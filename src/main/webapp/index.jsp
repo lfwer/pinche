@@ -627,7 +627,6 @@ table{
 	}
 	
 	function viewCarOwnerInfo(o, id) {
-	 
 		pushHis({name:'forward',value:''});
 		$(".mask").show();
 		$("#viewDiv").slideDown(500,function() {

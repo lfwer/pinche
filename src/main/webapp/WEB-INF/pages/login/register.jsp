@@ -17,7 +17,7 @@
 	<div id="scrollerInfo">
 		<div class="container">
 			<form id="registerForm" class="form-horizontal" method="post"
-				action="${basePath }/login/registerSubmit" target="targetFrame">
+				action="${basePath }/login/registerSubmit">
 				<div class="form-group">
 					<div class="col-xs-12">
 						<div style="display: table;">
@@ -243,7 +243,7 @@
 				$("#registerMsgContent").html(result.message);
 				$("#registerMsg").show();
 			}, 'json');
-		});;
+		});
 		// 发送验证码按钮点击事件
 		$("#btnCode").click(function() {
 			$("#registerForm").data('bootstrapValidator').resetForm();

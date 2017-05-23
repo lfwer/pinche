@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.alibaba.dubbo.common.json.JSONObject;
 import com.lfwer.common.AvoidDuplicateSubmission;
 import com.lfwer.common.CookieUtil;
+import com.lfwer.common.Valid;
 import com.lfwer.model.User;
 import com.lfwer.model.CarOwnerInfo;
 import com.lfwer.model.PinkerInfo;
@@ -40,8 +41,8 @@ public class CarOwnerInfoController {
 	@Autowired
 	private UserService userService;
 
-//	@Autowired
-//	private RedisTemplate<String, String> redisTemplate;
+	// @Autowired
+	// private RedisTemplate<String, String> redisTemplate;
 
 	/**
 	 * 跳转到车主发布页面
@@ -85,49 +86,55 @@ public class CarOwnerInfoController {
 	@RequestMapping("addCarOwnerInfoSubmit")
 	@AvoidDuplicateSubmission(needRemoveToken = true)
 	@ResponseBody
-	public String addCarOwnerInfoSubmit(CarOwnerInfo result, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		User user = CookieUtil.readCookie(request, response, loginService);
-		if (user != null) {
-			result.setAddTime(new Date());
-			result.setAddUser(user.getId());
-			result.setAge(user.getAge());
-			result.setSex(user.getSex());
-			result.setContacePhone(user.getPhone());
-			result.setContactUser(user.getRealName());
-			result.setCarColor(user.getCarColor());
-			result.setCarStyle(user.getCarStyle());
-			result.setCarType(user.getCarType());
-			result.setModyTime(new Date());
-			result.setRefreshTime(new Date());
-			result.setState(1);
-			result.setTop(0);
-			if (result.getTimeLimit() == 2) {
-				result.setPdate(null);
-				String[] arr = result.getPweekName().split(",");
-				for (String s : arr) {
-					if ("1".equals(s)) {
-						result.setPweek1(s);
-					} else if ("2".equals(s)) {
-						result.setPweek2(s);
-					} else if ("3".equals(s)) {
-						result.setPweek3(s);
-					} else if ("4".equals(s)) {
-						result.setPweek4(s);
-					} else if ("5".equals(s)) {
-						result.setPweek5(s);
-					} else if ("6".equals(s)) {
-						result.setPweek6(s);
-					} else if ("7".equals(s)) {
-						result.setPweek7(s);
+	public Valid addCarOwnerInfoSubmit(CarOwnerInfo result, HttpServletRequest request, HttpServletResponse response) {
+		Valid valid = null;
+		try {
+			User user = CookieUtil.readCookie(request, response, loginService);
+			if (user != null) {
+				result.setAddTime(new Date());
+				result.setAddUser(user.getId());
+				result.setAge(user.getAge());
+				result.setSex(user.getSex());
+				result.setContacePhone(user.getPhone());
+				result.setContactUser(user.getNickName());
+				result.setCarColor(user.getCarColor());
+				result.setCarStyle(user.getCarStyle());
+				result.setCarType(user.getCarType());
+				result.setModyTime(new Date());
+				result.setRefreshTime(new Date());
+				result.setState(1);
+				result.setTop(0);
+				if (result.getTimeLimit() == 2) {
+					result.setPdate(null);
+					String[] arr = result.getPweekName().split(",");
+					for (String s : arr) {
+						if ("1".equals(s)) {
+							result.setPweek1(s);
+						} else if ("2".equals(s)) {
+							result.setPweek2(s);
+						} else if ("3".equals(s)) {
+							result.setPweek3(s);
+						} else if ("4".equals(s)) {
+							result.setPweek4(s);
+						} else if ("5".equals(s)) {
+							result.setPweek5(s);
+						} else if ("6".equals(s)) {
+							result.setPweek6(s);
+						} else if ("7".equals(s)) {
+							result.setPweek7(s);
+						}
 					}
 				}
+				carOwnerInfoService.saveCarOwnerInfo(result);
+				return valid = new Valid(true, String.valueOf(result.getId()));
+			} else {
+				valid = new Valid(false, "保存失败。");
 			}
-			carOwnerInfoService.saveCarOwnerInfo(result);
-			return String.valueOf(result.getId());
-		} else {
-			return null;
+		} catch (Exception ex) {
+			valid = new Valid(false, "保存失败。");
+			ex.printStackTrace();
 		}
+		return valid;
 	}
 
 	/**
@@ -241,7 +248,8 @@ public class CarOwnerInfoController {
 
 			User curUser = CookieUtil.readCookie(request, response, loginService);
 			if (curUser != null) {
-				//redisTemplate.opsForSet().add("readCarOwner", String.valueOf(curUser.getId()));
+				// redisTemplate.opsForSet().add("readCarOwner",
+				// String.valueOf(curUser.getId()));
 			}
 			modelAndView.addObject("curUser", curUser);
 		}
