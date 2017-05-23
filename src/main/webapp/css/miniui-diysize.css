@@ -1,0 +1,211 @@
+body {
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	font-size: 14px;
+	line-height: 24px;
+}
+
+.mini-popup {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-mask-msg {
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	font-size: 14px;
+}
+
+.mini-feedback {
+	font: normal 12px tahoma, arial, helvetica, sans-serif;
+	*font-size: 14px;
+	line-height: 24px;
+}
+
+.mini-button {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	line-height: 24px;
+}
+
+.mini-checkbox {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	line-height: 24px;
+}
+
+.mini-textbox {
+	height: 32px;
+}
+
+.mini-textbox-border {
+	height: 30px;
+}
+
+.mini-textbox-input {
+	height: 30px;
+	line-height: 14px;
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+ 
+
+.mini-buttonedit-input {
+	line-height: 19px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	font-size: 14px;
+}
+
+.mini-panel {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-messagebox-content td {
+	font-size: 14px;
+}
+
+.mini-outlookbar {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-tabs {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-tabs-table {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-tab-text {
+	line-height: 24px;
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-splitter {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-layout {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-menu {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-menuitem-text a {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-calendar {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-calendar-daysheader td {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-calendar-days td {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-calendar-title {
+	line-height: 25px;
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-calendar-tadayButton, .mini-calendar-clearButton,
+	.mini-calendar-okButton, .mini-calendar-cancelButton {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-calendar-menu-month {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	line-height: 24px;
+}
+
+.mini-calendar-menu-year {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	line-height: 20px;
+}
+
+.mini-listbox td {
+	line-height: 24px;
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-checkboxlist {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-radiobuttonlist {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-radiobuttonlist table label {
+	line-height: 17px;
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-tooltip {
+	font-size: 14px;
+	line-height: 1.4;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-grid-cell-inner, .mini-grid-headerCell-inner {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	line-height: 24px;
+}
+
+.mini-grid-groupTitle {
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	font-size: 14px;
+}
+
+.mini-grid-columnproxy {
+	line-height: 28px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	font-size: 14px;
+}
+
+.mini-tree-editinput {
+	font-size: 14px;
+	line-height: 15px;
+}
+
+.mini-pager {
+	font-size: 14px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+}
+
+.mini-htmlfile .mini-buttonedit-button {
+	font-size: 12px;
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	line-height: 14px;
+}
+
+.mini-tips {
+	font-family: "Microsoft YaHei", '微软雅黑', Tahoma, Verdana, 宋体;
+	font-size: 14px;
+}

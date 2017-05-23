@@ -1,0 +1,71 @@
+#headerInfo {
+	position: absolute;
+	z-index: 2;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: 5px;
+	background-color: #fff;
+	border-bottom: 1px solid #E7E4E4;
+}
+
+#footerInfo {
+	position: absolute;
+	z-index: 2;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	padding: 6px 0 5px 0 ;
+	border-top: 1px solid #E7E4E4;
+	font-size: 14px;
+}
+
+#wrapperInfo {
+	position: absolute;
+	z-index: 1;
+	top: 45px;
+	bottom: 48px;
+	left: 0;
+	width: 100%;
+	overflow: hidden;
+}
+
+#wrapperInfo2 {
+	position: absolute;
+	z-index: 1;
+	top: 45px;
+	bottom: 48px;
+	left: 0;
+	width: 100%;
+	overflow: hidden;
+}
+
+#scrollerInfo {
+	position: absolute;
+	z-index: 1;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	width: 100%;
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-text-size-adjust: none;
+	-moz-text-size-adjust: none;
+	-ms-text-size-adjust: none;
+	-o-text-size-adjust: none;
+	text-size-adjust: none;
+}
+
+.left-label {
+	color: #9EA19B;
+}
+
+.font-16 {
+	font-size: 16px;
+}

@@ -1,0 +1,124 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+.lfwer-required {
+	color: red;
+}
+
+.lfwer-seize {
+	filter: alpha(opacity = 0);
+	-moz-opacity: 0;
+	opacity: 0;
+}
+
+.lfwer-hidden {
+	width: 0;
+	height: 0;
+	position: absolute;
+	left: -99999px;
+}
+
+.lfwer-addon-radio-checkbox-control {
+	display: block;
+	width: 100%;
+	height: auto;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+	-webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow
+		ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s, box-shadow ease-in-out
+		.15s;
+	transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+}
+
+.badge-1 {
+	display: inline-block;
+	min-width: 10px;
+	padding: 3px 7px;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 1;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	background-color: #4F83AB;
+	border-radius: 10px;
+}
+
+.badge-2 {
+	display: inline-block;
+	min-width: 10px;
+	padding: 3px 7px;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 1;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	background-color: #F2A287;
+	border-radius: 10px;
+}
+
+.badge-3 {
+	display: inline-block;
+	min-width: 10px;
+	padding: 4px 10px;
+	font-size: 12px;
+	font-weight: bold;
+	line-height: 1;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	background-color: #6FB3D3;
+	border-radius: 10px;
+}
+
+body {
+	-webkit-text-size-adjust: none; /* 字型大小是不會變的，而使用者就無法透過縮放網頁來達成放大字型 */
+	-webkit-appearance: none; /*可以改变按钮或者其它控件看起来类似本地的控件*/
+	-webkit-user-drag: none; /*-webkit-user-drag CSS 属性控制能否将元素作为一个整体拖动。*/
+	overflow: hidden;
+}
+
+a {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	/*很多Android 浏览器的 a 链接有边框，这里取消它 transparent */
+	blr: expression(this.onFocus = this.blur ());
+	text-decoration: none;
+	cursor: pointer;
+}
+
+a:focus {
+	outline: none;
+}
+
+a:hover {
+	text-decoration: none;
+}
+
+a.hidefocus {
+	outline: none
+}
+
+.dw-i {
+	font-size: 14px;
+}
+
+@media all and (orientation : landscape) { /*　　这是匹配横屏的状态，横屏时的css代码　　*/
+}
+
+@media all and (orientation : portrait) { /*　　这是匹配竖屏的状态，竖屏时的css代码　　*/
+}

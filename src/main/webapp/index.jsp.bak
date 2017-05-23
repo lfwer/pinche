@@ -1,0 +1,693 @@
+<%@page import="com.lfwer.common.TimeUtil"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@include file="/common/taglib.jsp"%>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<%@include file="/common/resource.jsp"%>
+<%SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); %>
+<title>${sysName }</title>
+<style type="text/css">
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+html {
+	-ms-touch-action: none;
+}
+
+body {
+	padding: 0;
+	margin: 0;
+	border: 0;
+	overflow: hidden;
+}
+
+#header {
+	position: absolute;
+	z-index: 2;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: 5px;
+	background: #1E99C2;
+}
+
+#footer {
+	position: absolute;
+	z-index: 2;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	padding: 2px;
+	border-top: 1px solid #E7E4E4;
+	background: #616161;
+}
+
+#wrapper {
+	position: absolute;
+	z-index: 1;
+	top: 45px;
+	bottom: 54px;
+	left: 0;
+	width: 100%;
+	overflow: hidden;
+}
+
+#scroller {
+	position: absolute;
+	z-index: 1;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	width: 100%;
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-text-size-adjust: none;
+	-moz-text-size-adjust: none;
+	-ms-text-size-adjust: none;
+	-o-text-size-adjust: none;
+	text-size-adjust: none;
+}
+
+#scroller ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	text-align: left;
+}
+
+#scroller li {
+	padding: 2px 10px;
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid #fff;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+#scroller table {
+	width: 100%;
+}
+
+.lfwer-btn-check {
+	width: 90px;
+	border: 0;
+	color: #FFFFFF;
+	font-weight: bolder;
+	cursor: pointer;
+}
+
+.lfwer-btn-uncheck {
+	width: 90px;
+	border: 0;
+	color: #919191;
+	font-weight: bolder;
+	cursor: pointer;
+}
+
+.lfwer-center {
+	width: auto;
+	display: table;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.lfwer-title {
+	font-weight: bolder;
+}
+
+.liclick {
+	color: gray;
+}
+table{
+	padding: 0;
+	margin: 0;
+	line-height: 16px;
+}
+
+</style>
+
+<script type="text/javascript">
+	var zhaoche = true;
+	var _date1="<%=sdf.format(new Date())%>";
+	var _date2="<%=sdf.format(new Date())%>";
+	var page = 1;
+	var myScroll;
+	var loading = false;
+	loadUp = true;
+	$(document)
+			.ready(
+					function() {
+						$("#switchInfo").bootstrapSwitch();
+						$("#switchInfo").on('switchChange.bootstrapSwitch',
+								function(event, state) {
+									zhaoche = state;
+									page = 1;
+									loading = false;
+									loadUp = true;
+									$("#pageInfo").empty();
+									if (zhaoche) {
+										loadCarOwnerInfo(page);
+									} else {
+										loadPinkerInfo(page);
+									}
+								});
+						document.addEventListener('touchmove', function(e) {
+							e.preventDefault();
+						}, false);
+						myScroll = new IScroll('#wrapper', {
+							probeType : 2, //probeType：1对性能没有影响。在滚动事件被触发时，滚动轴是不是忙着做它的东西。probeType：2总执行滚动，除了势头，反弹过程中的事件。这类似于原生的onscroll事件。probeType：3发出的滚动事件与到的像素精度。注意，滚动被迫requestAnimationFrame（即：useTransition：假）。  
+							scrollbars : true,//有滚动条  
+							mouseWheel : true,//允许滑轮滚动  
+							fadeScrollbars : true,//滚动时显示滚动条，默认影藏，并且是淡出淡入效果  
+							bounce : true,//边界反弹  
+							interactiveScrollbars : true,//滚动条可以拖动  
+							shrinkScrollbars : 'scale',// 当滚动边界之外的滚动条是由少量的收缩。'clip' or 'scale'. 
+							//preventDefault : false
+							click : true,// 允许点击事件  
+							keyBindings : true,//允许使用按键控制  
+
+							momentum : true
+						// 允许有惯性滑动  
+
+						});
+
+						myScroll
+								.on(
+										'scrollEnd',
+										function() {
+											if (!loading) {
+												if ($("#pullDown").html() == ("松开刷新 O(∩_∩)O")) {//下拉刷新
+													page = 1;
+													$("#pullDown").html(
+															"正在加载……");
+													$("#pullDown").show();
+													loadUp = true;
+													if (zhaoche) {
+														loadCarOwnerInfo(page);
+													} else {
+														loadPinkerInfo(page);
+													}
+												} else if ($("#pullDown")
+														.html() == ("↑ 下拉刷新")) {
+													$("#pullDown").empty()
+															.hide();
+												} else if (this.y == this.maxScrollY
+														&& loadUp) {
+													 
+													$("#pullUp").show();
+													page++;
+													if (zhaoche) {
+														loadCarOwnerInfo(page);
+													} else {
+														loadPinkerInfo(page);
+													}
+												} 
+
+											}
+
+										});
+
+						myScroll.on('scroll', function() {
+							var y = this.y;
+							if (this.y >= 30) {
+								$("#pullDown").html("松开刷新 O(∩_∩)O").show();
+							} else if (this.y > 0 && this.y < 30) {
+								$("#pullDown").html("↑ 下拉刷新").show();
+							}
+
+						});
+
+						$("#addInfo")
+								.click(
+										function() {
+											if (zhaoche) {
+												location.href = "${basePath}/pinkerInfo/addPinkerInfo";
+											} else {
+												$.ajax({
+													url:"${basePath}/login/isRegisterDriver",
+													success:function(data){
+														if(data.valid){
+															location.href = "${basePath}/carOwnerInfo/addCarOwnerInfo";
+														}else{
+															$('#myModal').modal('show');
+														}
+													}
+												});
+											}
+										});
+						
+						$('#myModal').modal('hide').css({
+							'margin-top' : function() {
+								return ($(this).height() / 2-100);
+							}
+						});
+						
+						//触发加载
+						//myScroll.scrollTo(0, 10, 200);
+						if (zhaoche) {
+							loadCarOwnerInfo(page);
+						} else {
+							loadPinkerInfo(page);
+						}
+					});
+
+	function info() {
+		$("#d1").removeClass("lfwer-btn-uncheck").addClass("lfwer-btn-check");
+		$("#d2").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
+		$("#d3").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
+	}
+	function friend() {
+		$("#d2").removeClass("lfwer-btn-uncheck").addClass("lfwer-btn-check");
+		$("#d1").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
+		$("#d3").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
+	}
+	function my() {
+		$("#d3").removeClass("lfwer-btn-uncheck").addClass("lfwer-btn-check");
+		$("#d1").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
+		$("#d2").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
+	}
+	var t1 = null;//这个设置为全局
+	function viewInfo() {
+		event.stopPropagation(); //  阻止事件冒泡
+	}
+
+	function reloadInfo() {
+		loading = false;
+		loadUp = true;
+		if (zhaoche) {
+			loadCarOwnerInfo(page);
+		} else {
+			loadPinkerInfo(page);
+		}
+	}
+	
+	
+	function nohead(o) {
+		//var img = event.srcElement;
+		//img.src = "${basePath }/images/nohead.jpg";
+		//控制不要一直跳动
+		//img.onerror = null;
+		
+		$(o).attr("src","${basePath }/images/nohead.jpg");
+	}
+	
+	var carOwnerInfoLi = '<li onclick="viewCarOwnerInfo(this,\'#id\')"><table><tr><td rowspan="4" width="80" style="padding-left: 5px;">'+
+	'<img src="${basePath }/login/getPhoto?id=#userId&name=#userPhotoSmall" onerror="nohead(this);" style="width: 60px; height: 60px;"></td>'+
+	'<td colspan="2">#form → #to</td></tr>'+
+	'<tr><td align="left" width="30"><nobr>途经：</nobr></td><td>#via</td></tr>'+
+	'<tr><td align="left"><nobr>时间：</nobr></td><td colspan="2">#date</td></tr>'+
+	'<tr><td align="left"><nobr>车型：</nobr></td><td colspan="2"><span style="float: left;">#carType #carStyle #carColor</span></td></tr>'+
+	'<tr><td style="padding: 0 10px 0 0;"><span class="#class" style="float: left;font-size:14px;">#sex</span><span style="float: right;font-size:14px;" class="#class">#age</span></td><td align="left"><nobr>人数：</nobr></td><td><span style="float: left;font-size: 14px;" class="badge-3">#pnum人</span><span class="badge" style="float: right; padding: 4px 10px; background-color: #337ab7; font-size: 14px;cursor: pointer;" onclick="viewInfo()">#nickName</span></td></tr>'+
+	'</table></li>';
+	function loadCarOwnerInfo(page) {
+		if (!loading) {
+
+			loading = true;
+			$("#pullOver").hide();
+			if (page == 1) {
+				$("pullDown").html("正在刷新……").show();
+				myScroll.refresh();
+				myScroll.scrollToElement(document.querySelector('#pullDown'),
+						null, null, true);
+				$.ajax({
+					url:"${basePath}/dict/getTime",
+					sync:true,
+					success:function(data){
+						_date1=data;
+					}
+				});
+			} else {
+				$("#pullUp").show();
+				myScroll.refresh();
+				myScroll.scrollToElement(document.querySelector('#pullUp'),
+						null, null, true);
+			}
+			 
+			$.ajax({
+				url : '${basePath}/carOwnerInfo/getPageInfo',
+				type : 'post',
+				data : 'page=' + page+"&date="+_date1,
+				success : function(data) {
+					if (data && data.length > 0) {
+						 
+						var result = "";
+						for (var i = 0; i < data.length; i++) {
+							var row = data[i];
+							var via = (row[2] ? row[2] + ','
+									: "") + (row[3] ? row[3] + ','
+											: "") + (row[4] ? row[4] + ',' : "")
+													+ (row[5] ? row[5] + ','
+													: "") + (row[6] ? row[6]
+															+ ',' : "");
+							if(via.length>12){
+								via = via.substring(0,12)+"...";
+							}
+							
+							var dateStr="";
+							
+							if(row[26]==1){
+								dateStr = row[7];
+							}else{
+								if(row[19]!=null && row[20]!=null && row[21]!=null 
+										&& row[22]!=null && row[23]!=null && row[24]!=null
+										&& row[25]!=null){
+									dateStr="周一至周日";
+								}else if(row[19]!=null && row[20]!=null && row[21]!=null 
+										&& row[22]!=null && row[23]!=null && row[24]!=null){
+									dateStr="周一至周六";
+								}else if(row[19]!=null && row[20]!=null && row[21]!=null 
+										&& row[22]!=null && row[23]!=null){
+									dateStr="周一至周五";
+								}else if(row[19]!=null && row[20]!=null && row[21]!=null 
+										&& row[22]!=null){
+									dateStr="周一至周四";
+								}else{
+									if(row[19]!=null){
+										dateStr+="周一";
+									}
+									if(row[20]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周二";
+									}
+									if(row[21]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周三";
+									}
+									if(row[22]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周四";
+									}
+									if(row[23]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周五";
+									}
+									if(row[24]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周六";
+									}
+									if(row[25]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周日";
+									}
+								}
+							}
+							
+							dateStr+=" " + row[8].substring(0, 5);
+							
+							 
+							
+							result += carOwnerInfoLi.replace("#form", row[0])
+									.replace("#to", row[1]).replace("#via",
+											via ? via : "无").replace("#sex", row[9]).replace("#age",
+											row[10]).replace("#pnum", row[11])
+									.replace("#carType", row[12]).replace(
+											"#carStyle", row[13]).replace(
+											"#carColor", row[14]).replace(
+											"#nickName", row[15]).replace(
+											"#id", row[16]).replace("#userId",
+											row[17]).replace("#userPhotoSmall",
+											row[18]).replace(/#class/g,row[9]=='男'?'badge-1':'badge-2')
+											.replace("#date",dateStr);
+						}
+						if (page > 1) {
+							$("#pageInfo").append(result);
+						} else {
+							$("#pageInfo").html(result);
+						}
+					}
+					$("#pullUp").hide();
+					$("#pullDown").hide();
+					myScroll.refresh();
+					
+					if (page > 1 && (data == null || data.length == 0)) {
+						loadUp = false;
+						$("#pullOver").show();
+						myScroll.refresh();
+						myScroll.scrollToElement(document
+								.querySelector('#pullOver'), null, null, true);
+					}
+					if (data && data.length > 0) {
+						page++;
+					}
+					
+					loading = false;
+				},
+				error : function() {
+					$("#pullUp").hide();
+					$("#pullDown").hide();
+					myScroll.refresh();
+					loading = false;
+					alert("加载失败");
+				}
+			});
+		}
+	}
+
+	function viewCarOwnerInfo(o, id) {
+		$(o).addClass("liclick");
+		location.href = '${basePath}/carOwnerInfo/viewCarOwnerInfo?type=index&id=' + id;
+	}
+
+	var pinkerInfoLi = '<li onclick="viewPinkerInfo(this,\'#id\')"><table><tr><td rowspan="2" width="80" style="padding-left: 5px;"><img src="${basePath }/login/getPhoto?id=#userId&name=#userPhotoSmall" onerror="nohead(this);" style="width: 60px; height: 60px;"></td><td colspan="2">#form → #to</td></tr><tr><td align="right" width="70"><nobr>出发时间：</nobr></td><td>#date</td></tr><tr><td style="padding: 0 10px 0 0;"><span class="#class" style="float: left;font-size:14px;">#sex</span><span style="float: right;font-size:14px;" class="#class">#age</span></td><td align="right" width="70"><nobr>搭乘人数：</nobr></td><td><span style="float: left;font-size: 14px;" class="badge-3">#pnum人</span><span class="badge" style="float: right; padding: 4px 10px; background-color: #337ab7; font-size: 14px;cursor: pointer;" onclick="viewInfo()">#nickName</span></td></tr></table></li>';
+	function loadPinkerInfo(page) {
+		if (!loading) {
+			loading = true;
+			$("#pullOver").hide();
+			if (page == 1) {
+				$("pullDown").html("正在刷新……").show();
+				myScroll.refresh();
+				myScroll.scrollToElement(document.querySelector('#pullDown'),
+						null, null, true);
+				$.ajax({
+					url:"${basePath}/dict/getTime",
+					sync:true,
+					success:function(data){
+						_date2=data;
+					}
+				});
+			} else {
+				$("#pullUp").show();
+				myScroll.refresh();
+				myScroll.scrollToElement(document.querySelector('#pullUp'),
+						null, null, true);
+			}
+
+			$.ajax({
+				url : '${basePath}/pinkerInfo/getPageInfo',
+				type : 'post',
+				data : 'page=' + page+"&date="+_date2,
+				success : function(data) {
+					if (data && data.length > 0) {
+						var result = "";
+						for (var i = 0; i < data.length; i++) {
+							var row = data[i];
+							
+							
+var dateStr="";
+							
+							if(row[20]==1){
+								dateStr = row[4];
+							}else{
+								if(row[13]!=null && row[14]!=null && row[15]!=null 
+										&& row[16]!=null && row[17]!=null && row[18]!=null
+										&& row[19]!=null){
+									dateStr="周一至周日";
+								}else if(row[13]!=null && row[14]!=null && row[15]!=null 
+										&& row[16]!=null && row[17]!=null && row[18]!=null){
+									dateStr="周一至周六";
+								}else if(row[13]!=null && row[14]!=null && row[15]!=null 
+										&& row[16]!=null && row[17]!=null){
+									dateStr="周一至周五";
+								}else if(row[13]!=null && row[14]!=null && row[15]!=null 
+										&& row[16]!=null){
+									dateStr="周一至周四";
+								}else{
+									if(row[13]!=null){
+										dateStr+="周一";
+									}
+									if(row[14]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周二";
+									}
+									if(row[15]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周三";
+									}
+									if(row[16]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周四";
+									}
+									if(row[17]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周五";
+									}
+									if(row[18]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周六";
+									}
+									if(row[19]!=null){
+										if(dateStr!=""){
+											dateStr+=",";
+										}
+										dateStr+="周日";
+									}
+								}
+							}
+							
+							dateStr+=" " + row[5].substring(0, 5);
+							
+							
+							result += pinkerInfoLi.replace("#form",
+									row[0] + " " + row[1]).replace("#to",
+									row[2] + " " + row[3]).replace(
+									"#sex", row[6]).replace("#age", row[7])
+									.replace("#pnum", row[8]).replace(
+											"#nickName", row[9]).replace("#id",
+											row[10]).replace("#userId",
+													row[11]).replace("#userPhotoSmall",
+															row[12]).replace(/#class/g,row[6]=='男'?'badge-1':'badge-2')
+															.replace("#date",dateStr);
+						}
+						if (page > 1) {
+							$("#pageInfo").append(result);
+						} else {
+							$("#pageInfo").html(result);
+						}
+
+					}
+					$("#pullUp").hide();
+					$("#pullDown").hide();
+					myScroll.refresh();
+					loading = false;
+					if (page > 1 && (data == null || data.length == 0)) {
+						loadUp = false;
+						$("#pullOver").show();
+						myScroll.refresh();
+						myScroll.scrollToElement(document
+								.querySelector('#pullOver'), null, null, true);
+					}
+					if (data && data.length > 0) {
+						page++;
+					}
+
+				},
+				error : function() {
+					$("#pullUp").hide();
+					$("#pullDown").hide();
+					myScroll.refresh();
+					loading = false;
+					alert("加载失败");
+
+				}
+			});
+		}
+	}
+
+	function viewPinkerInfo(o, id) {
+		$(o).addClass("liclick");
+		location.href = '${basePath}/pinkerInfo/viewPinkerInfo?type=index&id=' + id;
+	}
+</script>
+</head>
+<body>
+	<div id="header">
+		<div class="row">
+			<div class="col-xs-12 text-center">
+				<input type="checkbox" id="switchInfo" data-size=""
+					data-off-color="info" data-on-color="warning" data-on-text="找车子"
+					data-off-text="找乘客" data-label-width="24"
+					data-label-text='<img src="${basePath }/images/switch.png" style="width:18px;height:18px;" >'
+					checked>
+				<button id="addInfo" style="margin-left: 10px;"
+					class="btn btn-success">
+					<span class="glyphicon glyphicon-edit"></span> 发布
+				</button>
+				<button id="searchInfo" style="margin-left: 10px;"
+					class="btn btn-default" onclick="search()">
+					<span class="glyphicon glyphicon-th-list"></span> 筛选
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="wrapper">
+		<div id="scroller">
+			<div id="pullDown" class="alert text-center"
+				style="display: none; padding: 0; margin: 0 0 6px 0; font-size: 16px; height: 30px; color: gray;">
+			</div>
+			<ul id="pageInfo">
+
+			</ul>
+			<div id="pullUp" class="alert text-center"
+				style="display: none; padding: 6px; margin: 0; font-size: 16px;color: gray;">
+				正在刷新……</div>
+			<div id="pullOver" class="alert text-center" onclick="reloadInfo()"
+				style="display: none; padding: 6px; margin: 0; font-size: 16px; cursor: pointer;color: gray;">
+				没有更多数据，点击刷新</div>
+		</div>
+	</div>
+	<div id="footer" style="font-size: 18px;">
+		<div class="row text-center lfwer-center">
+			<div class="col-xs-4">
+				<div class="lfwer-btn-check" id="d1" onclick="info()">
+					<span class="glyphicon glyphicon-th-list"></span><br>拼车信息
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div class="lfwer-btn-uncheck" id="d2" onclick="friend()">
+					<span class="glyphicon glyphicon-heart"></span><br>拼友
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div class="lfwer-btn-uncheck" id="d3" onclick="my()">
+					<span class="glyphicon glyphicon-user"></span><br>我的
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">您需要完善车主信息才可以进行发布，点击<a href="${basePath }/login/register3">【完善车主信息】</a>去完善吧~</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
