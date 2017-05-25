@@ -406,8 +406,8 @@
 				 $this.removeAttr("disabled");
 				 if(result && result.valid == true){
 					 	//刷新列表
-					 	$("#pullDown1").html("松开刷新 O(∩_∩)O").show();
-					 	myScroll1.scrollTo(0, 30, 500, null);
+					 	//$("#pullDown1").html("松开刷新 O(∩_∩)O").show();
+					 	//myScroll1.scrollTo(0, 30, 500, null);
 					 	//查看详情
 					 	$("#viewDiv").empty();
 					 	$(".mask").show();

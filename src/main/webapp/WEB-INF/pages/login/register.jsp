@@ -94,7 +94,7 @@
 				</div>
 				<div class="form-group">
 					<div class="col-xs-12">
-						<button type="submit" class="btn btn-lg btn-success btn-block">
+						<button type="submit" class="btn btn-success btn-block">
 							<span class="glyphicon glyphicon-leaf"></span> 注 册
 						</button>
 					</div>

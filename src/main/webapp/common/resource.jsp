@@ -26,12 +26,12 @@ if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
 <link rel="stylesheet"
 	href="${basePath }/jslib/bootstrapdatetimepicker/css/bootstrap-datetimepicker.min.css" />
 <link rel="stylesheet" href="${basePath }/jslib/icheck/skins/all.css" />
-<link rel="stylesheet"
-	href="${basePath }/jslib/miniui/themes/default/miniui.css" />
-<link rel="stylesheet"
-	href="${basePath }/jslib/miniui/themes/bootstrap/skin.css" />
-<link rel="stylesheet" href="${basePath }/jslib/miniui/themes/icons.css" />
-<link rel="stylesheet" href="${basePath }/css/miniui-diysize.css" />
+<%-- <link rel="stylesheet"
+	href="${basePath }/jslib/miniui/themes/default/miniui.css" /> --%>
+<%-- <link rel="stylesheet"
+	href="${basePath }/jslib/miniui/themes/bootstrap/skin.css" /> --%>
+<%-- <link rel="stylesheet" href="${basePath }/jslib/miniui/themes/icons.css" />
+<link rel="stylesheet" href="${basePath }/css/miniui-diysize.css" /> --%>
 <link rel="stylesheet" href="${basePath }/jslib/diyUpload/css/webuploader.css" />
 <link rel="stylesheet" href="${basePath }/jslib/diyUpload/css/diyUpload.css" />
 <link rel="stylesheet" href="${basePath }/jslib/Jcrop/css/jquery.Jcrop.min.css" />
@@ -43,6 +43,7 @@ if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
 <link rel="stylesheet" href="${basePath }/jslib/swiper/css/swiper.min.css" />
 
 <script src="${basePath }/js/jquery-1.11.3.min.js"></script>
+<script src="${basePath }/js/jquery.cookie.js"></script>
 <script src="${basePath }/jslib/bootstrap/js/bootstrap.min.js"></script>
 <script
 	src="${basePath }/jslib/bootstrapvalidator/js/bootstrapValidator.min.js"></script>

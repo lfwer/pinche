@@ -354,27 +354,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="headPhotoModal" tabindex="-1" role="dialog"
-	aria-labelledby="headPhotoModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-body" style="margin: 0;padding: 0;">
-				<table style="width: 100%;margin: 0;padding: 0;">
-					<tr>
-						<td align="center"><img id="imgHeadPhoto" /></td>
-					</tr>
-				</table>
-			</div>
-			<div class="modal-footer">
-				<div class="text-center">
-					<button type="button" class="btn btn-primary"
-						onclick="savePhoto()">确定</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+
 <script type="text/javascript">
 	var _headPhoto;
 	var jcrop_api;

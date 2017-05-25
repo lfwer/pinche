@@ -98,7 +98,7 @@ body {
 }
  
 
-.scroller ul {
+.ul-main {
 	list-style: none;
 	padding: 0;
 	margin: 0;
@@ -106,7 +106,7 @@ body {
 	text-align: left;
 }
 
-.scroller li {
+.ul-main > li {
 	padding: 2px 10px;
 	border-bottom: 1px solid #ccc;
 	border-top: 1px solid #fff;
@@ -114,7 +114,7 @@ body {
 	cursor: pointer;
 }
 
-.scroller table {
+.scroller > table {
 	width: 100%;
 }
 
@@ -171,6 +171,45 @@ table{
 	bottom: 0;
 	overflow: hidden;
 }
+
+#viewMy{
+	width: 100%;
+	height:auto;
+	overflow: hidden;
+}
+
+#operDiv{
+	z-index: 5;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: none;
+	background: white;
+	bottom: 0;
+	overflow: hidden;
+}
+
+.modal{
+	font-size: 18px;
+	line-height: 28px;
+}
+
+.callDiv{
+	font-size: 32px;
+	position: absolute;
+	right: 5px;
+	bottom: 20px;
+	z-index: 2;
+	line-height: 48px; 
+}
+
+.callDiv > span{
+	border:1px #EEEEEE solid;
+	padding: 4px;
+	color: white;
+	background: gray;
+	
+}
 </style>
 
 <script type="text/javascript">
@@ -180,6 +219,7 @@ table{
 		var state = event.state;
 		var name = state.name;
 		var value = state.value;
+		$(".mask").hide();
 		if (name == "forward") {
 			$(".modal").modal('hide');
 			$(".mbsc-mobiscroll").hide();
@@ -200,26 +240,51 @@ table{
 	var page2 = 1;
 	var myScroll1 = null;
 	var myScroll2 = null;
+	var myScroll3 = null;
+	var myScroll4 = null;
 	var loading1 = false;
 	var loading2 = false;
+	var loading3 = false;
 	loadUp1 = true;
 	loadUp2 = true;
 	var swiper,swiper2;
 	var firstIn =true;
 	var delId,delflag;
-	
+	var curUser;
 	$(document).ready(function() {
-		$("#switchInfo").bootstrapSwitch();
+		zhaoche = true;
+		$("#switchInfo").bootstrapSwitch("state",true);
+		$(".mask").show();
+		$.ajax({
+			url:"${basePath}/login/getCurUser",
+			async:true,
+			success:function(data){
+				$(".mask").hide();
+				if(data){
+					curUser = data;
+					if(curUser.type == "1"){
+						zhaoche = false;
+						$("#switchInfo").bootstrapSwitch("state",false);
+					}
+				}
+			},
+			error:function(){
+				$(".mask").hide();
+			}
+		});
+		
+		
+		
 		
 		$("#switchInfo").on('switchChange.bootstrapSwitch',function(event, state) {
 			zhaoche = state;
 			info(false);
 			if (zhaoche) {
-				$("#addInfoName").html("车主发布");
+				$("#addInfoName").html("&nbsp;车主发布");
 				
 				swiper.slideTo(0,0,false);
 			} else {
-				$("#addInfoName").html("乘客发布");
+				$("#addInfoName").html("&nbsp;乘客发布");
 				swiper.slideTo(1,0,false); 
 				if(firstIn){
 					loadPinkerInfo(page2);
@@ -336,22 +401,22 @@ table{
 		 
 		$("#addInfo").click(function() {
 			if (zhaoche) {
-				$.ajax({
-					url:"${basePath}/login/isRegisterDriver",
-					success:function(data){
-						if(data.valid){
-							gotoUrl1('${basePath}/carOwnerInfo/addCarOwnerInfo');
-						}else{
-							if(data.message == "1"){
-								$('#myModal').modal('show');
-							}else{
-								$('#myModal2').modal('show');
-							}
-						}
+				if(curUser.id){//判断是否登录
+					if(curUser.carType){
+						gotoUrl1('${basePath}/carOwnerInfo/addCarOwnerInfo');
+					}else{
+						$('#myModal2').modal('show');
 					}
-				});
+				}else{
+					$('#myModal').modal('show');
+				}
 			} else {
-				gotoUrl1('${basePath}/pinkerInfo/addPinkerInfo');
+			 
+				if(curUser.id){//判断是否登录
+					gotoUrl1('${basePath}/pinkerInfo/addPinkerInfo');
+				}else{
+					$('#myModal').modal('show');
+				}
 			}
 		});
 		
@@ -388,9 +453,16 @@ table{
 				return ($(this).height() / 2 - 150);
 			}
 		});
+		
 		$('#carModal3').modal('hide').css({
 			'margin-top' : function() {
 				return ($(this).height() / 2 - 160);
+			}
+		});
+		
+		$('#signOutModal').modal('hide').css({
+			'margin-top' : function() {
+				return ($(this).height() / 2 - 150);
 			}
 		});
 		
@@ -399,12 +471,18 @@ table{
 			$("#imgCarPhoto").removeAttr("src");
 		});
 		
+		myScroll3 = new IScroll("#wrapper3", setting);
+		myScroll4 = new IScroll("#wrapper4", setting);
 		
 		loadCarOwnerInfo(page1);
+		
+		
 		
 	});
 
 	function info(t) {
+		$(".swiper-container").css({"top":"45px"});
+		$("#header").show();
 		if(t){
 			if($("#switchInfo").bootstrapSwitch("state") == true){
 				swiper.slideTo(0, 0,false);//切换到第一个slide，速度为1秒
@@ -418,18 +496,28 @@ table{
 		
 	}
 	function friend(t) {
+		$(".swiper-container").css({"top":"0"});
+		$("#header").hide();
 		$("#d2").removeClass("lfwer-btn-uncheck").addClass("lfwer-btn-check");
 		$("#d1").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
 		$("#d3").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
 		if(t)
 			swiper.slideTo(2, 0, false);
+		myScroll3.refresh();
 	}
+	
 	function my(t) {
+		$(".swiper-container").css({"top":"0"});
+		$("#header").hide();
 		$("#d3").removeClass("lfwer-btn-uncheck").addClass("lfwer-btn-check");
 		$("#d1").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
 		$("#d2").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
 		if(t)
 			swiper.slideTo(3, 0, false);
+		$("#viewMy").load("${basePath}/login/my",function(){
+			loading3 = true;
+			myScroll4.refresh();
+		});
 	}
 	var t1 = null;//这个设置为全局
 	function viewInfo() {
@@ -827,13 +915,6 @@ table{
 		loadPinkerInfo(page2);
 	}
 
-	function noFind() {
-		var img = event.srcElement;
-		img.src = "${basePath }/images/no.png";
-		//控制不要一直跳动
-		//img.onerror = null;
-	}
-	
 	//弹出删除发布信息确认框
 	function removeInfo(flag,id) {
 		delFlag = flag;
@@ -890,6 +971,11 @@ table{
 		history.pushState(json, '', '#'+json.name);
 	}
 	 
+	function gotoLogin(){
+		$("#myModal").modal('hide');
+		gotoUrl1('${basePath }/login/signIn');
+	}
+	
 	function gotoRegister3(){
 		$("#myModal2").modal('hide');
 		gotoUrl1('${basePath}/login/register3?type=index');
@@ -925,6 +1011,9 @@ table{
 		$("#viewDiv2").empty();
 	}
 	 
+	function signOutOk(){
+		location.href= "${basePath}/login/signOut";
+	}
 </script>
 </head>
 <body>
@@ -936,13 +1025,13 @@ table{
 				<col width="20%">
 			</colgroup>
 			<tr>
-				<td><input type="checkbox" id="switchInfo" data-off-color="info"
+				<td>&nbsp;<input type="checkbox" id="switchInfo" data-off-color="info"
 					data-on-color="info" data-on-text="车主列表" data-off-text="乘客列表"
-					data-label-text="切换" data-label-width="30" checked></td>
-				<td><a id="addInfo"> <span class="glyphicon glyphicon-edit"></span><span
-					id="addInfoName">车主发布</span>
+					data-label-text="切换" data-label-width="30" ></td>
+				<td><a id="addInfo" style="font-size: 16px;"><span class="glyphicon glyphicon-edit"></span><span
+					id="addInfoName">&nbsp;车主发布</span>
 				</a></td>
-				<td align="right"><a id="searchInfo"> <span class="glyphicon glyphicon-th-list"></span> 筛选</td>
+				<td align="right"><a id="searchInfo" style="font-size: 18px;"> <span class="glyphicon glyphicon-search"></span>&nbsp;</td>
 			</tr>
 		</table>
 	</div>
@@ -956,7 +1045,7 @@ table{
 						<div id="pullDown1" class="alert text-center"
 							style="display: none; padding: 0; margin: 0 0 6px 0; font-size: 16px; height: 30px; color: gray;">
 						</div>
-						<ul id="pageInfo1">
+						<ul id="pageInfo1" class="ul-main">
 						</ul>
 						<div id="pullUp1" class="alert text-center"
 							style="display: none; padding: 6px; margin: 0; font-size: 16px;color: gray;">
@@ -973,7 +1062,7 @@ table{
 						<div id="pullDown2" class="alert text-center"
 							style="display: none; padding: 0; margin: 0 0 6px 0; font-size: 16px; height: 30px; color: gray;">
 						</div>
-						<ul id="pageInfo2">
+						<ul id="pageInfo2" class="ul-main">
 						</ul>
 						<div id="pullUp2" class="alert text-center"
 							style="display: none; padding: 6px; margin: 0; font-size: 16px;color: gray;">
@@ -987,14 +1076,14 @@ table{
 			<div class="swiper-slide slide swiper-no-swiping" >
 				<div class="wrapper" id="wrapper3">
 					<div class="scroller">
-					 拼友
+					消息
 					</div>
 				</div>
 			</div>
 			<div class="swiper-slide slide swiper-no-swiping" >
 				<div class="wrapper" id="wrapper4">
 					<div class="scroller">
-					 我的
+						<div id="viewMy"></div>
 					</div>
 				</div>
 			</div>
@@ -1015,8 +1104,8 @@ table{
 			<div class="col-xs-4">
 				<div class="lfwer-btn-uncheck" id="d2" onclick="friend(true)">
 					<table style="width: 100%;text-align: center;">
-						<tr><td><span class="glyphicon glyphicon-heart"></span></td></tr>
-						<tr><td>拼友</td></tr>
+						<tr><td><span class="glyphicon glyphicon-comment"></span></td></tr>
+						<tr><td>消息</td></tr>
 					</table>
 				</div>
 			</div>
@@ -1034,13 +1123,14 @@ table{
 	
 	<div id="viewDiv"></div>
 	<div id="viewDiv2"></div>
+	
 	<iframe id="targetFrame" name="targetFrame" style="display: none;"></iframe>
 	
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
 		aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<div class="modal-body text-center">您需要登陆后才可以进行发布<br/>点击<a href="${basePath }/login/signIn">【登陆】</a></div>
+				<div class="modal-body text-center">您需要登陆后才可以进行发布<br/><a href="javascript:gotoLogin();">【登陆】</a></div>
 			</div>
 		</div>
 	</div>
@@ -1049,7 +1139,7 @@ table{
 		aria-labelledby="myModalLabel2" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<div class="modal-body text-center">您需要完善车主信息才可以进行发布<br/>点击<a href="javascript:gotoRegister3()">【完善车主信息】</a></div>
+				<div class="modal-body text-center">您需要认证为车主才可以进行发布<br/>点击<a href="javascript:gotoRegister3()">【车主认证】</a></div>
 			</div>
 		</div>
 	</div>
@@ -1058,12 +1148,28 @@ table{
 		aria-labelledby="myModalLabelInfo" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content text-center">
-				<div class="modal-body">确定删除？</div>
+				<div class="modal-body">确定删除此信息？</div>
 				<div class="modal-footer">
 					<div style="text-align: center;">
 						<button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
 						<button type="button" class="btn btn-warning"
 							onclick="removeSubmit()" data-dismiss="modal">确定</button>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="signOutModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content text-center">
+				<div class="modal-body">确定退出当前账号？</div>
+				<div class="modal-footer">
+					<div style="text-align: center;">
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-primary"
+							onclick="signOutOk()" data-dismiss="modal">确定</button>
 					</div>
 
 				</div>
@@ -1103,9 +1209,8 @@ table{
 		<div class="modal-content">
 			<div class="modal-body">如果不完善车辆信息，您是无法发布车主拼车信息的哦 ^_^</div>
 			<div class="modal-footer">
+				<button type="button" class="btn btn-default" id="btnBreak">残忍跳过</button>
 				<button type="button" class="btn btn-primary" data-dismiss="modal">继续完善</button>
-				<button type="button" class="btn btn-default" id="btnBreak">继续跳过
-				</button>
 			</div>
 		</div>
 	</div>
@@ -1126,6 +1231,28 @@ table{
 					<%
 						}
 					%>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="headPhotoModal" tabindex="-1" role="dialog"
+	aria-labelledby="headPhotoModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body" style="margin: 0;padding: 0;">
+				<table style="width: 100%;margin: 0;padding: 0;">
+					<tr>
+						<td align="center"><img id="imgHeadPhoto" /></td>
+					</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<div class="text-center">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary"
+						onclick="savePhoto()">确定</button>
 				</div>
 			</div>
 		</div>

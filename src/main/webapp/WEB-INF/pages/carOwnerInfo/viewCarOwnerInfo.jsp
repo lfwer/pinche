@@ -1,13 +1,23 @@
 <%@page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@include file="/common/taglib.jsp"%>
-<div id="headerInfo" class="font-16">
+<div id="headerInfo">
 	<div class="row">
-		<div class="col-xs-2"></div>
+		<div class="col-xs-2">
+			<span class="glyphicon glyphicon-chevron-left"
+				onclick="history.back();" style="cursor: pointer;">&nbsp;</span>
+		</div>
 		<div class="col-xs-8 text-center">
 			<span>车主发布详情</span>
 		</div>
-		<div class="col-xs-2"></div>
+		<div class="col-xs-2">
+			<c:if test="${curUser ne null and curUser.id eq result.addUser }">
+				<div class="pull-right">
+					<span class="glyphicon glyphicon-trash" onclick="removeInfo('carOwner','${result.id }')"
+						style="cursor: pointer;"></span>
+				</div>
+			</c:if>
+		</div>
 	</div>
 </div>
 <div id="wrapperInfo" class="font-16">
@@ -120,32 +130,36 @@
 						<div class="col-xs-12 text-nowrap left-label">车主留言</div>
 					</div>
 					<div class="row">
+						<div class="col-xs-12">
+							<a href="javascript:void(0)">联系我时，请说是在邯郸拼车网上看到的，谢谢！</a>
+						</div>
+					</div>
+					<div class="row">
 						<div class="col-xs-12" style="word-break: break-all;">${result.remark }</div>
 					</div>
-
+					
 					<div class="row">
 						<div class="col-xs-12 text-nowrap left-label">车辆照片</div>
 					</div>
+					<c:if test="${not empty user.carPhotoLarge1}">
 					<div class="row" style="padding: 2px;">
 						<img
 							src="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoLarge1}"
 							class="img-responsive center-block carPhone" onerror="noFind();">
 					</div>
+					</c:if>
+					<c:if test="${not empty user.carPhotoLarge2}">
 					<div class="row" style="padding: 2px;">
 						<img
 							src="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoLarge2}"
 							class="img-responsive center-block carPhone" onerror="noFind();">
 					</div>
-					<div class="row">
-						<div class="col-xs-12">
-							<a href="javascript:void(0)">联系我时，请说是在邯郸拼车网上看到的，谢谢！</a>
-						</div>
-					</div>
+					</c:if>
 				</c:if>
 				<c:if test="${result.state eq 0 }">
 					<div class="row">
 						<div class="col-xs-12 text-center" style="color: gray;">
-							<h2>此记录已删除</h2>
+							<h2>此信息已删除</h2>
 						</div>
 					</div>
 				</c:if>
@@ -153,90 +167,20 @@
 			<c:if test="${result eq null }">
 				<div class="row">
 					<div class="col-xs-12 text-center" style="color: gray;">
-						<h2>此记录不存在</h2>
+						<h2>此信息不存在</h2>
 					</div>
 				</div>
 			</c:if>
 		</div>
 	</div>
 </div>
-<div id="footerInfo">
-	<div class="container">
-		<div class="row text-center">
-			<c:if test="${result.state eq 1 }">
-				<%
-					if (!"index".equals(request.getParameter("type"))) {
-				%>
-				<c:if test="${curUser ne null and curUser.id eq result.addUser }">
-					<div class="col-xs-6">
-						<table style="width: 100%; text-align: center;">
-							<tr>
-								<td><a href="javascript:history.back();"> <span
-										class="glyphicon glyphicon-home"></span><br>返回
-								</a></td>
-							</tr>
-						</table>
-					</div>
-					<div class="col-xs-6">
-						<table style="width: 100%; text-align: center;">
-							<tr>
-								<td><a
-									href="javascript:removeInfo('carOwner','${result.id }')"> <span
-										class="glyphicon glyphicon-remove"></span><br>删除
-								</a></td>
-							</tr>
-						</table>
-					</div>
-				</c:if>
-				<%
-					} else {
-				%>
-				<div class="col-xs-4 col-sm-4 col-md-4">
-					<table style="width: 100%; text-align: center;">
-						<tr>
-							<td><a href="javascript:history.back();"> <span
-									class="glyphicon glyphicon-remove"></span><br>再看看
-							</a></td>
-						</tr>
-					</table>
-				</div>
-				<div class="col-xs-4 col-sm-4 col-md-4">
-					<table style="width: 100%; text-align: center;">
-						<tr>
-							<td><a href="tel:${result.contacePhone }"> <span
-									class="glyphicon glyphicon-earphone"></span><br>打电话
-							</a></td>
-						</tr>
-					</table>
-				</div>
-				<div class="col-xs-4 col-sm-4 col-md-4">
-					<table style="width: 100%; text-align: center;">
-						<tr>
-							<td><a href="sms:${result.contacePhone }"> <span
-									class="glyphicon glyphicon-envelope"></span><br>发短信
-							</a></td>
-						</tr>
-					</table>
-				</div>
-				<%
-					}
-				%>
-			</c:if>
-			<c:if test="${result eq null or result.state eq 0 }">
-				<div class="col-xs-12 text-center">
-					<table style="width: 100%; text-align: center;">
-						<tr>
-							<td><a href="javascript:history.back();"> <span
-									class="glyphicon glyphicon-home"></span><br>返回
-							</a></td>
-						</tr>
-					</table>
-				</div>
-			</c:if>
-		</div>
-	</div>
+<div class="callDiv">
+	<a href="tel:${result.contacePhone }"><span
+		class="glyphicon glyphicon-earphone" ></span></a>
+	<br>
+	<a href="sms:${result.contacePhone }" ><span
+		class="glyphicon glyphicon-envelope"></span></a>
 </div>
-
 <script type="text/javascript">
 	$(".timeago").timeago();
 	var myScrollInfo = new IScroll('#wrapperInfo', {

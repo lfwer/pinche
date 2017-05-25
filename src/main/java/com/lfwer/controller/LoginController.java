@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -81,9 +82,10 @@ public class LoginController {
 				List<User> list = loginService.find("from User t where (t.username=? or t.phone=?) and t.password=?",
 						new String[] { username, username, password });
 				if (list != null && !list.isEmpty() && list.size() == 1) {
-					CookieUtil.saveCookie(username, password, response);
+					session.setAttribute("curUser", list.get(0));
+					Cookie cookie = CookieUtil.saveCookie(username, password, response);
 					result.addProperty("valid", true);
-					result.addProperty("message", "登录成功");
+					result.addProperty("message", cookie.getValue());
 				} else {
 					result.addProperty("valid", false);
 					result.addProperty("message", "获取用户信息失败");
@@ -122,7 +124,8 @@ public class LoginController {
 		Valid data = null;
 		try {
 			if (user != null) {
-				user.setNickName("用户" + RandomUtil.getRandNum(8));
+				user.setNickName("用户" + RandomUtil.getRandNum(8));// 默认昵称
+				user.setType("1");// 默认身份为乘客
 				loginService.saveUser(user);
 				CookieUtil.saveCookie(user.getUsername(), user.getPassword(), response);
 				data = new Valid(true, "注册成功，系统将自动跳转到【登录】页面。");
@@ -227,7 +230,6 @@ public class LoginController {
 			modelAndView.addObject("carProvinceName", Util.getCarProvinceMap().get(user.getCarProvince()));
 			modelAndView.addObject("user", user);
 			modelAndView.addObject("carTypeList", dictService.getDicts("CARTYPE", null));
-
 			modelAndView.addObject("carColorList", dictService.getDicts("CARCOLOR", "-1"));
 		}
 		return modelAndView;
@@ -593,29 +595,54 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping("signOut")
-	public String signOut(HttpServletResponse response) {
-		CookieUtil.clearCookie(response);
-		return "/login/signIn";
+	public String signOut(HttpServletRequest request, HttpServletResponse response) {
+		CookieUtil.clearCookie(request, response);
+		return "redirect:/index.jsp";
 	}
 
-	@RequestMapping("isRegisterDriver")
+
+	@RequestMapping("getCurUser")
 	@ResponseBody
-	public Valid isRegisterDriver(HttpServletRequest request, HttpServletResponse response) {
+	public User getCurUser(HttpServletRequest request, HttpServletResponse response) {
 		User user = null;
 		try {
 			user = CookieUtil.readCookie(request, response, loginService);
 		} catch (Exception e) {
-			user = new User();
+
 			e.printStackTrace();
 		}
-		Valid data = null;
-		if (user == null) {
-			data = new Valid(false, "1");
-		} else if (user.getCarType() == null || user.getCarType().isEmpty()) {
-			data = new Valid(false, "2");
-		} else {
-			data = new Valid(true, null);
+		return user == null ? new User() : user;
+	}
+
+	/**
+	 * 跳转到我的信息页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("my")
+	public ModelAndView my(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView modelAndView = new ModelAndView("/login/my");
+		User user = CookieUtil.readCookie(request, response, loginService);
+		if (user != null) {
+			modelAndView.addObject("year", Calendar.getInstance().get(Calendar.YEAR));
+			modelAndView.addObject("month", Calendar.getInstance().get(Calendar.MONTH) + 1);
+			modelAndView.addObject("day", Calendar.getInstance().get(Calendar.DATE));
+			modelAndView.addObject("userTypeList", dictService.getDicts("USERTYPE", "-1"));
+			modelAndView.addObject("sexList", dictService.getDicts("SEX", "-1"));
+			modelAndView.addObject("marryList", dictService.getDicts("MARRY", "-1"));
+			modelAndView.addObject("hobbyList", dictService.getDicts("HOBBY", "-1"));
+			modelAndView.addObject("zoneList", dictService.getDicts("ZONE", "-1"));
+			modelAndView.addObject("industryList", dictService.getDicts("INDUSTRY", "-1"));
+			
+			modelAndView.addObject("userTypeName", dictService.getName("USERTYPE", user.getType()));
+			
 		}
-		return data;
+		modelAndView.addObject("user", user);
+
+		return modelAndView;
+
 	}
 }

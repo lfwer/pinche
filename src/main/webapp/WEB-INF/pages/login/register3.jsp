@@ -13,7 +13,7 @@
 				onclick="history.back();" style="cursor: pointer;">&nbsp;</span>
 		</div>
 		<div class="col-xs-8 text-center">
-			<span>完善车主信息</span>
+			<span>车主认证</span>
 		</div>
 		<div class="col-xs-2"></div>
 	</div>
@@ -145,22 +145,9 @@
 				</div>
 				<div class="form-group text-center">
 					<div class="col-xs-12">
-						<%
-							if ("index".equals(request.getParameter("type"))) {
-						%>
-						<button type="submit" class="btn btn-success btn-block btn-lg">
+						<button type="submit" class="btn btn-success btn-block">
 							<span class="glyphicon glyphicon-leaf"></span> 保 存
 						</button>
-						<%
-							} else {
-						%>
-						<button type="submit" class="btn btn-success">保 存</button>
-						<button type="button" class="btn btn-warning"
-							style="margin-left: 20px;" data-toggle="modal"
-							data-target="#carModalMsg">跳 过</button>
-						<%
-						}
-					%>
 					</div>
 				</div>
 			</form>

@@ -1,17 +1,20 @@
+<%@page import="com.lfwer.common.CookieUtil"%>
 <%@page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@include file="/common/taglib.jsp"%>
 <div id="headerInfo">
 	<div class="row">
-		<div class="col-xs-3">
+		<div class="col-xs-4">
 			<span class="glyphicon glyphicon-chevron-left"
 				onclick="history.back();" style="cursor: pointer;">&nbsp;</span>
 		</div>
-		<div class="col-xs-6 text-center">
+		<div class="col-xs-4 text-center">
 			<span>登录</span>
 		</div>
-		<div class="col-xs-3 pull-right">
-			<a href="javascript:forgetPwd();">忘记密码&nbsp;&nbsp;</a>
+		<div class="col-xs-4">
+			<div class="pull-right">
+				<a href="javascript:forgetPwd();" style="font-size: 14px;">忘记密码&nbsp;</a>
+			</div>
 		</div>
 	</div>
 </div>
@@ -19,21 +22,20 @@
 	<div id="scrollerInfo">
 		<div class="container">
 			<form id="signForm" class="form-horizontal"
-				action="${basePath }/login/signSubmit" method="post">
+				action="${basePath }/login/signSubmit" method="post" style="margin-top: 20px;">
 				<div class="form-group">
 					<div class="col-xs-12">
-						<div style="display: table;">
-							<span class="input-group-addon"><span
-								class="glyphicon glyphicon-user"></span></span><input type="text"
-								id="username" name="username" class="form-control"
-								style="border-radius: 0 3px 3px 0;" placeholder="用户名/手机号"
-								data-bv-notempty data-bv-notempty-message="请填写用户名/手机号">
-						</div>
-					</div>
+				<div class="input-group ">
+					<span class="input-group-addon"><span
+						class="glyphicon glyphicon-user"></span></span><input type="text"
+						id="username" name="username" class="form-control"
+						style="border-radius: 0 3px 3px 0;" placeholder="用户名/手机号"
+						data-bv-notempty data-bv-notempty-message="请填写用户名/手机号">
 				</div>
+				</div></div>
 				<div class="form-group">
 					<div class="col-xs-12">
-						<div style="display: table;">
+					<div class="input-group ">
 							<span class="input-group-addon"><span
 								class="glyphicon glyphicon-lock"></span></span><input type="password"
 								id="password" name="password" class="form-control"
@@ -42,15 +44,18 @@
 						</div>
 					</div>
 				</div>
-				<div class="form-group text-center">
-					<button type="submit" class="btn btn-success">
-						<span class="glyphicon glyphicon-off"></span> 登录
+				<div class="form-group">
+					<div class="col-xs-8">
+						<button type="submit" class="btn btn-success btn-block">
+						<span class="glyphicon glyphicon-check"></span> 登录
 					</button>
-					<button type="button" class="btn btn-warning"
-						onclick="gotoUrl2('${basePath }/login/register');"
-						style="margin-left: 20px;">
-						<span class="glyphicon glyphicon-plus-sign"></span> 注册
+					</div>
+					<div class="col-xs-4">
+						<button type="button" class="btn btn-warning btn-block"
+						onclick="gotoUrl2('${basePath }/login/register');" >
+						<span class="glyphicon glyphicon-new-window"></span> 注册
 					</button>
+					</div>
 				</div>
 				<div class="form-group text-center">
 					<div class="col-xs-12">
@@ -99,7 +104,9 @@
 			// Use Ajax to submit form data
 			$.post($form.attr('action'), $form.serialize(), function(result) {
 				if (result.valid == true) {
-					history.back();
+					//浏览器中加入cookie
+					<%-- $.cookie("<%=CookieUtil.cookieDomainName%>", result.message,{ expires: <%=CookieUtil.cookieMaxAge%>, path: '/' }); --%> 
+					location.reload();
 				} else {
 					$("#loginMsgContent").html(result.message);
 					$("#loginMsg").show();
