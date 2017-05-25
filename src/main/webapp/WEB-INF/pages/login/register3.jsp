@@ -186,7 +186,7 @@
 								+ data.small);
 			},
 			error : function(err) {
-				alert("上传失败");
+				alertMsg("上传失败");
 			},
 			thumb : {
 				width : 100,
@@ -220,7 +220,7 @@
 								+ data.small);
 			},
 			error : function(err) {
-				alert("上传失败");
+				alertMsg("上传失败");
 			},
 			thumb : {
 				width : 100,

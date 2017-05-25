@@ -6,5 +6,6 @@ public interface UserService {
 
 	public User getUser(Integer id);
 	
+	public void updateByHql(String hql,Object[] param);
 	 
  }

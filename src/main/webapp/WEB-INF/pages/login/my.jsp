@@ -88,7 +88,27 @@
 	        inputClass:'userTypeC', //为插件生成的input添加样式
 	        //placeholder: '请选择从事行业',//placeholder
 	        onSelect: function(valueText,inst){
-	         	
+	        	debugger;
+	        	var v;
+	        	$("#userType > option").each(function(){
+            		if($(this).text() == valueText){
+            			v = $(this).val();
+            			return false;
+            		}
+            	});
+	         	$.ajax({
+	         		url:'${basePath}/login/updateUserType',
+	         		data:'type='+v,
+	         		type:'post',
+	         		success:function(data){
+	         			if(!data.valid){
+	         				alertMsg(data.message);
+	         			}
+	         		},
+	         		error:function(){
+	         			alertMsg('身份保存失败！');
+	         		}
+	         	});
 	        }
 		});
 		
@@ -155,7 +175,7 @@
 							boundx = bounds[0];
 							boundy = bounds[1];
 							if(boundx<80 || boundy<80){
-								alert("图片尺寸过小，请选择80*80以上规格的图片！");
+								alertMsg("图片尺寸过小，请选择80*80以上规格的图片！");
 								jcrop_apiMy.destroy();
 								uploaderMy.reset();
 								return;
@@ -184,7 +204,7 @@
 						});
 					});
 				}else{
-					alert("图片无法加载！");
+					alertMsg("图片无法加载！");
 				}
 			});	
 		
@@ -205,7 +225,7 @@
 				default : text = '未知错误!';
 					break;	
 			}
-           	alert( text );
+			alertMsg( text );
        	}); 
 		//上传成功后触发事件;
 		uploaderMy.on('uploadSuccess',function( file, data ){
@@ -223,13 +243,12 @@
 			uploaderMy.reset();
 		});
 		
-		
 	});
  
 	function showBigHeadPhoto() {
 		var name = _headPhotoMy ? _headPhotoMy.large : "${user.photoLarge}";
 		$("#uploadCarPhotoModal").modal("show");
-		$("#imgPhoto").attr("src",
+		$("#imgCarPhoto").attr("src",
 				"${basePath}/login/getPhoto?id=${user.id}&name=" + name);
 	}
 

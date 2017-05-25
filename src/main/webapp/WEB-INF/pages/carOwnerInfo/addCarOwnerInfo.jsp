@@ -417,7 +417,7 @@
 							});
 						});
 				 }else{
-					 alert(result.message);
+					 alertMsg(result.message);
 				 }
 			 });
 		});

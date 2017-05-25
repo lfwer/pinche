@@ -600,7 +600,6 @@ public class LoginController {
 		return "redirect:/index.jsp";
 	}
 
-
 	@RequestMapping("getCurUser")
 	@ResponseBody
 	public User getCurUser(HttpServletRequest request, HttpServletResponse response) {
@@ -612,6 +611,26 @@ public class LoginController {
 			e.printStackTrace();
 		}
 		return user == null ? new User() : user;
+	}
+
+	@RequestMapping("updateUserType")
+	@ResponseBody
+	public Valid updateUserType(String type, HttpServletRequest request, HttpServletResponse response) {
+		Valid valid = null;
+		try {
+			User user = CookieUtil.readCookie(request, response, loginService);
+			if (type == null || "".equals(type.trim())) {
+				valid = new Valid(false, "请选择身份");
+			} else {
+				userService.updateByHql("update User u set u.type = ? where id = ?",
+						new Object[] { type, user.getId() });
+				valid = new Valid(true, "身份保存成功");
+			}
+		} catch (Exception e) {
+			valid = new Valid(false, "身份保存失败");
+			e.printStackTrace();
+		}
+		return valid;
 	}
 
 	/**
@@ -636,13 +655,12 @@ public class LoginController {
 			modelAndView.addObject("hobbyList", dictService.getDicts("HOBBY", "-1"));
 			modelAndView.addObject("zoneList", dictService.getDicts("ZONE", "-1"));
 			modelAndView.addObject("industryList", dictService.getDicts("INDUSTRY", "-1"));
-			
+
 			modelAndView.addObject("userTypeName", dictService.getName("USERTYPE", user.getType()));
-			
+
 		}
 		modelAndView.addObject("user", user);
 
 		return modelAndView;
-
 	}
 }

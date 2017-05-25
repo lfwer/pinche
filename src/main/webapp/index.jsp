@@ -229,7 +229,7 @@ table{
 			$(".mbsc-mobiscroll").hide();
 			closeViewDiv2();
 		} else {
-			alert('参数错误:'+name);
+			alertMsg('参数错误:'+name);
 		}
 	};
 
@@ -708,7 +708,7 @@ table{
 					$("#pullDown1").hide();
 					myScroll1.refresh();
 					loading1 = false;
-					alert("加载失败!");
+					alertMsg("加载失败!");
 				}
 			});
 		}
@@ -883,7 +883,7 @@ table{
 					$("#pullDown2").hide();
 					myScroll2.refresh();
 					loading2 = false;
-					alert("加载失败！");
+					alertMsg("加载失败！");
 				}
 			});
 		}
@@ -932,7 +932,7 @@ table{
 			url = '${basePath}/pinkerInfo/removePinkerInfo?id='+delId;
 			name = '2';
 		}else{
-			alert("参数错误！");
+			alertMsg("参数错误！");
 			return;
 		}
 		
@@ -1013,6 +1013,15 @@ table{
 	 
 	function signOutOk(){
 		location.href= "${basePath}/login/signOut";
+	}
+	
+	function alertMsg(message){
+		$("#alertMsgContent").html(message);
+		$("#alertMsg").show();
+		// 2秒后隐藏提示信息
+		window.setTimeout(function() {
+			$("#alertMsg").hide();
+		}, 2000);
 	}
 </script>
 </head>
@@ -1259,6 +1268,10 @@ table{
 	</div>
 </div>
 
+<div id="alertMsg" class="alert alert-danger text-center" style="display: none;position:absolute;bottom:20%;z-index: 999999999; margin:0   -40%;width: 80%;left:50%;">
+	<span id="alertMsgContent"></span>
+</div>
+						
 <!--加载效果-->
 <div class="mask">
     <div class="spinner">

@@ -451,7 +451,7 @@
 							boundx = bounds[0];
 							boundy = bounds[1];
 							if(boundx<80 || boundy<80){
-								alert("图片尺寸过小，请选择80*80以上规格的图片！");
+								alertMsg("图片尺寸过小，请选择80*80以上规格的图片！");
 								jcrop_api.destroy();
 								uploader.reset();
 								return;
@@ -480,7 +480,7 @@
 						});
 					});
 				}else{
-					alert("图片无法加载！");
+					alertMsg("图片无法加载！");
 				}
 			});	
 		
@@ -501,7 +501,7 @@
 				default : text = '未知错误!';
 					break;	
 			}
-           	alert( text );
+			alertMsg( text );
        	}); 
 		//上传成功后触发事件;
 		uploader.on('uploadSuccess',function( file, data ){
