@@ -73,7 +73,7 @@ body {
 	position: absolute;
 	width: 100%;
 	top: 45px;
-	bottom: 45px;
+	bottom: 52px;
 }
 
 .swiper-slide {
@@ -144,10 +144,11 @@ body {
 .liclick {
 	color: gray;
 }
-table{
+.list-table{
 	padding: 0;
 	margin: 0;
-	line-height: 16px;
+	line-height: 18px;
+	width: 100%;
 }
 
 #viewDiv{
@@ -244,13 +245,43 @@ table{
 	var myScroll4 = null;
 	var loading1 = false;
 	var loading2 = false;
-	var loading3 = false;
 	loadUp1 = true;
 	loadUp2 = true;
 	var swiper,swiper2;
 	var firstIn =true;
 	var delId,delflag;
 	var curUser;
+	var loadMy = false;
+	var carOwnerInfoLi = '<li onclick="viewCarOwnerInfo(this,\'#id\')" style="padding:4px 4px 6px 4px;">'
+		+ '<table class="list-table"><tr><td rowspan="4" width="80" style="padding-left: 5px;">'
+		+ '<img src="${basePath }/login/getPhoto?id=#userId&name=#userPhotoSmall" '
+		+ 'onerror="nohead(this);" class="img-circle" style="width: 60px; height: 60px;"></td>'
+		+ '<td>#form → #to</td></tr>'
+		+ '<tr><td>途经 #via</td></tr>'
+		+ '<tr><td>时间 #date</td></tr>'
+		+ '<tr><td>车型 #carType，#carStyle，#carColor</td></tr>'
+		+ '<tr><td style="padding: 0 10px 0 0;">'
+		+ '<span class="#class" style="float: left;">#sex</span>'
+		+ '<span style="float: right;" class="#class">#age</span></td>'
+		+ '<td align="left">空位 #pnum'
+		+ '<span class="#class" style="float: right;'
+		+ 'cursor: pointer;" onclick="viewInfo()">#nickName</span></td></tr></table></li>';
+		
+	var pinkerInfoLi = '<li onclick="viewPinkerInfo(this,\'#id\')" style="padding:4px 4px 6px 4px;">'
+			+ '<table class="list-table"><tr>'
+			+ '<td rowspan="3" width="80" style="padding-left: 5px;">'
+			+ '<img src="${basePath }/login/getPhoto?id=#userId&name=#userPhotoSmall" '
+			+ 'onerror="nohead(this);" class="img-circle" style="width: 60px; height: 60px;"></td>'
+			+ '<td>从 #form</td></tr>'
+			+ '<tr><td>到 #to</td></tr>'
+			+ '<tr><td>出发 #date</td></tr><tr><td style="padding: 0 10px 0 0;">'
+			+ '<span class="#class" style="float: left;">#sex</span>'
+			+ '<span style="float: right;" class="#class">#age</span></td>'
+			+ '<td>乘员 #pnum人'
+			+ '<span class="#class" style="float: right;cursor: pointer;"'
+			+ ' onclick="viewInfo()">#nickName</span>'
+			+ '</td></tr></table></li>';
+			
 	$(document).ready(function() {
 		zhaoche = true;
 		$("#switchInfo").bootstrapSwitch("state",true);
@@ -514,33 +545,18 @@ table{
 		$("#d2").removeClass("lfwer-btn-check").addClass("lfwer-btn-uncheck");
 		if(t)
 			swiper.slideTo(3, 0, false);
-		$("#viewMy").load("${basePath}/login/my",function(){
-			loading3 = true;
-			myScroll4.refresh();
-		});
+		if(!loadMy){
+			$("#viewMy").load("${basePath}/login/my",function(){
+				loadMy = true;
+				myScroll4.refresh();
+			});
+		}
 	}
 	var t1 = null;//这个设置为全局
 	function viewInfo() {
 		event.stopPropagation(); //  阻止事件冒泡
 	}
 
-	
-	var carOwnerInfoLi = '<li onclick="viewCarOwnerInfo(this,\'#id\')" style="padding:6px 4px 6px 4px;">'
-			+ '<table><tr><td rowspan="4" width="80" style="padding-left: 5px;">'
-			+ '<img src="${basePath }/login/getPhoto?id=#userId&name=#userPhotoSmall" '
-			+ 'onerror="nohead(this);" class="img-circle" style="width: 60px; height: 60px;"></td>'
-			+ '<td colspan="2">#form → #to</td></tr>'
-			+ '<tr><td align="left" width="30"><nobr>途经：</nobr></td><td>#via</td></tr>'
-			+ '<tr><td align="left"><nobr>时间：</nobr></td><td colspan="2">#date</td></tr>'
-			+ '<tr><td align="left"><nobr>车型：</nobr></td><td colspan="2">'
-			+ '<span style="float: left;">#carType #carStyle #carColor</span></td></tr>'
-			+ '<tr><td style="padding: 0 10px 0 0;">'
-			+ '<span class="#class" style="float: left;font-size:14px;">#sex</span>'
-			+ '<span style="float: right;font-size:14px;" class="#class">#age</span></td>'
-			+ '<td align="left"><nobr>人数：</nobr></td><td>'
-			+ '<span style="float: left;font-size: 12px;" class="badge-3">#pnum人</span>'
-			+ '<span class="badge" style="float: right; padding: 4px 10px; background-color: #337ab7; '
-			+ 'font-size: 14px;cursor: pointer;" onclick="viewInfo()">#nickName</span></td></tr></table></li>';
 	function loadCarOwnerInfo(page) {
 
 		if (!loading1) {
@@ -726,21 +742,6 @@ table{
 		});
 	}
 	
-	var pinkerInfoLi = '<li onclick="viewPinkerInfo(this,\'#id\')" style="padding:6px 4px 6px 4px;">'
-			+ '<table><tr>'
-			+ '<td rowspan="2" width="80" style="padding-left: 5px;">'
-			+ '<img src="${basePath }/login/getPhoto?id=#userId&name=#userPhotoSmall" '
-			+ 'onerror="nohead(this);" class="img-circle" style="width: 60px; height: 60px;"></td>'
-			+ '<td colspan="2">#form → #to</td></tr><tr><td align="right" width="70"><nobr>出发时间：</nobr></td>'
-			+ '<td>#date</td></tr><tr><td style="padding: 0 10px 0 0;">'
-			+ '<span class="#class" style="float: left;font-size:14px;">#sex</span>'
-			+ '<span style="float: right;font-size:14px;" class="#class">#age</span></td>'
-			+ '<td align="right" width="70"><nobr>搭乘人数：</nobr></td>'
-			+ '<td><span style="float: left;font-size: 12px;" class="badge-3">#pnum人</span>'
-			+ '<span class="badge" style="float: right; padding: 4px 10px; '
-			+ 'background-color: #337ab7; font-size: 14px;cursor: pointer;" onclick="viewInfo()">#nickName</span>'
-			+ '</td></tr></table></li>';
-	
 	function loadPinkerInfo(page) {
 		if (!loading2) {
 			loading2 = true;
@@ -846,8 +847,8 @@ table{
 							dateStr += " " + row[5].substring(0, 5);
 
 							result += pinkerInfoLi
-									.replace("#form",row[0] + " " + row[1])
-									.replace("#to",row[2] + " " + row[3])
+									.replace("#form",row[0] + "，" + row[1])
+									.replace("#to",row[2] + "，" + row[3])
 									.replace("#sex", lfwer.replaceNull(row[6]))
 									.replace("#age", lfwer.replaceNull(row[7]))
 									.replace("#pnum", row[8])
@@ -1201,9 +1202,9 @@ table{
 		aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
-				<div class="modal-body" style="margin: 0; padding: 0;">
+				<div class="modal-body" style="margin: 0; padding: 2px;">
 					<center>
-						<img id="imgCarPhoto" class="imgCarPhoto img-responsive"
+						<img id="imgCarPhoto" class="imgCarPhoto img-responsive img-thumbnail"
 							onclick="$('#uploadCarPhotoModal').modal('hide');"
 							onerror="noFind(this);">
 					</center>
@@ -1230,13 +1231,12 @@ table{
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-body" >
-				<div style="line-height: 40px;">
+				<div style="line-height: 40px;text-align: left;">
 					<%
 						Map<Integer, String> carProvinceMap = Util.getCarProvinceMap();
 						for (Integer i : carProvinceMap.keySet()) {
 					%>
 					<button class="btn btn-default chooseCarProvince" value="<%=i%>"><%=carProvinceMap.get(i)%></button>
-					&nbsp;
 					<%
 						}
 					%>

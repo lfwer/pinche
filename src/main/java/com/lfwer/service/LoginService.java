@@ -31,4 +31,6 @@ public interface LoginService extends BaseService {
 	public void updateUserPhoto(Integer id,String photoSmall,String photoLarge);
 	
 	public void updateCarPhoto(Integer id,String smallFilename,String largeFilename,int type);
+	
+	public void updateDrivingBookPhoto(Integer id,String smallFilename,String largeFilename);
 }

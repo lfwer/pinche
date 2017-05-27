@@ -25,10 +25,11 @@
 		<div id="scrollerInfo">
 			<div class="container">
 				<input type="hidden" id="mirror_field" value="" readonly />
-				<div class="alert alert-info"
+				<!-- <div class="alert alert-info"
 					style="padding: 4px; margin-bottom: 10px;">
-					<span>温馨提示：使用本平台拼车前，请认真阅读《免责声明》，平台不承担任何法律连带责任！</span>
-				</div>
+					<span>温馨提示：使用本平台拼车前，请认真阅读《<a href="#">免责声明</a>》，平台不承担任何法律连带责任！</span>
+				</div> -->
+				<div class="row" style="height:10px;"></div>
 				<form id="addCarOwnerInfoForm" class="form-horizontal" method="post"
 					action="${basePath }/carOwnerInfo/addCarOwnerInfoSubmit"
 					style="margin: 0; padding: 0;">
@@ -107,14 +108,15 @@
 						<div class="col-xs-12">
 							<div class="input-group">
 								<span class="input-group-addon">出发地<span
-									class="lfwer-seize">⊙</span></span><select data-bv-notempty
-									data-bv-notempty-message="请选择出发地" class="form-control"
-									id="fromZone" name="fromZone">
+									class="lfwer-seize">⊙</span></span><select id="fromZoneC">
 									<option value=''>- 请选择 -</option>
 									<c:forEach var="o" items="${zoneList }">
 										<option value='${o.id }'>${o.name }</option>
 									</c:forEach>
 								</select>
+								<input name="fromZone" id="fromZone" type="text"
+								class="lfwer-hidden" value="" data-bv-notempty
+								data-bv-notempty-message="请选择出发地" >
 							</div>
 						</div>
 					</div>
@@ -122,14 +124,15 @@
 						<div class="col-xs-12">
 							<div class="input-group">
 								<span class="input-group-addon">目的地<span
-									class="lfwer-seize">⊙</span></span><select data-bv-notempty
-									data-bv-notempty-message="请选择目的地" class="form-control"
-									id="toZone" name="toZone">
+									class="lfwer-seize">⊙</span></span><select id="toZoneC">
 									<option value=''>- 请选择 -</option>
 									<c:forEach var="o" items="${zoneList }">
 										<option value='${o.id }'>${o.name }</option>
 									</c:forEach>
 								</select>
+								<input name="toZone" id="toZone" type="text"
+								class="lfwer-hidden" value="" data-bv-notempty
+								data-bv-notempty-message="请选择目的地" >
 							</div>
 						</div>
 					</div>
@@ -344,7 +347,7 @@
 			var v = "";
 			$("button[name='pweekC']").each(function(index,element){
 				if($(this).hasClass("btn-primary")){
-					if(index>1){
+					if(index>0){
 						v += ",";
 					}
 					v += $(this).val();
@@ -367,26 +370,85 @@
 			myScrollInfo.refresh();
 		});
 		
+		$('#fromZoneC').mobiscroll().select({
+            theme: '',     // Specify theme like: theme: 'ios' or omit setting to use default 
+            mode: 'scroller',       // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
+            display: 'bottom', // Specify display mode like: display: 'bottom' or omit setting to use default 
+            lang: 'zh',        // Specify language like: lang: 'pl' or omit setting to use default 
+            inputClass:'form-control', //为插件生成的input添加样式
+           	//rows:10,
+            onSelect: function(valueText,inst){
+            	$("#fromZoneC > option").each(function(){
+            		if($(this).text()==valueText){
+            			$("#fromZone").val($(this).val());
+            			return false;
+            		}
+            	});
+            	$("#fromZone").keyup();
+            }
+		});
+		
+		$('#toZoneC').mobiscroll().select({
+            theme: '',     // Specify theme like: theme: 'ios' or omit setting to use default 
+            mode: 'scroller',       // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
+            display: 'bottom', // Specify display mode like: display: 'bottom' or omit setting to use default 
+            lang: 'zh',        // Specify language like: lang: 'pl' or omit setting to use default 
+            inputClass:'form-control', //为插件生成的input添加样式
+           	//rows:10,
+            onSelect: function(valueText,inst){
+            	$("#toZoneC > option").each(function(){
+            		if($(this).text()==valueText){
+            			$("#toZone").val($(this).val());
+            			return false;
+            		}
+            	});
+            	$("#toZone").keyup();
+            }
+		});
+		
 		$('#pdate').mobiscroll().date({
                   theme: '',     // Specify theme like: theme: 'ios' or omit setting to use default 
                   mode: 'scroller',       // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
-                  display: 'modal', // Specify display mode like: display: 'bottom' or omit setting to use default 
+                  display: 'bottom', // Specify display mode like: display: 'bottom' or omit setting to use default 
                   lang: 'zh',        // Specify language like: lang: 'pl' or omit setting to use default 
                   dateFormat: 'yy-mm-dd', // 日期格式
+                  //rows:10,
+                  showLabel:true,
                   minDate:mini.parseDate('<%=new SimpleDateFormat("yyyy-MM-dd").format(new Date())%>')
+                   
                   
 		}).on("change",function(){
 			changeTime(1);
 		});
+		
 		$('#ptime').mobiscroll().time({
                   theme: '',     // Specify theme like: theme: 'ios' or omit setting to use default 
                   mode: 'scroller',       // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
-                  display: 'modal', // Specify display mode like: display: 'bottom' or omit setting to use default 
+                  display: 'bottom', // Specify display mode like: display: 'bottom' or omit setting to use default 
                   lang: 'zh',       // Specify language like: lang: 'pl' or omit setting to use default 
                   dateFormat: 'hh:ii', // 日期格式
+                  //rows:10,
+                  showLabel:true,
                   minDate:mini.parseDate('<%=new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date())%>')
+                 
 		}).on('change',function(){
 			$("#ptime").keyup();
+		});
+		
+		$("#cost").mobiscroll().number({
+			 theme: '',     // Specify theme like: theme: 'ios' or omit setting to use default 
+             mode: 'scroller',       // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
+             display: 'bottom', // Specify display mode like: display: 'bottom' or omit setting to use default 
+             lang: 'zh',       // Specify language like: lang: 'pl' or omit setting to use default 
+             //rows:10,
+             min:5,
+             max:9999,
+             width:150,
+             step:1,
+             onSelect: function(valueText,inst){
+             	$("#cost").keyup();
+             }
+            
 		});
 		
 		$("#btnSave").click(function(){

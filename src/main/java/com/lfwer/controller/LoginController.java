@@ -190,7 +190,7 @@ public class LoginController {
 			dbUser.setZone(user.getZone());
 			dbUser.setAddr(user.getAddr());
 
-			dbUser.setType(user.getType());
+			// dbUser.setType(user.getType());
 			dbUser.setNickName(user.getNickName());
 			dbUser.setSex(user.getSex());
 			dbUser.setBirthday(user.getBirthday());
@@ -444,6 +444,86 @@ public class LoginController {
 			SmbUtil.smbPut(prop.getProperty("smb.carPhoto") + "/" + user.getId(), largeFile);
 
 			loginService.updateCarPhoto(user.getId(), smallFilename, largeFilename, type);
+
+			// session重新赋值
+			if (type == 1) {
+				user.setCarPhotoSmall1(smallFilename);
+				user.setCarPhotoLarge1(largeFilename);
+			} else {
+				user.setCarPhotoSmall2(smallFilename);
+				user.setCarPhotoLarge2(largeFilename);
+			}
+			request.getSession().setAttribute("curUser", user);
+
+			JsonObject result = new JsonObject();
+			result.addProperty("small", smallFilename);
+			result.addProperty("large", largeFilename);
+			return result.toString();
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		} finally {
+			if (fromFile.exists()) {
+				fromFile.delete();
+			}
+			if (smallFile.exists()) {
+				smallFile.delete();
+			}
+			if (largeFile.exists()) {
+				largeFile.delete();
+			}
+		}
+
+		return null;
+	}
+	
+	@RequestMapping("uploadDrivingBookPhoto")
+	@ResponseBody
+	public String uploadDrivingBookPhoto(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
+		File fromFile = null;
+		File largeFile = null;
+		File smallFile = null;
+		try {
+			User user = CookieUtil.readCookie(request, response, loginService);
+			File tempFile = new File(request.getServletContext().getRealPath("") + "/uploadTemp");
+			if (!tempFile.exists()) {
+				tempFile.mkdirs();
+			}
+			String filename;
+			Properties prop = new Properties();
+			InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
+			prop.load(in);
+			String stuff;
+			int index = file.getOriginalFilename().lastIndexOf(".");
+			if (index < 0) {
+				stuff = ".jpg";
+			} else {
+				stuff = file.getOriginalFilename().substring(index);
+			}
+			String name = UUID.randomUUID().toString();
+			filename = name + stuff;
+			fromFile = new File(tempFile.getPath() + "/" + filename);
+			file.transferTo(fromFile);
+			fromFile.createNewFile();
+
+			// 图片缩略
+			String smallFilename = name + "_small" + stuff;
+			smallFile = new File(tempFile.getPath() + "/" + smallFilename);
+			ImageUtil.resize(fromFile, smallFile, 100, 100, true);
+			String largeFilename = name + "_large" + stuff;
+			largeFile = new File(tempFile.getPath() + "/" + largeFilename);
+			ImageUtil.resize(fromFile, largeFile, 400, 400, true);
+			// 使用smb协议将文件上传到共享目录
+			SmbUtil.smbPut(prop.getProperty("smb.drivingBookPhoto") + "/" + user.getId(), smallFile);
+			SmbUtil.smbPut(prop.getProperty("smb.drivingBookPhoto") + "/" + user.getId(), largeFile);
+
+			loginService.updateDrivingBookPhoto(user.getId(), smallFilename, largeFilename);
+
+			// session重新赋值
+			user.setDrivingBookPhotoSmall(smallFilename);
+			user.setDrivingBookPhotoLarge(largeFilename);
+			request.getSession().setAttribute("curUser", user);
+
 			JsonObject result = new JsonObject();
 			result.addProperty("small", smallFilename);
 			result.addProperty("large", largeFilename);
@@ -476,6 +556,16 @@ public class LoginController {
 		prop.load(in);
 
 		SmbUtil.smbGet(prop.getProperty("smb.carPhoto") + "/" + id + "/" + name, response);
+	}
+	
+	@RequestMapping("getDrivingBookPhoto")
+	@ResponseBody
+	public void getDrivingBookPhoto(HttpServletRequest request, HttpServletResponse response, String name, String id)
+			throws Exception {
+		Properties prop = new Properties();
+		InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
+		prop.load(in);
+		SmbUtil.smbGet(prop.getProperty("smb.drivingBookPhoto") + "/" + id + "/" + name, response);
 	}
 
 	@RequestMapping("getCarPhotoLarge1")
@@ -624,7 +714,12 @@ public class LoginController {
 			} else {
 				userService.updateByHql("update User u set u.type = ? where id = ?",
 						new Object[] { type, user.getId() });
+
+				// session 重新赋值
+				user.setType(type);
+				request.getSession().setAttribute("curUser", user);
 				valid = new Valid(true, "身份保存成功");
+
 			}
 		} catch (Exception e) {
 			valid = new Valid(false, "身份保存失败");

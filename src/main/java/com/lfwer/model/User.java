@@ -74,7 +74,9 @@ public class User implements Serializable {
 	// 车辆照片2
 	private String carPhotoSmall2;
 	private String carPhotoLarge2;
-
+	//行驶本照片
+	private String drivingBookPhotoSmall;
+	private String drivingBookPhotoLarge;
 	public String getRealName() {
 		return realName;
 	}
@@ -305,6 +307,22 @@ public class User implements Serializable {
 
 	public void setCarColor(String carColor) {
 		this.carColor = carColor;
+	}
+
+	public String getDrivingBookPhotoSmall() {
+		return drivingBookPhotoSmall;
+	}
+
+	public void setDrivingBookPhotoSmall(String drivingBookPhotoSmall) {
+		this.drivingBookPhotoSmall = drivingBookPhotoSmall;
+	}
+
+	public String getDrivingBookPhotoLarge() {
+		return drivingBookPhotoLarge;
+	}
+
+	public void setDrivingBookPhotoLarge(String drivingBookPhotoLarge) {
+		this.drivingBookPhotoLarge = drivingBookPhotoLarge;
 	}
 
 }

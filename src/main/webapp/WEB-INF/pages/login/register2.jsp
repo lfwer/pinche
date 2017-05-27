@@ -3,18 +3,11 @@
 <%@page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@include file="/common/taglib.jsp"%>
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<%@include file="/common/resource.jsp"%>
-<title>${sysName }&nbsp;-&nbsp;完善信息</title>
 <style>
 #wrapperInfo {
 	bottom: 0;
 }
 </style>
-</head>
-<body>
 <div id="headerInfo">
 	<div class="row">
 		<div class="col-xs-2">
@@ -43,7 +36,7 @@
 							onerror="nohead(this);" onclick="showBigHeadPhoto()">
 					</div>
 				</div>
-				<div class="form-group">
+				<%-- <div class="form-group">
 					<div class="col-xs-12">
 						<div class="input-group">
 							<span class="input-group-addon">身份<span
@@ -69,7 +62,7 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> --%>
 				
 				<%-- <div class="form-group">
 					<div class="col-xs-12">
@@ -312,10 +305,7 @@
 
 				<div class="form-group text-center">
 					<div class="col-xs-12">
-						<button type="submit" class="btn btn-success">保存</button>
-						<button type="button" class="btn btn-warning"
-							style="margin-left: 20px;" data-toggle="modal"
-							data-target="#myModal">跳过</button>
+						<button type="submit" class="btn btn-success btn-block">保存</button>
 					</div>
 				</div>
 			</form>
@@ -323,7 +313,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+<!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
 	aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -336,24 +326,7 @@
 			</div>
 		</div>
 	</div>
-</div>
-
-<div class="modal fade" id="uploadCarPhotoModal" tabindex="-1"
-	role="dialog" aria-labelledby="uploadCarPhotoModalLabel"
-	aria-hidden="true">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-body" style="margin: 0;padding: 0;">
-				<center>
-					<img id="imgPhoto" class="img-thumbnail" 
-						onclick="$('#uploadCarPhotoModal').modal('hide');"
-						onerror="noFind(this);">
-				</center>
-			</div>
-		</div>
-	</div>
-</div>
-
+</div> -->
 
 <script type="text/javascript">
 	var _headPhoto;
@@ -543,9 +516,11 @@
 		$('#birthday').mobiscroll().date({
                   theme: '',     // Specify theme like: theme: 'ios' or omit setting to use default 
                   mode: 'scroller',       // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
-                  display: 'modal', // Specify display mode like: display: 'bottom' or omit setting to use default 
+                  display: 'bottom', // Specify display mode like: display: 'bottom' or omit setting to use default 
                   lang: 'zh',        // Specify language like: lang: 'pl' or omit setting to use default 
                   dateFormat: 'yy-mm-dd', // 日期格式
+                  showLabel:true,
+                //rows:10,
                   minDate:mini.parseDate('1900-01-01'),
                   maxDate:mini.parseDate('<%=new SimpleDateFormat("yyyy-MM-dd").format(new Date())%>'),
                   headerText: function (valueText) { return "选择生日"; } 
@@ -554,11 +529,12 @@
 		$('#industryList').mobiscroll().select({
             theme: '',     // Specify theme like: theme: 'ios' or omit setting to use default 
             mode: 'scroller',       // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
-            display: 'modal', // Specify display mode like: display: 'bottom' or omit setting to use default 
+            display: 'bottom', // Specify display mode like: display: 'bottom' or omit setting to use default 
             lang: 'zh',        // Specify language like: lang: 'pl' or omit setting to use default 
             //defaultValue:"",
             inputClass:'form-control', //为插件生成的input添加样式
             //placeholder: '请选择从事行业',//placeholder
+            //rows:10,
             headerText: function (valueText) { return "选择从事行业"; },
             onSelect: function(valueText,inst){
             	$("#industryList > option").each(function(){
@@ -603,12 +579,12 @@
 		}); 
 		
 		
-		$("button[name='typeC']").click(function(){
+		/* $("button[name='typeC']").click(function(){
 			$("button[name='typeC']").removeClass('btn-primary').addClass('btn-default'); 
 			$(this).removeClass('btn-default').addClass('btn-primary');
 			$("#type").val($(this).val());
 			$("#type").keyup();
-		});
+		}); */
 		$("button[name='sexC']").click(function(){
 			$("button[name='sexC']").removeClass('btn-primary').addClass('btn-default'); 
 			$(this).removeClass('btn-default').addClass('btn-primary');
@@ -642,11 +618,11 @@
 		});
 		
 		//初始化赋值
-		$("button[name='typeC']").each(function(){
+		/* $("button[name='typeC']").each(function(){
 			if("${user.type}" == $(this).val()){
 				$(this).removeClass('btn-default').addClass('btn-primary');
 			}
-		});
+		}); */
 		$("button[name='sexC']").each(function(){
 			if("${user.sex}" == $(this).val()){
 				$(this).removeClass('btn-default').addClass('btn-primary');
@@ -677,7 +653,7 @@
 	function showBigHeadPhoto() {
 		var name = _headPhoto ? _headPhoto.large : "${user.photoLarge}";
 		$("#uploadCarPhotoModal").modal("show");
-		$("#imgPhoto").attr("src",
+		$("#imgCarPhoto").attr("src",
 				"${basePath}/login/getPhoto?id=${user.id}&name=" + name);
 	}
 
@@ -737,5 +713,3 @@
 		}
 	}
 </script>
-</body>
-</html>

@@ -164,4 +164,10 @@ public class LoginServiceImpl extends BaseServiceImpl implements LoginService {
 
 	}
 
+	@Override
+	public void updateDrivingBookPhoto(Integer id, String smallFilename, String largeFilename) {
+		userDao.executeHql("update User t set t.drivingBookPhotoSmall=?,t.drivingBookPhotoLarge=? where t.id=?",
+				new Object[] { smallFilename, largeFilename, id });
+	}
+
 }
