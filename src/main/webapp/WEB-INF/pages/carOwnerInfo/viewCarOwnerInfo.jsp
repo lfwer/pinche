@@ -141,20 +141,39 @@
 					<div class="row">
 						<div class="col-xs-12 text-nowrap left-label">车辆照片</div>
 					</div>
-					<c:if test="${not empty user.carPhotoLarge1}">
+
 					<div class="row" style="padding: 2px;">
-						<img
-							src="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoLarge1}"
-							class="img-responsive center-block carPhone" onerror="noFind();">
+						
+						<div class="carPhotoList" itemscope itemtype="http://schema.org/ImageGallery">
+						<c:if test="${not empty user.carPhotoLarge1}">
+							<figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+								<a
+									href="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoLarge1}"
+									itemprop="contentUrl" data-size="1024x1024"> <img
+									style="margin-bottom: 10px;"
+									src="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoSmall1}"
+									class="img-responsive center-block carPhone"
+									onerror="noFind();"  itemprop="thumbnail">
+									<figcaption itemprop="caption description"></figcaption>
+								</a>
+							</figure>
+						</c:if>
+						<c:if test="${not empty user.carPhotoLarge2}">
+							<figure itemprop="associatedMedia" itemscope
+								itemtype="http://schema.org/ImageObject">
+								<a
+									href="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoLarge2}"
+									itemprop="contentUrl" data-size="1024x1024"> <img
+									style="margin-bottom: 10px;"
+									src="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoSmall2}"
+									class="img-responsive center-block carPhone"
+									onerror="noFind();"  itemprop="thumbnail">
+									<figcaption itemprop="caption description"></figcaption>
+								</a>
+							</figure>
+						</c:if>
+						</div>
 					</div>
-					</c:if>
-					<c:if test="${not empty user.carPhotoLarge2}">
-					<div class="row" style="padding: 2px;">
-						<img
-							src="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoLarge2}"
-							class="img-responsive center-block carPhone" onerror="noFind();">
-					</div>
-					</c:if>
 				</c:if>
 				<c:if test="${result.state eq 0 }">
 					<div class="row">
@@ -182,20 +201,30 @@
 		class="glyphicon glyphicon-envelope"></span></a>
 </div>
 <script type="text/javascript">
-	$(".timeago").timeago();
+	
+	document.addEventListener('touchmove', function(e) {
+		e.preventDefault();
+	}, false); 
+	
 	var myScrollInfo = new IScroll('#wrapperInfo', {
 		probeType : 1, //probeType：1对性能没有影响。在滚动事件被触发时，滚动轴是不是忙着做它的东西。probeType：2总执行滚动，除了势头，反弹过程中的事件。这类似于原生的onscroll事件。probeType：3发出的滚动事件与到的像素精度。注意，滚动被迫requestAnimationFrame（即：useTransition：假）。  
 		scrollbars : true,
 		mouseWheel : true,
 		interactiveScrollbars : true,
 		shrinkScrollbars : 'scale',
-		fadeScrollbars : true
-	//preventDefault : false
+		fadeScrollbars : true,
+		preventDefault : false
 	});
-
+	
+	$(".timeago").timeago();
+	
 	//当所有图片加载完毕后刷新iscroll
 	isImgLoad("carPhone", function() {
 		myScrollInfo.refresh();
 
 	});
+	initPhotoSwipeFromDOM('.carPhotoList');
+	
+	 
+	
 </script>

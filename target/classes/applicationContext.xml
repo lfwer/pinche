@@ -65,7 +65,8 @@
 		cache-period="31556926" />
 	<mvc:resources mapping="/js/**" location="/js/"
 		cache-period="31556926" />
-
+	<mvc:resources mapping="/*" location="/"
+		cache-period="31556926" />
 	
 	<!-- 字符转换 -->
 	<bean id="utf8Charset" class="java.nio.charset.Charset"

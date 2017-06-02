@@ -36,10 +36,23 @@
 <c:if test="${not empty user }">
 	<table style="width: auto; margin: 10px;">
 		<tr>
-			<td><img src="${basePath }/login/getPhoto?id=${user.id}&name=${user.photoSmall}"
-				class="img-circle" width="80" height="80"
-				style="width: 80px; height: 80px; cursor: pointer;"
-				onerror="nohead(this);" onclick="showBigHeadPhoto()"></td>
+			<td>
+			<div class="userPhotoBig" itemscope
+					itemtype="http://schema.org/ImageGallery">
+					<figure itemprop="associatedMedia" itemscope
+						itemtype="http://schema.org/ImageObject">
+						<a
+							href="${basePath }/login/getPhoto?id=${user.id}&name=${user.photoLarge}"
+							itemprop="contentUrl" data-size="400x400"> <img
+							src="${basePath }/login/getPhoto?id=${user.id}&name=${user.photoSmall}"
+							class="img-circle" width="80" height="80"
+							style="width: 80px; height: 80px; cursor: pointer;"
+							onerror="nohead(this);" itemprop="thumbnail">
+							<figcaption itemprop="caption description"></figcaption>
+						</a>
+					</figure>
+				</div>
+			</td>
 			<td valign="bottom">&nbsp;${user.nickName }</td>
 		</tr>
 	</table>
@@ -117,5 +130,7 @@
 		$("#imgCarPhoto").attr("src",
 				"${basePath}/login/getPhoto?id=${user.id}&name=${user.photoLarge}");
 	}
-
+	
+	initPhotoSwipeFromDOM('.userPhotoBig');
+	
 </script>

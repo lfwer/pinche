@@ -133,6 +133,9 @@
 		class="glyphicon glyphicon-envelope"></span></a>
 </div>
 <script type="text/javascript">
+	document.addEventListener('touchmove', function(e) {
+		e.preventDefault();
+	}, false); 
 	$(".timeago").timeago();
 	var myScrollInfo = new IScroll('#wrapperInfo', {
 		probeType : 1, //probeType：1对性能没有影响。在滚动事件被触发时，滚动轴是不是忙着做它的东西。probeType：2总执行滚动，除了势头，反弹过程中的事件。这类似于原生的onscroll事件。probeType：3发出的滚动事件与到的像素精度。注意，滚动被迫requestAnimationFrame（即：useTransition：假）。  
@@ -140,7 +143,7 @@
 		mouseWheel : true,
 		interactiveScrollbars : true,
 		shrinkScrollbars : 'scale',
-		fadeScrollbars : true
-	//preventDefault : false
+		fadeScrollbars : true,
+		preventDefault : false
 	});
 </script>

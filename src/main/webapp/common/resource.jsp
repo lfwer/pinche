@@ -41,6 +41,8 @@ if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
 <link rel="stylesheet" href="${basePath }/css/mask.css" />
 <link rel="stylesheet" href="${basePath }/css/view.css">
 <link rel="stylesheet" href="${basePath }/jslib/swiper/css/swiper.min.css" />
+<link href="${basePath }/jslib/photoSwipe/dist/photoswipe.css" rel="stylesheet" />
+<link href="${basePath }/jslib/photoSwipe/dist/default-skin/default-skin.css" rel="stylesheet" />
 
 <script src="${basePath }/js/jquery-1.11.3.min.js"></script>
 <script src="${basePath }/js/jquery.cookie.js"></script>
@@ -68,6 +70,8 @@ if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
 <script src="${basePath }/js/lfwer.js"></script>
 <script src="${basePath }/js/img.js"></script>
 <script src="${basePath }/jslib/swiper/js/swiper.min.js"></script> 
+<script src="${basePath }/jslib/photoSwipe/dist/photoswipe.min.js"></script>
+<script src="${basePath }/jslib/photoSwipe/dist/photoswipe-ui-default.min.js"></script>
 <script type="text/javascript">
 	$(function() {
 		$('input, textarea').placeholder();

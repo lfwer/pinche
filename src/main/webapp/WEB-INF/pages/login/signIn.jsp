@@ -45,15 +45,15 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<div class="col-xs-8">
-						<button type="submit" class="btn btn-success btn-block">
-						<span class="glyphicon glyphicon-check"></span> 登录
-					</button>
-					</div>
-					<div class="col-xs-4">
+					<div class="col-xs-6">
 						<button type="button" class="btn btn-warning btn-block"
 						onclick="gotoUrl2('${basePath }/login/register');" >
 						<span class="glyphicon glyphicon-new-window"></span> 注册
+					</button>
+					</div>
+					<div class="col-xs-6">
+						<button type="submit" class="btn btn-success btn-block">
+						<span class="glyphicon glyphicon-check"></span> 登录
 					</button>
 					</div>
 				</div>
