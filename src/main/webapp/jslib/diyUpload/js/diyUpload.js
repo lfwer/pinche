@@ -34,6 +34,11 @@
 				delete opt.error;
 			}
 			
+			if(opt.fileQueued){
+				var fileQueuedCallBack = opt.fileQueued;
+				delete opt.fileQueued;
+			}
+			
 			//迭代出默认配置
 			$.each( getOption( '#'+$fileInputId ),function( key, value ){
 					opt[ key ] = opt[ key ] || value; 
@@ -104,6 +109,13 @@
 					errorCallBack( err );
 				}
 			});
+			
+			webUploader.on('fileQueued', function( file ) {
+				if(fileQueuedCallBack){
+					fileQueuedCallBack(file);
+				}
+			});
+			
 			
 			//选择文件错误触发事件;
 			webUploader.on('error', function( code ) {

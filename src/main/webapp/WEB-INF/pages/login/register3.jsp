@@ -115,21 +115,43 @@
 								class="lfwer-seize">*</span></span>
 							<div class="input-group form-control"
 								style="border-radius: 0 3px 3px 0;">
+
 								<table>
 									<tr>
-										<td align="center"><img
-											src="${basePath }/login/getCarPhoto?id=${user.id}&name=${user.carPhotoSmall1}"
-											id="imgCarPhoto1" width="100" height="100"
-											class="img-thumbnail" alt="查看大图"
-											style="cursor: pointer; width: 100px; height: 100px;"
-											onerror="noCar(this);" onclick="showBigCarPhoto(1)"></td>
+										<td align="center">
+											<div class="carPhotoDiv" itemscope
+												itemtype="http://schema.org/ImageGallery">
+												<figure itemprop="associatedMedia" itemscope
+													itemtype="http://schema.org/ImageObject">
+													<a
+														href="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoLarge1}"
+														itemprop="contentUrl" data-size="${fn:split(user.carPhotoLarge1,'_')[1] }x${fn:split(user.carPhotoLarge1,'_')[2] }"> <img
+														src="${basePath }/login/getCarPhoto?id=${user.id}&name=${user.carPhotoSmall1}"
+														id="imgCarPhoto1" class="img-thumbnail img" alt="查看大图"
+														style="cursor: pointer; max-width: 100px;"
+														onerror="noCar(this);" itemprop="thumbnail">
+														<figcaption itemprop="caption description"></figcaption>
+													</a>
+												</figure>
+											</div>
+										</td>
 										<td width="10px">&nbsp;</td>
-										<td align="center"><img
-											src="${basePath }/login/getCarPhoto?id=${user.id}&name=${user.carPhotoSmall2}"
-											id="imgCarPhoto2" width="100" height="100"
-											class="img-thumbnail"
-											style="cursor: pointer; width: 100px; height: 100px;"
-											onerror="noCar(this);" onclick="showBigCarPhoto(2)"></td>
+										<td align="center">
+											<div class="carPhotoDiv" itemscope
+												itemtype="http://schema.org/ImageGallery">
+												<figure itemprop="associatedMedia" itemscope
+													itemtype="http://schema.org/ImageObject">
+													<a
+														href="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoLarge2}"
+														itemprop="contentUrl" data-size="${fn:split(user.carPhotoLarge2,'_')[1] }x${fn:split(user.carPhotoLarge2,'_')[2] }"><img
+														src="${basePath }/login/getCarPhoto?id=${user.id}&name=${user.carPhotoSmall2}"
+														id="imgCarPhoto2" class="img-thumbnail img"
+														style="cursor: pointer; max-width: 100px;"
+														onerror="noCar(this);" itemprop="thumbnail">
+														<figcaption itemprop="caption description"></figcaption> </a>
+												</figure>
+											</div>
+										</td>
 									</tr>
 									<tr>
 										<td colspan="3" height="6px;"></td>
@@ -153,12 +175,21 @@
 								style="border-radius: 0 3px 3px 0;">
 								<table>
 									<tr>
-										<td align="center"><img
-											src="${basePath }/login/getDrivingBookPhoto?id=${user.id}&name=${user.drivingBookPhotoSmall}"
-											id="imgDrivingBookPhoto" width="100" height="100"
-											class="img-thumbnail" alt="查看大图"
-											style="cursor: pointer; width: 100px; height: 100px;"
-											onerror="noCar(this);" onclick="showDrivingBookPhoto()"></td>
+										<td align="center">
+											<div class="drivingBookDiv" itemscope
+												itemtype="http://schema.org/ImageGallery">
+												<figure itemprop="associatedMedia" itemscope
+													itemtype="http://schema.org/ImageObject">
+													<a
+														href="${basePath }/login/getDrivingBookPhoto?id=${user.id}&name=${user.drivingBookPhotoLarge}"
+														itemprop="contentUrl" data-size="${fn:split(user.drivingBookPhotoLarge,'_')[1] }x${fn:split(user.drivingBookPhotoLarge,'_')[2] }"> <img
+														src="${basePath }/login/getDrivingBookPhoto?id=${user.id}&name=${user.drivingBookPhotoSmall}"
+														id="imgDrivingBookPhoto" class="img-thumbnail img" 
+														alt="查看大图" style="cursor: pointer;max-width: 100px;" onerror="noCar(this);" itemprop="thumbnail">
+														<figcaption itemprop="caption description"></figcaption>
+													</a>
+												</figure>
+										</td>
 									</tr>
 									<tr>
 										<td colspan="3" height="6px;"></td>
@@ -213,6 +244,9 @@
 						"src",
 						'${basePath}/login/getCarPhoto?id=${user.id}&name='
 								+ data.small);
+				$("#imgCarPhoto1").parent().attr("href","${basePath}/login/getCarPhoto?id=${user.id}&name="+data.large);
+				$("#imgCarPhoto1").parent().attr("data-size",data.large.split("_")[1]+"x"+data.large.split("_")[2]);
+				
 			},
 			error : function(err) {
 				alertMsg("上传失败");
@@ -230,12 +264,34 @@
 				// 否则强制转换成指定的类型。
 				type : "image/jpeg"
 			},
-			compress : false,
+			// 修改后图片上传前，尝试将图片压缩到 
+			compress : {
+				//宽度达到指定像素则压缩
+			 	width: 1600, 
+			 	//高度达到指定像素则压缩
+			    height: 1600,
+			    // 图片质量，只有type为`image/jpeg`的时候才有效。
+			    quality: 90,
+			    // 是否允许放大，如果想要生成小图的时候不失真，此选项应该设置为false.
+			    allowMagnify: false,
+			    // 是否允许裁剪。
+			    crop: false,
+			    // 是否保留头部meta信息。
+			    preserveHeaders: true,
+			    // 如果发现压缩后文件大小比原来还大，则使用原来图片
+			    // 此属性可能会影响图片自动纠正功能
+			    noCompressIfLarger: false,
+			    // 单位字节，如果图片大小小于此值，不会采用压缩。
+			    compressSize: 0
+			},
 			buttonText : '选择图片',
 			//最大上传的文件数量, 总文件大小,单个文件大小(单位字节);
 			fileNumLimit : 1,
-			fileSizeLimit : 1024 * 1024 * 5,
-			fileSingleSizeLimit : 1024 * 1024 * 4
+			fileSizeLimit : 1024 * 1024 * 10,
+			fileSingleSizeLimit : 1024 * 1024 * 10,
+			fileQueued: function(file) { //图片加入队列后
+				
+			}
 		});
 		$('#divCarPhoto2').diyUpload({
 			// 选完文件后，是否自动上传。
@@ -247,6 +303,8 @@
 						"src",
 						'${basePath}/login/getCarPhoto?id=${user.id}&name='
 								+ data.small);
+				$("#imgCarPhoto2").parent().attr("href","${basePath}/login/getCarPhoto?id=${user.id}&name="+data.large);
+				$("#imgCarPhoto2").parent().attr("data-size",data.large.split("_")[1]+"x"+data.large.split("_")[2]);
 			},
 			error : function(err) {
 				alertMsg("上传失败");
@@ -265,12 +323,30 @@
 				type : "image/jpeg"
 			},
 			// 修改后图片上传前，尝试将图片压缩到 
-			compress : false,
+			compress : {
+				//宽度达到指定像素则压缩
+			 	width: 1600, 
+			 	//高度达到指定像素则压缩
+			    height: 1600,
+			    // 图片质量，只有type为`image/jpeg`的时候才有效。
+			    quality: 90,
+			    // 是否允许放大，如果想要生成小图的时候不失真，此选项应该设置为false.
+			    allowMagnify: false,
+			    // 是否允许裁剪。
+			    crop: false,
+			    // 是否保留头部meta信息。
+			    preserveHeaders: true,
+			    // 如果发现压缩后文件大小比原来还大，则使用原来图片
+			    // 此属性可能会影响图片自动纠正功能
+			    noCompressIfLarger: false,
+			    // 单位字节，如果图片大小小于此值，不会采用压缩。
+			    compressSize: 0
+			},
 			buttonText : '选择图片',
 			//最大上传的文件数量, 总文件大小,单个文件大小(单位字节);
 			fileNumLimit : 1,
-			fileSizeLimit : 1024 * 1024 * 5,
-			fileSingleSizeLimit : 1024 * 1024 * 4
+			fileSizeLimit : 1024 * 1024 * 10,
+			fileSingleSizeLimit : 1024 * 1024 * 10
 		});
 		$('#divDrivingBookPhoto').diyUpload({
 			// 选完文件后，是否自动上传。
@@ -282,6 +358,8 @@
 						"src",
 						'${basePath}/login/getDrivingBookPhoto?id=${user.id}&name='
 								+ data.small);
+				$("#imgDrivingBookPhoto").parent().attr("href","${basePath}/login/getDrivingBookPhoto?id=${user.id}&name="+data.large);
+				$("#imgDrivingBookPhoto").parent().attr("data-size",data.large.split("_")[1]+"x"+data.large.split("_")[2]);
 			},
 			error : function(err) {
 				alertMsg("上传失败");
@@ -300,12 +378,30 @@
 				type : "image/jpeg"
 			},
 			// 修改后图片上传前，尝试将图片压缩到 
-			compress : false,
+			compress : {
+				//宽度达到指定像素则压缩
+			 	width: 1600, 
+			 	//高度达到指定像素则压缩
+			    height: 1600,
+			    // 图片质量，只有type为`image/jpeg`的时候才有效。
+			    quality: 90,
+			    // 是否允许放大，如果想要生成小图的时候不失真，此选项应该设置为false.
+			    allowMagnify: false,
+			    // 是否允许裁剪。
+			    crop: false,
+			    // 是否保留头部meta信息。
+			    preserveHeaders: true,
+			    // 如果发现压缩后文件大小比原来还大，则使用原来图片
+			    // 此属性可能会影响图片自动纠正功能
+			    noCompressIfLarger: false,
+			    // 单位字节，如果图片大小小于此值，不会采用压缩。
+			    compressSize: 0
+			},
 			buttonText : '选择图片',
 			//最大上传的文件数量, 总文件大小,单个文件大小(单位字节);
 			fileNumLimit : 1,
-			fileSizeLimit : 1024 * 1024 * 5,
-			fileSingleSizeLimit : 1024 * 1024 * 4
+			fileSizeLimit : 1024 * 1024 * 10,
+			fileSingleSizeLimit : 1024 * 1024 * 10
 		});
 		
 		$("#btnBreak").click(function() {
@@ -411,6 +507,16 @@
 			$("#carProvince").val($(this).val());
 			$("#carModal3").modal('hide');
 		});
+		
+		//当所有图片加载完毕后刷新iscroll
+		isImgLoad("img", function() {
+			myScrollInfo.refresh();
+		});
+		
+		initPhotoSwipeFromDOM('.carPhotoDiv');
+		initPhotoSwipeFromDOM('.drivingBookDiv');
+		
+		
 	});
 
 	function showBigCarPhoto(v) {

@@ -397,8 +397,8 @@
 			method:"POST",
 			//最大上传的文件数量, 总文件大小,单个文件大小(单位字节);
 			fileNumLimit : 1,
-			fileSizeLimit : 1024 * 1024 * 5,
-			fileSingleSizeLimit : 1024 * 1024 * 5
+			fileSizeLimit : 1024 * 1024 * 10,
+			fileSingleSizeLimit : 1024 * 1024 * 10
 		});
 		
 		uploader.on('fileQueued', function( file ) {
@@ -424,7 +424,7 @@
 							boundx = bounds[0];
 							boundy = bounds[1];
 							if(boundx<80 || boundy<80){
-								alertMsg("图片尺寸过小，请选择80*80以上规格的图片！");
+								alertMsg("图片尺寸过小，请选择80x80以上规格的图片！");
 								jcrop_api.destroy();
 								uploader.reset();
 								return;

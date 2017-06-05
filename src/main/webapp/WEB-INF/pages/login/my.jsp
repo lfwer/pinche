@@ -43,7 +43,7 @@
 						itemtype="http://schema.org/ImageObject">
 						<a
 							href="${basePath }/login/getPhoto?id=${user.id}&name=${user.photoLarge}"
-							itemprop="contentUrl" data-size="400x400"> <img
+							itemprop="contentUrl" data-size="${fn:split(user.photoLarge,'_')[1] }x${fn:split(user.photoLarge,'_')[2] }"> <img
 							src="${basePath }/login/getPhoto?id=${user.id}&name=${user.photoSmall}"
 							class="img-circle" width="80" height="80"
 							style="width: 80px; height: 80px; cursor: pointer;"

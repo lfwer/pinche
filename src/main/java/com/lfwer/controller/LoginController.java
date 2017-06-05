@@ -433,12 +433,11 @@ public class LoginController {
 			fromFile.createNewFile();
 
 			// 图片缩略
-			String smallFilename = name + "_small" + stuff;
-			smallFile = new File(tempFile.getPath() + "/" + smallFilename);
-			ImageUtil.resize(fromFile, smallFile, 100, 100, true);
-			String largeFilename = name + "_large" + stuff;
-			largeFile = new File(tempFile.getPath() + "/" + largeFilename);
-			ImageUtil.resize(fromFile, largeFile, 400, 400, true);
+			smallFile = ImageUtil.resize(fromFile, tempFile.getPath(), 100, 100, true);
+			largeFile = ImageUtil.resize(fromFile, tempFile.getPath(), 1600, 1600, true);
+			String smallFilename = smallFile.getName();
+			String largeFilename = largeFile.getName();
+
 			// 使用smb协议将文件上传到共享目录
 			SmbUtil.smbPut(prop.getProperty("smb.carPhoto") + "/" + user.getId(), smallFile);
 			SmbUtil.smbPut(prop.getProperty("smb.carPhoto") + "/" + user.getId(), largeFile);
@@ -476,7 +475,7 @@ public class LoginController {
 
 		return null;
 	}
-	
+
 	@RequestMapping("uploadDrivingBookPhoto")
 	@ResponseBody
 	public String uploadDrivingBookPhoto(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
@@ -507,12 +506,11 @@ public class LoginController {
 			fromFile.createNewFile();
 
 			// 图片缩略
-			String smallFilename = name + "_small" + stuff;
-			smallFile = new File(tempFile.getPath() + "/" + smallFilename);
-			ImageUtil.resize(fromFile, smallFile, 100, 100, true);
-			String largeFilename = name + "_large" + stuff;
-			largeFile = new File(tempFile.getPath() + "/" + largeFilename);
-			ImageUtil.resize(fromFile, largeFile, 400, 400, true);
+			smallFile = ImageUtil.resize(fromFile, tempFile.getPath(), 100, 100, true);
+			largeFile = ImageUtil.resize(fromFile, tempFile.getPath(), 1600, 1600, true);
+			String smallFilename = smallFile.getName();
+			String largeFilename = largeFile.getName();
+
 			// 使用smb协议将文件上传到共享目录
 			SmbUtil.smbPut(prop.getProperty("smb.drivingBookPhoto") + "/" + user.getId(), smallFile);
 			SmbUtil.smbPut(prop.getProperty("smb.drivingBookPhoto") + "/" + user.getId(), largeFile);
@@ -557,7 +555,7 @@ public class LoginController {
 
 		SmbUtil.smbGet(prop.getProperty("smb.carPhoto") + "/" + id + "/" + name, response);
 	}
-	
+
 	@RequestMapping("getDrivingBookPhoto")
 	@ResponseBody
 	public void getDrivingBookPhoto(HttpServletRequest request, HttpServletResponse response, String name, String id)
@@ -599,6 +597,7 @@ public class LoginController {
 	public String uploadPhoto(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
 		String filename = null;
 		File f = null;
+		File cutFile = null;
 		File smallFile = null;
 		File largeFile = null;
 		InputStream in = null;
@@ -627,22 +626,22 @@ public class LoginController {
 			in = null;
 			in = LoginController.class.getResourceAsStream("/config/upload.properties");
 			prop.load(in);
-			smallFile = new File(tempFile.getPath() + "/" + filename + "_small" + stuff);
-			largeFile = new File(tempFile.getPath() + "/" + filename + "_large" + stuff);
+			
+			cutFile = ImageUtil.cut(f, tempFile.getPath(), x, y, w, h);
 
-			ImageUtil.cut(f, largeFile, x, y, w, h);
-
-			ImageUtil.resize(largeFile, smallFile, 80, 80, true);
-			ImageUtil.resize(largeFile, largeFile, 400, 400, true);
+			smallFile = ImageUtil.resize(cutFile, tempFile.getPath(), 100, 100, true);
+			largeFile = ImageUtil.resize(cutFile, tempFile.getPath(), 1600, 1600, true);
+			String smallFilename = smallFile.getName();
+			String largeFilename = largeFile.getName();
 
 			SmbUtil.smbPut(prop.getProperty("smb.photo") + "/" + user.getId(), smallFile);
 			SmbUtil.smbPut(prop.getProperty("smb.photo") + "/" + user.getId(), largeFile);
 
-			loginService.updateUserPhoto(user.getId(), smallFile.getName(), largeFile.getName());
+			loginService.updateUserPhoto(user.getId(), smallFilename, largeFilename);
 
 			JsonObject result = new JsonObject();
-			result.addProperty("small", smallFile.getName());
-			result.addProperty("large", largeFile.getName());
+			result.addProperty("small", smallFilename);
+			result.addProperty("large", largeFilename);
 
 			return result.toString();
 		} catch (Exception e) {
@@ -665,6 +664,9 @@ public class LoginController {
 			}
 			if (largeFile.exists()) {
 				largeFile.delete();
+			}
+			if (cutFile.exists()) {
+				cutFile.delete();
 			}
 		}
 	}

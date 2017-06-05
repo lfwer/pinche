@@ -149,7 +149,7 @@
 							<figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
 								<a
 									href="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoLarge1}"
-									itemprop="contentUrl" data-size="1024x1024"> <img
+									itemprop="contentUrl" data-size="${fn:split(user.carPhotoLarge1,'_')[1] }x${fn:split(user.carPhotoLarge1,'_')[2] }"> <img
 									style="margin-bottom: 10px;"
 									src="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoSmall1}"
 									class="img-responsive center-block carPhone"
@@ -163,7 +163,7 @@
 								itemtype="http://schema.org/ImageObject">
 								<a
 									href="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoLarge2}"
-									itemprop="contentUrl" data-size="1024x1024"> <img
+									itemprop="contentUrl" data-size="${fn:split(user.carPhotoLarge2,'_')[1] }x${fn:split(user.carPhotoLarge2,'_')[2] }"> <img
 									style="margin-bottom: 10px;"
 									src="${basePath}/login/getCarPhoto?id=${user.id}&name=${user.carPhotoSmall2}"
 									class="img-responsive center-block carPhone"
