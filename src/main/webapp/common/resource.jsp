@@ -39,7 +39,7 @@ if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
 <link rel="stylesheet" href="${basePath }/jslib/mobiscroll/css/mobiscroll.custom-2.17.0.min.css" />
 <link rel="stylesheet" href="${basePath }/css/lfwer.css" />
 <link rel="stylesheet" href="${basePath }/css/mask.css" />
-<link rel="stylesheet" href="${basePath }/css/view.css">
+<link rel="stylesheet" href="${basePath }/css/view.css" />
 <link rel="stylesheet" href="${basePath }/jslib/swiper/css/swiper.min.css" />
 <link href="${basePath }/jslib/photoSwipe/dist/photoswipe.css" rel="stylesheet" />
 <link href="${basePath }/jslib/photoSwipe/dist/default-skin/default-skin.css" rel="stylesheet" />

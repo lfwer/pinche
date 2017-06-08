@@ -3,7 +3,9 @@ package com.lfwer.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -626,7 +628,7 @@ public class LoginController {
 			in = null;
 			in = LoginController.class.getResourceAsStream("/config/upload.properties");
 			prop.load(in);
-			
+
 			cutFile = ImageUtil.cut(f, tempFile.getPath(), x, y, w, h);
 
 			smallFile = ImageUtil.resize(cutFile, tempFile.getPath(), 100, 100, true);
@@ -705,26 +707,65 @@ public class LoginController {
 		return user == null ? new User() : user;
 	}
 
-	@RequestMapping("updateUserType")
+	@RequestMapping("updateUser")
 	@ResponseBody
-	public Valid updateUserType(String type, HttpServletRequest request, HttpServletResponse response) {
+	public Valid updateUser(String type, String value, HttpServletRequest request, HttpServletResponse response) {
 		Valid valid = null;
 		try {
-			User user = CookieUtil.readCookie(request, response, loginService);
-			if (type == null || "".equals(type.trim())) {
-				valid = new Valid(false, "请选择身份");
-			} else {
-				userService.updateByHql("update User u set u.type = ? where id = ?",
-						new Object[] { type, user.getId() });
 
-				// session 重新赋值
-				user.setType(type);
-				request.getSession().setAttribute("curUser", user);
-				valid = new Valid(true, "身份保存成功");
-
+			if (value == null || "".equals(value.trim())) {
+				return new Valid(false, "不能为空");
 			}
+			User user = CookieUtil.readCookie(request, response, loginService);
+			int age = 0;
+			switch (type) {
+			case "type":
+				userService.updateByHql("update User u set u.type = ? where id = ?",
+						new Object[] { value, user.getId() });
+				user.setType(value);
+				break;
+			case "sex":
+				userService.updateByHql("update User u set u.sex = ? where id = ?",
+						new Object[] { value, user.getId() });
+				user.setSex(value);
+				break;
+			case "marry":
+				userService.updateByHql("update User u set u.marry = ? where id = ?",
+						new Object[] { value, user.getId() });
+				user.setMarry(value);
+				break;
+			case "industry":
+				userService.updateByHql("update User u set u.industry = ? where id = ?",
+						new Object[] { value, user.getId() });
+				user.setIndustry(value);
+				break;
+			case "birthday":
+				Date birthday = new SimpleDateFormat("yyyy-MM-dd").parse(value.split(",")[0]);
+				age = Integer.parseInt(value.split(",")[1]);
+				userService.updateByHql("update User u set birthday = ? , u.age = ? where id = ?",
+						new Object[] { birthday, age, user.getId() });
+				user.setAge(age);
+				break;
+			case "age":
+				age = Integer.parseInt(value);
+				userService.updateByHql("update User u set u.age = ? where id = ?", new Object[] { age, user.getId() });
+				user.setAge(age);
+				break;
+			case "hobby":
+				userService.updateByHql("update User u set u.hobby = ? where id = ?",
+						new Object[] { value, user.getId() });
+				user.setHobby(value);
+				break;
+			default:
+				return new Valid(false, "保存失败");
+			}
+
+			// 重置session
+			request.getSession().setAttribute("curUser", user);
+			valid = new Valid(true, "保存成功");
+
 		} catch (Exception e) {
-			valid = new Valid(false, "身份保存失败");
+			valid = new Valid(false, "保存失败");
 			e.printStackTrace();
 		}
 		return valid;

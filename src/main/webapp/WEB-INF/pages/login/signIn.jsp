@@ -106,7 +106,8 @@
 				if (result.valid == true) {
 					//浏览器中加入cookie
 					<%-- $.cookie("<%=CookieUtil.cookieDomainName%>", result.message,{ expires: <%=CookieUtil.cookieMaxAge%>, path: '/' }); --%> 
-					location.reload();
+					//location.reload();
+					history.back();
 				} else {
 					$("#loginMsgContent").html(result.message);
 					$("#loginMsg").show();

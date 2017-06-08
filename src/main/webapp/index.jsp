@@ -228,6 +228,12 @@ body {
 			$(".modal").modal('hide');
 			$(".mbsc-mobiscroll").hide();
 			closeViewDiv2();
+		}else if(_hash == "#signIn"){
+			$(".modal").modal('hide');
+			$(".mbsc-mobiscroll").hide();
+			closeViewDiv();
+			loadMy = false;
+			my(true);
 		}
 	}
 	/* window.onpopstate = function(event) {
@@ -1000,8 +1006,10 @@ body {
 		gotoUrl1('${basePath}/login/register3?type=index');
 	}
 	
-	function gotoUrl1(url){
-		pushHis({name:'forward',value:''});
+	function gotoUrl1(url,name){
+		if(!name)
+			name = "forward";
+		pushHis({name:name,value:''});
 		$(".mask").show();
 		$("#viewDiv").slideDown(500,function() {
 			$("#viewDiv").load(url, function() {
@@ -1034,8 +1042,13 @@ body {
 		location.href= "${basePath}/login/signOut";
 	}
 	
-	function alertMsg(message){
+	function alertMsg(message,type){
 		$("#alertMsgContent").html(message);
+		if(type == "success"){
+			$("#alertMsg").removeClass("alert-danger").addClass("alert-success");
+		}else{
+			$("#alertMsg").removeClass("alert-success").addClass("alert-danger");
+		}
 		$("#alertMsg").show();
 		// 2秒后隐藏提示信息
 		window.setTimeout(function() {
@@ -1484,7 +1497,7 @@ body {
 	</div>
 </div>
 
-<div id="alertMsg" class="alert alert-danger text-center" style="display: none;position:absolute;bottom:20%;z-index: 999999999; margin:0   -40%;width: 80%;left:50%;">
+<div id="alertMsg" class="alert alert-danger text-center" style="display: none;position:absolute;bottom:50%;z-index: 999999999; margin:0   -40%;width: 80%;left:50%;">
 	<span id="alertMsgContent"></span>
 </div>
 						

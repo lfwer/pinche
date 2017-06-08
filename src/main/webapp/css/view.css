@@ -16,7 +16,7 @@
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	padding: 6px 0 5px 0 ;
+	padding: 6px 0 5px 0;
 	border-top: 1px solid #E7E4E4;
 	font-size: 14px;
 }
@@ -26,7 +26,7 @@
 	z-index: 1;
 	top: 40px;
 	/*bottom: 48px;*/
-	bottom:0;
+	bottom: 0;
 	left: 0;
 	width: 100%;
 	overflow: hidden;
@@ -70,4 +70,27 @@
 
 .font-16 {
 	font-size: 16px;
+}
+
+.selectC {
+	width: auto;
+	text-align: right;
+	border:0;
+	background:none;
+	cursor:default;
+	
+}
+
+.my-list {
+	font-size: 18px;
+}
+
+.my-list :FIRST-CHILD {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.my-list :LAST-CHILD {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
 }

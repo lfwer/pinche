@@ -3,34 +3,14 @@
 <%@page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@include file="/common/taglib.jsp"%>
-<style>
-#my-list :FIRST-CHILD {
-	border-top-left-radius: 0;
-	border-top-right-radius: 0;
-}
-
-#my-list :LAST-CHILD {
-	border-bottom-left-radius: 0;
-	border-bottom-right-radius: 0;
-}
-
-.userTypeC{
-	width: 100%;
-	border: 0;
-	text-align: right;
-}
-</style>
+ 
 <c:if test="${empty user }">
-	<div class="container">
-		<div class="row">
-			<div class="col-xs-12">
-				<button type="button" class="btn btn-success btn-block btn-lg"
-					style="margin-top: 50%;"
-					onclick="gotoUrl1('${basePath}/login/signIn')">
-					<span class="glyphicon glyphicon-user"></span> 登录
-				</button>
-			</div>
-		</div>
+ 	<div class="container">
+	<button type="button" class="btn btn-success btn-block btn-lg"
+		style="margin-top: 50%;"
+		onclick="gotoUrl1('${basePath}/login/signIn','signIn')">
+		<span class="glyphicon glyphicon-user"></span> 登录
+	</button>
 	</div>
 </c:if>
 <c:if test="${not empty user }">
@@ -56,9 +36,9 @@
 			<td valign="bottom">&nbsp;${user.nickName }</td>
 		</tr>
 	</table>
-	<ul id="my-list" class="list-group" style="margin-top: 10px;">
+	<ul class="list-group my-list" style="margin-top: 10px;">
 		<li class="list-group-item"
-			onclick="gotoUrl1('${basePath}/login/register2')">基本资料<span
+			onclick="gotoUrl1('${basePath}/login/register2')">个人资料<span
 			class="pull-right glyphicon glyphicon-menu-right"></span></li>
 		<li class="list-group-item"
 			onclick="gotoUrl1('${basePath}/login/register3')">车主认证 <span
@@ -90,14 +70,18 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
-	 
+		
+		document.addEventListener('touchmove', function(e) {
+			e.preventDefault();
+		}, false);
+		
 		$('#userType').mobiscroll().select({
 	        theme: '',     // Specify theme like: theme: 'ios' or omit setting to use default 
 	        mode: 'scroller',       // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
 	        display: 'bottom', // Specify display mode like: display: 'bottom' or omit setting to use default 
 	        lang: 'zh',        // Specify language like: lang: 'pl' or omit setting to use default 
 	        headerText: function (valueText) { return "选择身份"; },
-	        inputClass:'userTypeC', //为插件生成的input添加样式
+	        inputClass:'selectC', //为插件生成的input添加样式
 	        //placeholder: '请选择从事行业',//placeholder
 	        onSelect: function(valueText,inst){
 	        	var v;
@@ -108,16 +92,18 @@
             		}
             	});
 	         	$.ajax({
-	         		url:'${basePath}/login/updateUserType',
-	         		data:'type='+v,
+	         		url:'${basePath}/login/updateUser',
+	         		data:'type=type&value='+v,
 	         		type:'post',
 	         		success:function(data){
 	         			if(!data.valid){
 	         				alertMsg(data.message);
+	         			}else{
+	         				alertMsg(data.message,"success");
 	         			}
 	         		},
 	         		error:function(){
-	         			alertMsg('身份保存失败！');
+	         			alertMsg('保存失败！');
 	         		}
 	         	});
 	        }
@@ -130,7 +116,7 @@
 		$("#imgCarPhoto").attr("src",
 				"${basePath}/login/getPhoto?id=${user.id}&name=${user.photoLarge}");
 	}
-	
+		
 	initPhotoSwipeFromDOM('.userPhotoBig');
 	
 </script>
