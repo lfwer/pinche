@@ -1,6 +1,5 @@
 package com.lfwer.common;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -32,7 +31,7 @@ public class CookieUtil {
 	 * @param user
 	 * @param response
 	 */
-	public static Cookie saveCookie(String username, String password, HttpServletResponse response) {
+	public static Cookie genCookie(String username, String password) {
 		try {
 			// cookie的有效期
 			long validTime = System.currentTimeMillis() + 60 * 60 * 24 * cookieMaxAge * 1000;
@@ -49,8 +48,6 @@ public class CookieUtil {
 			cookie.setMaxAge(60 * 60 * 24 * cookieMaxAge);
 			// cookie有效路径是网站根目录
 			cookie.setPath("/");
-			// 向客户端写入
-			response.addCookie(cookie);
 			return cookie;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,19 +63,23 @@ public class CookieUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static User readCookie(HttpServletRequest request, HttpServletResponse response, LoginService loginService)
-			throws Exception {
+	public static User readCookie(String name, HttpServletRequest request, HttpServletResponse response,
+			LoginService loginService) throws Exception {
 		// 先从缓存中读取，读不到再从cookie中取
 		User user = (User) request.getSession().getAttribute("curUser");
 		if (user == null) {
-			// 根据cookieName取cookieValue
-			Cookie cookies[] = request.getCookies();
 			String cookieValue = null;
-			if (cookies != null) {
-				for (int i = 0; i < cookies.length; i++) {
-					if (cookieDomainName.equals(cookies[i].getName())) {
-						cookieValue = URLDecoder.decode(cookies[i].getValue(),"utf-8");
-						break;
+			if (name != null && !"".equals(name.trim())) {
+				cookieValue = name;
+			} else {
+				// 从request中根据cookieName取cookieValue
+				Cookie cookies[] = request.getCookies();
+				if (cookies != null) {
+					for (int i = 0; i < cookies.length; i++) {
+						if (cookieDomainName.equals(cookies[i].getName())) {
+							cookieValue = URLDecoder.decode(cookies[i].getValue(), "utf-8");
+							break;
+						}
 					}
 				}
 			}
@@ -120,7 +121,7 @@ public class CookieUtil {
 				if (md5ValueFromUser.equals(md5ValueInCookie) || md5ValudFormUser2.equals(md5ValueInCookie)) {
 					request.getSession().setAttribute("curUser", user);
 					return user;
-				}else{
+				} else {
 					return null;
 				}
 			}

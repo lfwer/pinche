@@ -52,15 +52,18 @@ public class Util {
 		
 	
 	public static void main(String[] args) throws Exception {
-		  BufferedReader read = new BufferedReader(new FileReader("D:\\Workspaces\\eclipse\\pinche\\src\\main\\webapp\\pages\\register.jsp"));
-		  String line = "";
-	        while((line=read.readLine())!=null){
-	            if(!line.equals("")){
-	                System.out.println(line);
-	            }
-	        }
-	        read.close();
-		
+//		  BufferedReader read = new BufferedReader(new FileReader("D:\\Workspaces\\eclipse\\pinche\\src\\main\\webapp\\pages\\register.jsp"));
+//		  String line = "";
+//	        while((line=read.readLine())!=null){
+//	            if(!line.equals("")){
+//	                System.out.println(line);
+//	            }
+//	        }
+//	        read.close();
+		Map<Integer, String> carProvinceMap = Util.getCarProvinceMap();
+		for (Integer i : carProvinceMap.keySet()) {
+			System.out.println("<button class=\"btn btn-default chooseCarProvince\" value=\""+i+"\">"+carProvinceMap.get(i)+"</button>");
+		}
 	}
 	 
 }

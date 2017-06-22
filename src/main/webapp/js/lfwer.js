@@ -2,8 +2,7 @@
  * lfwer v1.0
  * Copyright 2015-2015 刘方伟, Inc.
  */
-var lfwer = function() {
-};
+var lfwer = function() {};
 
 lfwer.getRootPath = function() {
 	// 获取当前网址，如： http://localhost:8083/proj/meun.jsp
@@ -19,6 +18,7 @@ lfwer.getRootPath = function() {
 	return (localhostPath + projectName);
 }
 
+//项目根目录
 lfwer.rootName = lfwer.getRootPath().substring(
 		lfwer.getRootPath().lastIndexOf("/"));
 
@@ -32,3 +32,8 @@ lfwer.replaceNull = function(value){
 	}
 }
 
+lfwer.getQueryString = function(name){
+     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+     var r = window.location.search.substr(1).match(reg);
+     if(r!=null)return  unescape(r[2]); return null;
+}

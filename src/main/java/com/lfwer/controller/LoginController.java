@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.dubbo.common.json.JSON;
 import com.google.gson.JsonObject;
 import com.lfwer.common.CookieUtil;
 import com.lfwer.common.ImageUtil;
@@ -47,68 +50,41 @@ public class LoginController {
 	private UserService userService;
 
 	/**
-	 * 跳转到登录页面
-	 * 
-	 * @return
-	 */
-	@RequestMapping("signIn")
-	public String signIn() {
-		return "/login/signIn";
-	}
-
-	/**
 	 * 登录提交
 	 * 
 	 * @param username
 	 * @param password
-	 * @param session
-	 * @param response
 	 * @return
 	 */
 	@RequestMapping("signSubmit")
 	@ResponseBody
-	public String signSubmit(@RequestParam("username") String username, @RequestParam("password") String password,
-			HttpSession session, HttpServletResponse response) {
-		JsonObject result = new JsonObject();
+	public JSONPObject signSubmit(String callback, @RequestParam("username") String username,
+			@RequestParam("password") String password) {
+		Valid valid  = null;
 		boolean validUsername = loginService.validateUsername(username);
 		boolean validPhone = false;
 		if (!validUsername) {
 			validPhone = loginService.validatePhone(username);
 		}
 		if (validUsername || validPhone) {
-			boolean valid = loginService.validatePassword(username, password);
-			if (!valid) {
-				result.addProperty("valid", false);
-				result.addProperty("message", "密码不正确");
+			boolean isOk = loginService.validatePassword(username, password);
+			if (!isOk) {
+				valid = new Valid(false, "密码不正确");
 			} else {
 				List<User> list = loginService.find("from User t where (t.username=? or t.phone=?) and t.password=?",
 						new String[] { username, username, password });
 				if (list != null && !list.isEmpty() && list.size() == 1) {
-					session.setAttribute("curUser", list.get(0));
-					Cookie cookie = CookieUtil.saveCookie(username, password, response);
-					result.addProperty("valid", true);
-					result.addProperty("message", cookie.getValue());
+					Cookie cookie = CookieUtil.genCookie(username, password);
+					valid = new Valid(true,  cookie.getValue());
+					 
 				} else {
-					result.addProperty("valid", false);
-					result.addProperty("message", "获取用户信息失败");
-
+					valid = new Valid(false, "获取用户信息失败");
 				}
 			}
 		} else {
-			result.addProperty("valid", false);
-			result.addProperty("message", "用户名/手机号不存在");
+			valid = new Valid(false, "用户名/手机号不存在");
 		}
-		return result.toString();
-	}
-
-	/**
-	 * 跳转到注册页面
-	 * 
-	 * @return
-	 */
-	@RequestMapping("register")
-	public String register() {
-		return "/login/register";
+		return new JSONPObject(callback, valid);
 	}
 
 	/**
@@ -121,15 +97,14 @@ public class LoginController {
 	 */
 	@RequestMapping("registerSubmit")
 	@ResponseBody
-	public Valid registerSubmit(User user, HttpSession session, HttpServletRequest request,
-			HttpServletResponse response) {
+	public JSONPObject registerSubmit(String callback, User user) {
 		Valid data = null;
 		try {
 			if (user != null) {
 				user.setNickName("用户" + RandomUtil.getRandNum(8));// 默认昵称
 				user.setType("1");// 默认身份为乘客
 				loginService.saveUser(user);
-				CookieUtil.saveCookie(user.getUsername(), user.getPassword(), response);
+				CookieUtil.genCookie(user.getUsername(), user.getPassword());
 				data = new Valid(true, "注册成功，系统将自动跳转到【登录】页面。");
 			} else {
 				data = new Valid(false, "注册失败。");
@@ -138,138 +113,7 @@ public class LoginController {
 			e.printStackTrace();
 			data = new Valid(false, "注册失败。");
 		}
-		return data;
-	}
-
-	/**
-	 * 跳转到注册成功后完善信息页面
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("register2")
-	public ModelAndView register2(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelAndView modelAndView = null;
-		User user = CookieUtil.readCookie(request, response, loginService);
-		if (user == null) {
-			modelAndView = new ModelAndView("redirect:/login/signIn");
-		} else {
-			modelAndView = new ModelAndView("/login/register2");
-			modelAndView.addObject("user", user);
-			modelAndView.addObject("year", Calendar.getInstance().get(Calendar.YEAR));
-			modelAndView.addObject("month", Calendar.getInstance().get(Calendar.MONTH) + 1);
-			modelAndView.addObject("day", Calendar.getInstance().get(Calendar.DATE));
-			modelAndView.addObject("userTypeList", dictService.getDicts("USERTYPE", "-1"));
-			modelAndView.addObject("sexList", dictService.getDicts("SEX", "-1"));
-			modelAndView.addObject("marryList", dictService.getDicts("MARRY", "-1"));
-			modelAndView.addObject("hobbyList", dictService.getDicts("HOBBY", "-1"));
-			modelAndView.addObject("zoneList", dictService.getDicts("ZONE", "-1"));
-			modelAndView.addObject("industryList", dictService.getDicts("INDUSTRY", "-1"));
-		}
-
-		return modelAndView;
-	}
-
-	/**
-	 * 完善信息页面提交
-	 * 
-	 * @param user
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("register2Submit")
-	public String register2Submit(User user, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		if (user != null) {
-			User dbUser = CookieUtil.readCookie(request, response, loginService);
-
-			dbUser.setRealName(user.getRealName());
-			dbUser.setIdCard(user.getIdCard());
-			dbUser.setZone(user.getZone());
-			dbUser.setAddr(user.getAddr());
-
-			// dbUser.setType(user.getType());
-			dbUser.setNickName(user.getNickName());
-			dbUser.setSex(user.getSex());
-			dbUser.setBirthday(user.getBirthday());
-			dbUser.setAge(user.getAge());
-			dbUser.setMarry(user.getMarry());
-			dbUser.setHobby(user.getHobby());
-			dbUser.setIndustry(user.getIndustry());
-			dbUser.setSign(user.getSign());
-			loginService.updateUser(dbUser);
-		}
-		if ("2".equals(user.getType())) {// 完善车主信息
-			return "redirect:/login/register3";
-		} else {
-			return "redirect:/index.jsp";
-		}
-	}
-
-	/**
-	 * 跳转到完善车主信息页面
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("register3")
-	public ModelAndView register3(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelAndView modelAndView = null;
-		User user = CookieUtil.readCookie(request, response, loginService);
-		if (user == null) {
-			modelAndView = new ModelAndView("redirect:/login/signIn");
-		} else {
-			modelAndView = new ModelAndView("/login/register3");
-			if (user.getCarProvince() == null) {
-				user.setCarProvince(8);
-			}
-			modelAndView.addObject("carProvinceName", Util.getCarProvinceMap().get(user.getCarProvince()));
-			modelAndView.addObject("user", user);
-			modelAndView.addObject("carTypeList", dictService.getDicts("CARTYPE", null));
-			modelAndView.addObject("carColorList", dictService.getDicts("CARCOLOR", "-1"));
-		}
-		return modelAndView;
-	}
-
-	/**
-	 * 完善车主信息提交
-	 * 
-	 * @param user
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("register3Submit")
-	public String register3Submit(User user, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		if (user != null) {
-			User dbUser = CookieUtil.readCookie(request, response, loginService);
-			dbUser.setCarType(user.getCarType());
-			dbUser.setCarBrand(user.getCarBrand());
-			dbUser.setCarStyle(user.getCarStyle());
-			dbUser.setCarColor(user.getCarColor());
-			dbUser.setCarProvince(user.getCarProvince());
-			dbUser.setCarNum(user.getCarNum());
-			loginService.updateUser(dbUser);
-		}
-		return "redirect:/index.jsp";
-	}
-
-	/**
-	 * 跳转到找回密码页面-验证手机并发送验证码
-	 * 
-	 * @return
-	 */
-	@RequestMapping("retrievePwd")
-	public String retrievePwd() {
-		return "/login/retrievePwd";
+		return new JSONPObject(callback, data);
 	}
 
 	/**
@@ -282,22 +126,9 @@ public class LoginController {
 	 */
 	@RequestMapping("retrievePwdSubmit")
 	@ResponseBody
-	public Valid retrievePwdSubmit(HttpSession session, String phone, String smsCode) {
+	public JSONPObject retrievePwdSubmit(String callback, String phone, String smsCode) {
 		Valid data = validateSMS(phone, smsCode);
-		if (data.isValid()) {
-			session.setAttribute("retrievePwd_phone", phone);
-		}
-		return data;
-	}
-
-	/**
-	 * 跳转到找回密码页面-重设密码
-	 * 
-	 * @return
-	 */
-	@RequestMapping("retrievePwd2")
-	public String retrievePwd2() {
-		return "/login/retrievePwd2";
+		return new JSONPObject(callback, data);
 	}
 
 	/**
@@ -309,22 +140,16 @@ public class LoginController {
 	 */
 	@RequestMapping("retrievePwd2Submit")
 	@ResponseBody
-	public Valid retrievePwd2Submit(HttpSession session, String password) {
+	public JSONPObject retrievePwd2Submit(String callback, String phoneNo, String password) {
 		Valid data = null;
 		try {
-			String phone = String.valueOf(session.getAttribute("retrievePwd_phone"));
-			if (phone == null) {
-				data = new Valid(false, "您常时间未操作，系统将自动跳转到【找回密码】页面。");
-			} else {
-				loginService.retrievePwd(phone, password);
-				data = new Valid(true, "重设密码成功，系统将自动跳转到【登录】页面。");
-			}
-			session.removeAttribute("retrievePwd_phone");
+			loginService.retrievePwd(phoneNo, password);
+			data = new Valid(true, "重设密码成功，系统将自动跳转到【登录】页面。");
 		} catch (Exception ex) {
 			data = new Valid(false, "操作失败。");
 			ex.printStackTrace();
 		}
-		return data;
+		return new JSONPObject(callback, data);
 	}
 
 	/**
@@ -336,11 +161,12 @@ public class LoginController {
 	 */
 	@RequestMapping("validatePhone")
 	@ResponseBody
-	public String validatePhone(@RequestParam("type") int type, @RequestParam("phone") String phone) {
+	public JSONPObject validatePhone(String callback, @RequestParam("type") int type,
+			@RequestParam("phone") String phone) {
 		JsonObject result = new JsonObject();
 		boolean valid = loginService.validatePhone(phone);
 		result.addProperty("valid", type == 1 ? !valid : valid);
-		return result.toString();
+		return new JSONPObject(callback, result.toString());
 	}
 
 	/**
@@ -363,7 +189,7 @@ public class LoginController {
 	@ResponseBody
 	public String validateNickName(HttpServletRequest request, HttpServletResponse response, String nickName)
 			throws Exception {
-		User user = CookieUtil.readCookie(request, response, loginService);
+		User user = CookieUtil.readCookie(null, request, response, loginService);
 		JsonObject result = new JsonObject();
 		boolean valid = loginService.validateNickName(nickName, user.getId());
 		result.addProperty("valid", valid);
@@ -410,7 +236,7 @@ public class LoginController {
 		File largeFile = null;
 		File smallFile = null;
 		try {
-			User user = CookieUtil.readCookie(request, response, loginService);
+			User user = CookieUtil.readCookie(null, request, response, loginService);
 
 			int type = Integer.parseInt(request.getParameter("_type"));
 			File tempFile = new File(request.getServletContext().getRealPath("") + "/uploadTemp");
@@ -485,7 +311,7 @@ public class LoginController {
 		File largeFile = null;
 		File smallFile = null;
 		try {
-			User user = CookieUtil.readCookie(request, response, loginService);
+			User user = CookieUtil.readCookie(null, request, response, loginService);
 			File tempFile = new File(request.getServletContext().getRealPath("") + "/uploadTemp");
 			if (!tempFile.exists()) {
 				tempFile.mkdirs();
@@ -623,7 +449,7 @@ public class LoginController {
 			f = new File(tempFile.getPath() + "/" + filename + "_tmp" + stuff);
 			file.transferTo(f);
 			f.createNewFile();
-			User user = CookieUtil.readCookie(request, response, loginService);
+			User user = CookieUtil.readCookie(null, request, response, loginService);
 			Properties prop = new Properties();
 			in = null;
 			in = LoginController.class.getResourceAsStream("/config/upload.properties");
@@ -683,85 +509,63 @@ public class LoginController {
 		SmbUtil.smbGet(prop.getProperty("smb.photo") + "/" + id + "/" + name, response);
 	}
 
-	/**
-	 * 退出并跳转到登录页面
-	 * 
-	 * @return
-	 */
-	@RequestMapping("signOut")
-	public String signOut(HttpServletRequest request, HttpServletResponse response) {
-		CookieUtil.clearCookie(request, response);
-		return "redirect:/index.jsp";
-	}
-
 	@RequestMapping("getCurUser")
 	@ResponseBody
-	public User getCurUser(HttpServletRequest request, HttpServletResponse response) {
+	public JSONPObject getCurUser(String callback, String name, HttpServletRequest request,
+			HttpServletResponse response) {
 		User user = null;
 		try {
-			user = CookieUtil.readCookie(request, response, loginService);
+			user = CookieUtil.readCookie(name, request, response, loginService);
 		} catch (Exception e) {
-
 			e.printStackTrace();
 		}
-		return user == null ? new User() : user;
+		return new JSONPObject(callback, user);
 	}
 
 	@RequestMapping("updateUser")
 	@ResponseBody
-	public Valid updateUser(String type, String value, HttpServletRequest request, HttpServletResponse response) {
+	public Valid updateUser(Integer userId, String type, String value, HttpServletRequest request,
+			HttpServletResponse response) {
 		Valid valid = null;
 		try {
 
 			if (value == null || "".equals(value.trim())) {
 				return new Valid(false, "不能为空");
 			}
-			User user = CookieUtil.readCookie(request, response, loginService);
+
 			int age = 0;
 			switch (type) {
 			case "type":
-				userService.updateByHql("update User u set u.type = ? where id = ?",
-						new Object[] { value, user.getId() });
-				user.setType(value);
+				userService.updateByHql("update User u set u.type = ? where id = ?", new Object[] { value, userId });
+
 				break;
 			case "sex":
-				userService.updateByHql("update User u set u.sex = ? where id = ?",
-						new Object[] { value, user.getId() });
-				user.setSex(value);
+				userService.updateByHql("update User u set u.sex = ? where id = ?", new Object[] { value, userId });
 				break;
 			case "marry":
-				userService.updateByHql("update User u set u.marry = ? where id = ?",
-						new Object[] { value, user.getId() });
-				user.setMarry(value);
+				userService.updateByHql("update User u set u.marry = ? where id = ?", new Object[] { value, userId });
 				break;
 			case "industry":
 				userService.updateByHql("update User u set u.industry = ? where id = ?",
-						new Object[] { value, user.getId() });
-				user.setIndustry(value);
+						new Object[] { value, userId });
 				break;
 			case "birthday":
 				Date birthday = new SimpleDateFormat("yyyy-MM-dd").parse(value.split(",")[0]);
 				age = Integer.parseInt(value.split(",")[1]);
 				userService.updateByHql("update User u set birthday = ? , u.age = ? where id = ?",
-						new Object[] { birthday, age, user.getId() });
-				user.setAge(age);
+						new Object[] { birthday, age, userId });
 				break;
 			case "age":
 				age = Integer.parseInt(value);
-				userService.updateByHql("update User u set u.age = ? where id = ?", new Object[] { age, user.getId() });
-				user.setAge(age);
+				userService.updateByHql("update User u set u.age = ? where id = ?", new Object[] { age, userId });
 				break;
 			case "hobby":
-				userService.updateByHql("update User u set u.hobby = ? where id = ?",
-						new Object[] { value, user.getId() });
-				user.setHobby(value);
+				userService.updateByHql("update User u set u.hobby = ? where id = ?", new Object[] { value, userId });
 				break;
 			default:
 				return new Valid(false, "保存失败");
 			}
 
-			// 重置session
-			request.getSession().setAttribute("curUser", user);
 			valid = new Valid(true, "保存成功");
 
 		} catch (Exception e) {
@@ -771,34 +575,4 @@ public class LoginController {
 		return valid;
 	}
 
-	/**
-	 * 跳转到我的信息页面
-	 * 
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("my")
-	public ModelAndView my(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelAndView modelAndView = new ModelAndView("/login/my");
-		User user = CookieUtil.readCookie(request, response, loginService);
-		if (user != null) {
-			modelAndView.addObject("year", Calendar.getInstance().get(Calendar.YEAR));
-			modelAndView.addObject("month", Calendar.getInstance().get(Calendar.MONTH) + 1);
-			modelAndView.addObject("day", Calendar.getInstance().get(Calendar.DATE));
-			modelAndView.addObject("userTypeList", dictService.getDicts("USERTYPE", "-1"));
-			modelAndView.addObject("sexList", dictService.getDicts("SEX", "-1"));
-			modelAndView.addObject("marryList", dictService.getDicts("MARRY", "-1"));
-			modelAndView.addObject("hobbyList", dictService.getDicts("HOBBY", "-1"));
-			modelAndView.addObject("zoneList", dictService.getDicts("ZONE", "-1"));
-			modelAndView.addObject("industryList", dictService.getDicts("INDUSTRY", "-1"));
-
-			modelAndView.addObject("userTypeName", dictService.getName("USERTYPE", user.getType()));
-
-		}
-		modelAndView.addObject("user", user);
-
-		return modelAndView;
-	}
 }

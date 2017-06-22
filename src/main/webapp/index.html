@@ -1,538 +1,423 @@
-
 <!DOCTYPE html>
-<html lang="en" prefix="og: http://ogp.me/ns#" debug="true">
-  <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">    
-    <meta charset="utf-8">
+<html lang="zh-CN">
+<head>
+<title>邯郸拼车</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Access-Control-Allow-Origin" content="*">	
+<script type="text/javascript">
+	//只能微信内使用
+	/* var useragent = navigator.userAgent;
+	if (useragent.match(/MicroMessenger/i) != 'MicroMessenger') {
+	    // 这里警告框会阻塞当前页面继续加载
+	    alert('已禁止本次访问：您必须使用微信内置浏览器访问本页面！');
+	    // 以下代码是用javascript强行关闭当前页面
+	    var opened = window.open('about:blank', '_self');
+	    opened.opener = null;
+	    opened.close();
+	} */
+	if(location.href.indexOf("#")>0){
+		location.href=location.href.substring(0,location.href.indexOf("#"));
+	}
+</script>
 
-    <title>PhotoSwipe: Responsive JavaScript Image Gallery</title>
+<link rel="stylesheet"
+	href="jslib/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="jslib/bootstrapvalidator/css/bootstrapValidator.min.css" />
+<link rel="stylesheet"
+	href="jslib/bootstrapswitch/css/bootstrap-switch.min.css" />
+<link rel="stylesheet"
+	href="jslib/bootstrapdatetimepicker/css/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" href="jslib/icheck/skins/all.css" />
+<link rel="stylesheet" href="jslib/diyUpload/css/webuploader.css" />
+<link rel="stylesheet" href="jslib/diyUpload/css/diyUpload.css" />
+<link rel="stylesheet" href="jslib/Jcrop/css/jquery.Jcrop.min.css" />
+<link rel="stylesheet" href="jslib/selectize/css/selectize.bootstrap3.css" />
+<link rel="stylesheet" href="jslib/mobiscroll/css/mobiscroll.custom-2.17.0.min.css" />
+<link rel="stylesheet" href="jslib/swiper/css/swiper.min.css" />
+<link href="jslib/photoSwipe/dist/photoswipe.css" rel="stylesheet" />
+<link href="jslib/photoSwipe/dist/default-skin/default-skin.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/lfwer.css" />
+<link rel="stylesheet" href="css/mask.css" />
+<link rel="stylesheet" href="css/view.css" />
+<link rel="stylesheet" href="css/index.css" />
 
-    <meta name="description" content="Touch-friendly JavaScript image gallery for mobile and desktop, without dependencies. Responsive layout. Swipe and zoom gestures.">
-    <meta name="viewport" content="width = device-width, initial-scale = 1.0"> 
-
- 
-    
-  
-    <link href="jslib/photoSwipe/dist/photoswipe.css" rel="stylesheet" />
-    <link href="jslib/photoSwipe/dist/default-skin/default-skin.css" rel="stylesheet" />
-      
-    <script src="jslib/photoSwipe/dist/photoswipe.min.js"></script>
-    <script src="jslib/photoSwipe/dist/photoswipe-ui-default.min.js"></script>
-     
-  </head>
-
-  <body>
-
-
-    
-    
-
-
-    	<div class="section section--head">
-
-	    <div class="row row--heading">
-			<h1>PhotoSwipe<a href="https://github.com/dimsemenov/PhotoSwipe/releases"> v4.1.1</a></h1>
-			<p>JavaScript gallery, no dependencies.</p>
-	    </div>
-
-	    
-
-	    <div class="row">
-	      <div id="demo-test-gallery" class="demo-gallery">
-
-	        <a href="https://farm4.staticflickr.com/3894/15008518202_c265dfa55f_h.jpg" data-size="1600x1600" data-med="https://farm4.staticflickr.com/3894/15008518202_b016d7d289_b.jpg" data-med-size="1024x1024" data-author="Folkert Gorter" class="demo-gallery__img--main">
-	          <img src="https://farm4.staticflickr.com/3894/15008518202_b016d7d289_m.jpg" alt="" />
-	          <figure>This is dummy caption.</figure>
-	        </a>
-
-	        <a href="https://farm6.staticflickr.com/5591/15008867125_b61960af01_h.jpg" data-size="1600x1068" data-med="https://farm6.staticflickr.com/5591/15008867125_68a8ed88cc_b.jpg" data-med-size="1024x683" data-author="Samuel Rohl">
-	          <img src="https://farm6.staticflickr.com/5591/15008867125_68a8ed88cc_m.jpg" alt="" />
-	          <figure>This is dummy caption. It has been placed here solely to demonstrate the look and feel of finished, typeset text.</figure>
-	        </a>
-
-
-	        <a href="https://farm4.staticflickr.com/3902/14985871946_24f47d4b53_h.jpg" data-size="1600x1067" data-med="https://farm4.staticflickr.com/3902/14985871946_86abb8c56f_b.jpg" data-med-size="1024x683" data-author="Ales Krivec">
-	          <img src="https://farm4.staticflickr.com/3902/14985871946_86abb8c56f_m.jpg" alt="" />
-	          <figure>This is dummy caption. It is not meant to be read.</figure>
-	        </a>
-
-
-	        <a href="https://farm6.staticflickr.com/5584/14985868676_b51baa4071_h.jpg" data-size="1600x1067" data-med="https://farm6.staticflickr.com/5584/14985868676_4b802b932a_b.jpg" data-med-size="1024x683" data-author="Michael Hull">
-	          <img src="https://farm6.staticflickr.com/5584/14985868676_4b802b932a_m.jpg" alt="" />
-	          <figure>Dummy caption. It's Greek to you. Unless, of course, you're Greek, in which case, it really makes no sense.</figure>
-	        </a>
-
-	        <a href="https://farm4.staticflickr.com/3920/15008465772_d50c8f0531_h.jpg" data-size="1600x1067" data-med="https://farm4.staticflickr.com/3920/15008465772_383e697089_b.jpg" data-med-size="1024x683" data-author="Thomas Lefebvre">
-	          <img src="https://farm4.staticflickr.com/3920/15008465772_383e697089_m.jpg" alt="" />
-	          <figure>It's a dummy caption. He who searches for meaning here will be sorely disappointed.</figure>
-	        </a>
-
-
-
-	      </div>
-	    
-
-	    </div>
-
+</head>
+<body>
+	<div id="header">
+		<table style="width: 100%;margin: 0;padding: 0;" border="0">
+			<colgroup>
+				<col width="50%">
+				<col width="30%">
+				<col width="20%">
+			</colgroup>
+			<tr>
+				<td>&nbsp;<input type="checkbox" id="switchInfo" data-off-color="info"
+					data-on-color="info" data-on-text="车主列表" data-off-text="乘客列表"
+					data-label-text="切换" data-label-width="30" ></td>
+				<td><a id="index_addInfo" style="font-size: 16px;"><span class="glyphicon glyphicon-edit"></span><span
+					id="addInfoName">&nbsp;车主发布</span>
+				</a></td>
+				<td align="right"><a id="searchInfo" style="font-size: 18px;"> <span class="glyphicon glyphicon-search"></span>&nbsp;</td>
+			</tr>
+		</table>
 	</div>
 
-	<div class="navigation">
-		<div class="row row--nav"><a href="documentation/getting-started.html">Documentation</a> &middot; <a href="https://github.com/dimsemenov/photoswipe">GitHub</a> &middot; <a class="twitter-nav-link" href="http://twitter.com/photoswipe"><span>Twitter</span></a></div> 
-	</div>
-
-	
-	 
- 
-	 
-  	 
-    
-
-     
-
-
-
-      
-
-
-    
-
-
-     
-
-
-      
-
-
-    
-
-    <div id="gallery" class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="pswp__bg"></div>
-
-        <div class="pswp__scroll-wrap">
-
-          <div class="pswp__container">
-			<div class="pswp__item"></div>
-			<div class="pswp__item"></div>
-			<div class="pswp__item"></div>
-          </div>
-
-          <div class="pswp__ui pswp__ui--hidden">
-
-            <div class="pswp__top-bar">
-
-				<div class="pswp__counter"></div>
-
-				<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
-
-				<button class="pswp__button pswp__button--share" title="Share"></button>
-
-				<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
-
-				<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
-
-				<div class="pswp__preloader">
-					<div class="pswp__preloader__icn">
-					  <div class="pswp__preloader__cut">
-					    <div class="pswp__preloader__donut"></div>
-					  </div>
+	<!-- 横向 -->
+	<div class="swiper-container">
+		<div class="swiper-wrapper">
+			<div class="swiper-slide slide swiper-no-swiping" >
+				<div class="wrapper" id="wrapper1">
+					<div class="scroller">
+						<div id="pullDown1" class="alert text-center"
+							style="display: none; padding: 0; margin: 0 0 6px 0; font-size: 16px; height: 30px; color: gray;">
+						</div>
+						<ul id="pageInfo1" class="ul-main">
+						</ul>
+						<div id="pullUp1" class="alert text-center"
+							style="display: none; padding: 6px; margin: 0; font-size: 16px;color: gray;">
+							正在刷新……</div>
+						<div id="pullOver1" class="alert text-center" onclick="reloadInfo1()"
+							style="display: none; padding: 6px; margin: 0; font-size: 16px; cursor: pointer;color: gray;">
+							没有更多数据，点击刷新</div>
 					</div>
 				</div>
-            </div>
+			</div>
+			<div class="swiper-slide slide swiper-no-swiping" >
+				<div class="wrapper" id="wrapper2">
+					<div class="scroller">
+						<div id="pullDown2" class="alert text-center"
+							style="display: none; padding: 0; margin: 0 0 6px 0; font-size: 16px; height: 30px; color: gray;">
+						</div>
+						<ul id="pageInfo2" class="ul-main">
+						</ul>
+						<div id="pullUp2" class="alert text-center"
+							style="display: none; padding: 6px; margin: 0; font-size: 16px;color: gray;">
+							正在刷新……</div>
+						<div id="pullOver2" class="alert text-center" onclick="reloadInfo2()"
+							style="display: none; padding: 6px; margin: 0; font-size: 16px; cursor: pointer;color: gray;">
+							没有更多数据，点击刷新</div>
+					</div>
+				</div>
+			</div>
+			<div class="swiper-slide slide swiper-no-swiping" >
+				<div class="wrapper" id="wrapper3">
+					<div class="scroller">
+						消息
+					</div>
+				</div>
+			</div>
+			<div class="swiper-slide slide swiper-no-swiping" >
+				<div class="wrapper" id="wrapper4">
+					<div class="scroller">
+						<div id="viewMy"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+			 
+	<div id="footer">
+		<div class="container">
+		<div class="row text-center">
+			<div class="col-xs-4">
+				<div class="lfwer-btn-check" id="index_d1" onclick="info(true)">
+					<table style="width: 100%;text-align: center;">
+						<tr><td><span class="glyphicon glyphicon-home" ></span></td></tr>
+						<tr><td>拼车信息</td></tr>
+					</table>
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div class="lfwer-btn-uncheck" id="index_d2" onclick="friend(true)">
+					<table style="width: 100%;text-align: center;">
+						<tr><td><span class="glyphicon glyphicon-comment"></span></td></tr>
+						<tr><td>消息</td></tr>
+					</table>
+				</div>
+			</div>
+			<div class="col-xs-4">
+				<div class="lfwer-btn-uncheck" id="index_d3" onclick="my(true)">
+					<table style="width: 100%;text-align: center;">
+						<tr><td><span class="glyphicon glyphicon-user"></span></td></tr>
+						<tr><td>我的</td></tr>
+					</table>
+				</div>
+			</div>
+		</div>
+		</div>
+	</div>
+	
+	<div id="viewDiv"></div>
+	<div id="viewDiv2"></div>
+	
+	<iframe id="targetFrame" name="targetFrame" style="display: none;"></iframe>
+	
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body text-center">您需要登陆后才可以进行发布<br/><a href="javascript:gotoLogin();">【登陆】</a></div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="myModal2" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel2" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body text-center">您需要认证为车主才可以进行发布<br/>点击<a href="javascript:gotoRegister3()">【车主认证】</a></div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="myModalInfo" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabelInfo" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content text-center">
+				<div class="modal-body">确定删除此信息？</div>
+				<div class="modal-footer">
+					<div style="text-align: center;">
+						<button type="button" class="btn btn-primary" data-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-warning"
+							onclick="removeSubmit()" data-dismiss="modal">确定</button>
+					</div>
 
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="signOutModal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content text-center">
+				<div class="modal-body">确定退出当前账号？</div>
+				<div class="modal-footer">
+					<div style="text-align: center;">
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						<button type="button" class="btn btn-primary"
+							onclick="signOutOk()" data-dismiss="modal">确定</button>
+					</div>
 
-			<!-- <div class="pswp__loading-indicator"><div class="pswp__loading-indicator__line"></div></div> -->
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="msgInfo" tabindex="-1"
+		aria-labelledby="msgModalLabelInfo" role="dialog" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div id="msgContentInfo" class="modal-body alert-danger text-center"
+					style="font-size: 20px;"></div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="uploadCarPhotoModal" tabindex="-1"
+		role="dialog" aria-labelledby="uploadCarPhotoModalLabel"
+		aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-body" style="margin: 0; padding: 2px;">
+					<center>
+						<img id="imgCarPhoto" class="imgCarPhoto img-responsive img-thumbnail"
+							onclick="$('#uploadCarPhotoModal').modal('hide');"
+							onerror="noFind(this);">
+					</center>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+<div class="modal fade" id="carModalMsg" tabindex="-1" role="dialog"
+	aria-labelledby="carModalMsgLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">如果不完善车辆信息，您是无法发布车主拼车信息的哦 ^_^</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" id="btnBreak">残忍跳过</button>
+				<button type="button" class="btn btn-primary" data-dismiss="modal">继续完善</button>
+			</div>
+		</div>
+	</div>
+</div>
 
-            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
-	            <div class="pswp__share-tooltip">
-					<!-- <a href="#" class="pswp__share--facebook"></a>
-					<a href="#" class="pswp__share--twitter"></a>
-					<a href="#" class="pswp__share--pinterest"></a>
-					<a href="#" download class="pswp__share--download"></a> -->
-	            </div>
-	        </div>
+<div class="modal fade" id="carModal3" tabindex="-1"
+	aria-labelledby="carModal3Label" role="dialog" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body" >
+				<div style="line-height: 40px;text-align: left;">
+					<button class="btn btn-default chooseCarProvince" value="1">京</button>
+					<button class="btn btn-default chooseCarProvince" value="2">沪</button>
+					<button class="btn btn-default chooseCarProvince" value="3">浙</button>
+					<button class="btn btn-default chooseCarProvince" value="4">苏</button>
+					<button class="btn btn-default chooseCarProvince" value="5">粤</button>
+					<button class="btn btn-default chooseCarProvince" value="6">鲁</button>
+					<button class="btn btn-default chooseCarProvince" value="7">晋</button>
+					<button class="btn btn-default chooseCarProvince" value="8">冀</button>
+					<button class="btn btn-default chooseCarProvince" value="9">豫</button>
+					<button class="btn btn-default chooseCarProvince" value="10">川</button>
+					<button class="btn btn-default chooseCarProvince" value="11">渝</button>
+					<button class="btn btn-default chooseCarProvince" value="12">辽</button>
+					<button class="btn btn-default chooseCarProvince" value="13">吉</button>
+					<button class="btn btn-default chooseCarProvince" value="14">黑</button>
+					<button class="btn btn-default chooseCarProvince" value="15">皖</button>
+					<button class="btn btn-default chooseCarProvince" value="16">鄂</button>
+					<button class="btn btn-default chooseCarProvince" value="17">湘</button>
+					<button class="btn btn-default chooseCarProvince" value="18">赣</button>
+					<button class="btn btn-default chooseCarProvince" value="19">闽</button>
+					<button class="btn btn-default chooseCarProvince" value="20">陕</button>
+					<button class="btn btn-default chooseCarProvince" value="21">甘</button>
+					<button class="btn btn-default chooseCarProvince" value="22">宁</button>
+					<button class="btn btn-default chooseCarProvince" value="23">蒙</button>
+					<button class="btn btn-default chooseCarProvince" value="24">津</button>
+					<button class="btn btn-default chooseCarProvince" value="25">贵</button>
+					<button class="btn btn-default chooseCarProvince" value="26">云</button>
+					<button class="btn btn-default chooseCarProvince" value="27">桂</button>
+					<button class="btn btn-default chooseCarProvince" value="28">琼</button>
+					<button class="btn btn-default chooseCarProvince" value="29">青</button>
+					<button class="btn btn-default chooseCarProvince" value="30">新</button>
+					<button class="btn btn-default chooseCarProvince" value="31">藏</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
-            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
-            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
-            <div class="pswp__caption">
-              <div class="pswp__caption__center">
-              </div>
-            </div>
-          </div>
+<div class="modal fade" id="headPhotoModal" tabindex="-1" role="dialog"
+	aria-labelledby="headPhotoModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body" style="margin: 0;padding: 0;">
+				<table style="width: 100%;margin: 0;padding: 0;">
+					<tr>
+						<td align="center"><img id="imgHeadPhoto" /></td>
+					</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<div class="text-center">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary"
+						onclick="savePhoto()">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
+<div id="alertMsg" class="alert alert-danger text-center" style="display: none;position:absolute;bottom:50%;z-index: 999999999; margin:0   -40%;width: 80%;left:50%;">
+	<span id="alertMsgContent"></span>
+</div>
+						
+<!--加载效果-->
+<div class="mask">
+    <div class="spinner">
+        <div class="spinner-container container1">
+            <div class="circle1"></div>
+            <div class="circle2"></div>
+            <div class="circle3"></div>
+            <div class="circle4"></div>
         </div>
-
-
+        <div class="spinner-container container2">
+            <div class="circle1"></div>
+            <div class="circle2"></div>
+            <div class="circle3"></div>
+            <div class="circle4"></div>
+        </div>
+        <div class="spinner-container container3">
+            <div class="circle1"></div>
+            <div class="circle2"></div>
+            <div class="circle3"></div>
+            <div class="circle4"></div>
+        </div>
     </div>
-    
-  
-    <script type="text/javascript">
-    (function() {
-
-		var initPhotoSwipeFromDOM = function(gallerySelector) {
-
-			var parseThumbnailElements = function(el) {
-			    var thumbElements = el.childNodes,
-			        numNodes = thumbElements.length,
-			        items = [],
-			        el,
-			        childElements,
-			        thumbnailEl,
-			        size,
-			        item;
-
-			    for(var i = 0; i < numNodes; i++) {
-			        el = thumbElements[i];
-
-			        // include only element nodes 
-			        if(el.nodeType !== 1) {
-			          continue;
-			        }
-					
-			        childElements = el.children;
-
-			        size = el.getAttribute('data-size').split('x');
-
-			        // create slide object
-			        item = {
-						src: el.getAttribute('href'),
-						w: parseInt(size[0], 10),
-						h: parseInt(size[1], 10),
-						author: el.getAttribute('data-author')
-			        };
-
-			        item.el = el; // save link to element for getThumbBoundsFn
-
-			        if(childElements.length > 0) {
-			          item.msrc = childElements[0].getAttribute('src'); // thumbnail url
-			          if(childElements.length > 1) {
-			              item.title = childElements[1].innerHTML; // caption (contents of figure)
-			          }
-			        }
-
-
-					var mediumSrc = el.getAttribute('data-med');
-		          	if(mediumSrc) {
-		            	size = el.getAttribute('data-med-size').split('x');
-		            	// "medium-sized" image
-		            	item.m = {
-		              		src: mediumSrc,
-		              		w: parseInt(size[0], 10),
-		              		h: parseInt(size[1], 10)
-		            	};
-		          	}
-		          	// original image
-		          	item.o = {
-		          		src: item.src,
-		          		w: item.w,
-		          		h: item.h
-		          	};
-
-			        items.push(item);
-			    }
-
-			    return items;
-			};
-
-			// find nearest parent element
-			var closest = function closest(el, fn) {
-			    return el && ( fn(el) ? el : closest(el.parentNode, fn) );
-			};
-
-			var onThumbnailsClick = function(e) {
-			    e = e || window.event;
-			    e.preventDefault ? e.preventDefault() : e.returnValue = false;
-
-			    var eTarget = e.target || e.srcElement;
-
-			    var clickedListItem = closest(eTarget, function(el) {
-			        return el.tagName === 'A';
-			    });
-
-			    if(!clickedListItem) {
-			        return;
-			    }
-
-			    var clickedGallery = clickedListItem.parentNode;
-
-			    var childNodes = clickedListItem.parentNode.childNodes,
-			        numChildNodes = childNodes.length,
-			        nodeIndex = 0,
-			        index;
-
-			    for (var i = 0; i < numChildNodes; i++) {
-			        if(childNodes[i].nodeType !== 1) { 
-			            continue; 
-			        }
-
-			        if(childNodes[i] === clickedListItem) {
-			            index = nodeIndex;
-			            break;
-			        }
-			        nodeIndex++;
-			    }
-
-			    if(index >= 0) {
-			        openPhotoSwipe( index, clickedGallery );
-			    }
-			    return false;
-			};
-
-			var photoswipeParseHash = function() {
-				
-				var hash = window.location.hash.substring(1),
-			    params = {};
-			    if(hash.length < 5) { // pid=1
-			        return params;
-			    }
-
-			    var vars = hash.split('&');
-			    for (var i = 0; i < vars.length; i++) {
-			        if(!vars[i]) {
-			            continue;
-			        }
-			        var pair = vars[i].split('=');  
-			        if(pair.length < 2) {
-			            continue;
-			        }           
-			        params[pair[0]] = pair[1];
-			    }
-
-			    if(params.gid) {
-			    	params.gid = parseInt(params.gid, 10);
-			    }
-
-			    return params;
-			};
-
-			var openPhotoSwipe = function(index, galleryElement, disableAnimation, fromURL) {
-			    var pswpElement = document.querySelectorAll('.pswp')[0],
-			        gallery,
-			        options,
-			        items;
-
-				items = parseThumbnailElements(galleryElement);
-
-			    // define options (if needed)
-			    options = {
-
-			        galleryUID: galleryElement.getAttribute('data-pswp-uid'),
-
-			        getThumbBoundsFn: function(index) {
-			            // See Options->getThumbBoundsFn section of docs for more info
-			            var thumbnail = items[index].el.children[0],
-			                pageYScroll = window.pageYOffset || document.documentElement.scrollTop,
-			                rect = thumbnail.getBoundingClientRect(); 
-
-			            return {x:rect.left, y:rect.top + pageYScroll, w:rect.width};
-			        },
-
-			        addCaptionHTMLFn: function(item, captionEl, isFake) {
-						if(!item.title) {
-							captionEl.children[0].innerText = '';
-							return false;
-						}
-						captionEl.children[0].innerHTML = item.title +  '<br/><small>Photo: ' + item.author + '</small>';
-						return true;
-			        },
-					
-			    };
-
-
-			    if(fromURL) {
-			    	if(options.galleryPIDs) {
-			    		// parse real index when custom PIDs are used 
-			    		// http://photoswipe.com/documentation/faq.html#custom-pid-in-url
-			    		for(var j = 0; j < items.length; j++) {
-			    			if(items[j].pid == index) {
-			    				options.index = j;
-			    				break;
-			    			}
-			    		}
-				    } else {
-				    	options.index = parseInt(index, 10) - 1;
-				    }
-			    } else {
-			    	options.index = parseInt(index, 10);
-			    }
-
-			    // exit if index not found
-			    if( isNaN(options.index) ) {
-			    	return;
-			    }
-
-
-
-				var radios = document.getElementsByName('gallery-style');
-				for (var i = 0, length = radios.length; i < length; i++) {
-				    if (radios[i].checked) {
-				        if(radios[i].id == 'radio-all-controls') {
-
-				        } else if(radios[i].id == 'radio-minimal-black') {
-				        	options.mainClass = 'pswp--minimal--dark';
-					        options.barsSize = {top:0,bottom:0};
-							options.captionEl = false;
-							options.fullscreenEl = false;
-							options.shareEl = false;
-							options.bgOpacity = 0.85;
-							options.tapToClose = true;
-							options.tapToToggleControls = false;
-				        }
-				        break;
-				    }
-				}
-
-			    if(disableAnimation) {
-			        options.showAnimationDuration = 0;
-			    }
-
-			    // Pass data to PhotoSwipe and initialize it
-			    gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, items, options);
-
-			    // see: http://photoswipe.com/documentation/responsive-images.html
-				var realViewportWidth,
-				    useLargeImages = false,
-				    firstResize = true,
-				    imageSrcWillChange;
-
-				gallery.listen('beforeResize', function() {
-
-					var dpiRatio = window.devicePixelRatio ? window.devicePixelRatio : 1;
-					dpiRatio = Math.min(dpiRatio, 2.5);
-				    realViewportWidth = gallery.viewportSize.x * dpiRatio;
-
-
-				    if(realViewportWidth >= 1200 || (!gallery.likelyTouchDevice && realViewportWidth > 800) || screen.width > 1200 ) {
-				    	if(!useLargeImages) {
-				    		useLargeImages = true;
-				        	imageSrcWillChange = true;
-				    	}
-				        
-				    } else {
-				    	if(useLargeImages) {
-				    		useLargeImages = false;
-				        	imageSrcWillChange = true;
-				    	}
-				    }
-
-				    if(imageSrcWillChange && !firstResize) {
-				        gallery.invalidateCurrItems();
-				    }
-
-				    if(firstResize) {
-				        firstResize = false;
-				    }
-
-				    imageSrcWillChange = false;
-
-				});
-
-				gallery.listen('gettingData', function(index, item) {
-				    if( useLargeImages ) {
-				        item.src = item.o.src;
-				        item.w = item.o.w;
-				        item.h = item.o.h;
-				    } else {
-				        item.src = item.m.src;
-				        item.w = item.m.w;
-				        item.h = item.m.h;
-				    }
-				});
-
-			    gallery.init();
-			};
-
-			// select all gallery elements
-			var galleryElements = document.querySelectorAll( gallerySelector );
-			for(var i = 0, l = galleryElements.length; i < l; i++) {
-				galleryElements[i].setAttribute('data-pswp-uid', i+1);
-				galleryElements[i].onclick = onThumbnailsClick;
-			}
-
-			// Parse URL and open gallery if it contains #&pid=3&gid=1
-			var hashData = photoswipeParseHash();
-			if(hashData.pid && hashData.gid) {
-				openPhotoSwipe( hashData.pid,  galleryElements[ hashData.gid - 1 ], true, true );
-			}
-		};
-
-		initPhotoSwipeFromDOM('.demo-gallery');
-
-	})();
-
-	</script>
-
-
-
-    
-    
-
-    
-
-
-
-    <!-- analytics -->
-    <script>
-    (function() {
-
-      var url = window.location.href.toLowerCase();
-      if(url.indexOf('photoswipe') === -1) {
-        return;
-      } 
-
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-49016964-1', 'photoswipe.com');
-      ga('send', 'pageview');
-
-      function trackJavaScriptError(e) {
-        e = e || window.event;
-        if(!e || !e.message || !e.lineno){ 
-          return true; 
-        }
-        var errMsg = e.message;
-        var errSrc = e.filename + ': ' + e.lineno;
-        ga('send', 'event', 'JavaScript Error', errMsg, errSrc, { 'nonInteraction': 1 });
-      }
-
-      if (window.addEventListener) {
-        window.addEventListener('error', trackJavaScriptError, false);
-      } else if (window.attachEvent) {
-        window.attachEvent('onerror', trackJavaScriptError);
-      } else {
-        window.onerror = trackJavaScriptError;
-      }
-
-
-      (function (d, w, c) {
-          (w[c] = w[c] || []).push(function() {
-              try {
-                  w.yaCounter24301471 = new Ya.Metrika({id:24301471,
-                          webvisor:false,
-                          clickmap:false});
-              } catch(e) { }
-          });
-
-          var n = d.getElementsByTagName("script")[0],
-              s = d.createElement("script"),
-              f = function () { n.parentNode.insertBefore(s, n); };
-          s.type = "text/javascript";
-          s.async = true;
-          s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js";
-
-          if (w.opera == "[object Opera]") {
-              d.addEventListener("DOMContentLoaded", f, false);
-          } else { f(); }
-      })(document, window, "yandex_metrika_callbacks");
-
-    })();
-    </script>
-    
-
-
-
-
-  </body>
+</div>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+	<!-- Background of PhotoSwipe. 
+        It's a separate element, as animating opacity is faster than rgba(). -->
+	<div class="pswp__bg"></div>
+	<!-- Slides wrapper with overflow:hidden. -->
+	<div class="pswp__scroll-wrap">
+		<!-- Container that holds slides. PhotoSwipe keeps only 3 slides in DOM to save memory. -->
+		<!-- don't modify these 3 pswp__item elements, data is added later on. -->
+		<div class="pswp__container">
+			<div class="pswp__item"></div>
+			<div class="pswp__item"></div>
+			<div class="pswp__item"></div>
+		</div>
+		<!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+		<div class="pswp__ui pswp__ui--hidden">
+			<div class="pswp__top-bar">
+				<!--  Controls are self-explanatory. Order can be changed. -->
+				<div class="pswp__counter"></div>
+				<button class="pswp__button pswp__button--close"
+					title="Close (Esc)"></button>
+				<button class="pswp__button pswp__button--share" title="Share"></button>
+				<button class="pswp__button pswp__button--fs"
+					title="Toggle fullscreen"></button>
+				<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+				<!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+				<!-- element will get class pswp__preloader--active when preloader is running -->
+				<div class="pswp__preloader">
+					<div class="pswp__preloader__icn">
+						<div class="pswp__preloader__cut">
+							<div class="pswp__preloader__donut"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div
+				class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+				<div class="pswp__share-tooltip"></div>
+			</div>
+			<button class="pswp__button pswp__button--arrow--left"
+				title="Previous (arrow left)"></button>
+			<button class="pswp__button pswp__button--arrow--right"
+				title="Next (arrow right)"></button>
+			<div class="pswp__caption">
+				<div class="pswp__caption__center"></div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/jquery.cookie.js"></script>
+<script src="jslib/bootstrap/js/bootstrap.min.js"></script>
+<script
+	src="jslib/bootstrapvalidator/js/bootstrapValidator.min.js"></script>
+<script
+	src="jslib/bootstrapswitch/js/bootstrap-switch.min.js"></script>
+<script
+	src="jslib/bootstrapdatetimepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script
+	src="jslib/bootstrapdatetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="jslib/icheck/icheck.min.js"></script>
+<script
+	src="jslib/jqueryplaceholder/jquery.placeholder.min.js"></script>
+<script src="jslib/miniui/miniui.js"></script>
+<script src="jslib/diyUpload/js/webuploader.html5only.min.js"></script>
+<script src="jslib/diyUpload/js/diyUpload.js"></script>
+<script src="jslib/Jcrop/js/jquery.Jcrop.min.js"></script>
+<script src="jslib/iscroll/iscroll-probe.js"></script>
+<script src="jslib/selectize/js/standalone/selectize.min.js"></script>
+<script src="jslib/mobiscroll/js/mobiscroll.custom-2.17.0.min.js"></script>
+<script src="jslib/timeago/jquery.timeago.js"></script> 
+<script src="jslib/timeago/locales/jquery.timeago.zh-CN.js"></script>
+<script src="jslib/swiper/js/swiper.min.js"></script> 
+<script src="jslib/photoSwipe/dist/photoswipe.min.js"></script>
+<script src="jslib/photoSwipe/dist/photoswipe-ui-default.min.js"></script>
+<script src="js/img.js"></script>
+<script src="js/lfwer.js"></script>
+<script src="js/server.js"></script>
+<script src="js/index.js"></script>
 </html>

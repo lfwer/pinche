@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +52,7 @@ public class PinkerInfoController {
 	@AvoidDuplicateSubmission(needSaveToken = true)
 	public ModelAndView addPinkerInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView modelAndView = null;
-		User user = CookieUtil.readCookie(request, response, loginService);
+		User user = CookieUtil.readCookie(null, request, response, loginService);
 		if (user == null) {
 			modelAndView = new ModelAndView("redirect:/login/signIn?url=pinkerInfo/addPinkerInfo");
 		} else {
@@ -77,7 +79,7 @@ public class PinkerInfoController {
 	public Valid addPinkerInfoSubmit(PinkerInfo result, HttpServletRequest request, HttpServletResponse response) {
 		Valid valid = null;
 		try {
-			User user = CookieUtil.readCookie(request, response, loginService);
+			User user = CookieUtil.readCookie(null, request, response, loginService);
 			if (user != null) {
 				result.setAddTime(new Date());
 				result.setAddUser(user.getId());
@@ -210,7 +212,7 @@ public class PinkerInfoController {
 			User user = userService.getUser(result.getAddUser());
 			modelAndView.addObject("user", user);
 
-			User addUser = CookieUtil.readCookie(request, response, loginService);
+			User addUser = CookieUtil.readCookie(null, request, response, loginService);
 			modelAndView.addObject("addUser", addUser);
 		}
 
@@ -220,14 +222,13 @@ public class PinkerInfoController {
 	@RequestMapping("removePinkerInfo")
 	public void removePinkerInfo(Integer id, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		User user = CookieUtil.readCookie(request, response, loginService);
+		User user = CookieUtil.readCookie(null, request, response, loginService);
 		pinkerInfoService.removePinkerInfo(id, user);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@RequestMapping("getPageInfo")
 	@ResponseBody
-	public List getPageInfo(PinkerInfo result, Integer page, String date) {
-		return pinkerInfoService.getPageInfo(result, page, date);
+	public JSONPObject getPageInfo(String callback, PinkerInfo result, Integer page, String date) {
+		return new JSONPObject(callback, pinkerInfoService.getPageInfo(result, page, date));
 	}
 }

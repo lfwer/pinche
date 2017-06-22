@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -56,7 +58,7 @@ public class CarOwnerInfoController {
 	@AvoidDuplicateSubmission(needSaveToken = true)
 	public ModelAndView addCarOwnerInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		ModelAndView modelAndView = null;
-		User user = CookieUtil.readCookie(request, response, loginService);
+		User user = CookieUtil.readCookie(null, request, response, loginService);
 		if (user == null) {
 			modelAndView = new ModelAndView("redirect:/login/signIn");
 		} else {
@@ -89,7 +91,7 @@ public class CarOwnerInfoController {
 	public Valid addCarOwnerInfoSubmit(CarOwnerInfo result, HttpServletRequest request, HttpServletResponse response) {
 		Valid valid = null;
 		try {
-			User user = CookieUtil.readCookie(request, response, loginService);
+			User user = CookieUtil.readCookie(null, request, response, loginService);
 			if (user != null) {
 				result.setAddTime(new Date());
 				result.setAddUser(user.getId());
@@ -246,7 +248,7 @@ public class CarOwnerInfoController {
 			User user = userService.getUser(result.getAddUser());
 			modelAndView.addObject("user", user);
 
-			User curUser = CookieUtil.readCookie(request, response, loginService);
+			User curUser = CookieUtil.readCookie(null, request, response, loginService);
 			if (curUser != null) {
 				// redisTemplate.opsForSet().add("readCarOwner",
 				// String.valueOf(curUser.getId()));
@@ -260,14 +262,13 @@ public class CarOwnerInfoController {
 	@RequestMapping("removeCarOwnerInfo")
 	public void removeCarOwnerInfo(Integer id, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		User user = CookieUtil.readCookie(request, response, loginService);
+		User user = CookieUtil.readCookie(null, request, response, loginService);
 		carOwnerInfoService.removeCarOwnerInfo(id, user);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@RequestMapping("getPageInfo")
 	@ResponseBody
-	public List getPageInfo(CarOwnerInfo result, Integer page, String date) {
-		return carOwnerInfoService.getPageInfo(result, page, date);
+	public JSONPObject getPageInfo(String callback, CarOwnerInfo result, Integer page, String date) {
+		return new JSONPObject(callback, carOwnerInfoService.getPageInfo(result, page, date));
 	}
 }
