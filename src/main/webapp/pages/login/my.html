@@ -1,0 +1,51 @@
+<div id="my_d1" class="container" style="display: none;">
+	<button type="button" id="my_btn_login"
+		class="btn btn-success btn-block btn-lg" style="margin-top: 50%;">
+		<span class="glyphicon glyphicon-user"></span> 登录
+	</button>
+</div>
+<div id="my_d2" class="container-fluid"
+	style="display: none; padding: 0; margin: 0;">
+	<table style="width: auto; margin: 10px;">
+		<tr>
+			<td>
+				<div class="userPhotoBig" itemscope
+					itemtype="http://schema.org/ImageGallery">
+					<figure itemprop="associatedMedia" itemscope
+						itemtype="http://schema.org/ImageObject">
+						<a id="userPhotoBig_a" itemprop="contentUrl"> <img
+							id="userPhotoBig_img" class="img-circle" width="80" height="80"
+							style="width: 80px; height: 80px; cursor: pointer;"
+							onerror="nohead(this);" itemprop="thumbnail">
+							<figcaption itemprop="caption description"></figcaption>
+						</a>
+					</figure>
+				</div>
+			</td>
+			<td valign="bottom">&nbsp;<span class="nickName"></span></td>
+		</tr>
+	</table>
+	<ul class="list-group my-list" style="margin-top: 10px;">
+		<li class="list-group-item my_li_1">个人资料<span
+			class="pull-right glyphicon glyphicon-menu-right"></span></li>
+		<li class="list-group-item my_li_2">车主认证 <span
+			class="pull-right glyphicon glyphicon-menu-right"></span>
+		</li>
+		<li class="list-group-item my_li_3">身份
+			<div class="pull-right">
+				<select id="userType">
+					<option value="1">乘客</option>
+					<option value="2">车主</option>
+					</c:forEach>
+				</select>
+			</div>
+		</li>
+		<li class="list-group-item my_li_4">账号安全 <span
+			class="pull-right glyphicon glyphicon-menu-right"></span>
+		</li>
+		<li class="list-group-item" data-toggle="modal"
+			data-target="#signOutModal" style="text-align: center; color: red;">退出当前账号
+		</li>
+	</ul>
+</div>
+<script src="js/my.js"></script>

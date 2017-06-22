@@ -1,0 +1,193 @@
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+html, body {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+    padding: 0;
+	margin: 0;
+	border: 0;
+}
+
+body {
+    background: #fff;
+    font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color:#000;
+    margin: 0;
+    padding: 0;
+}
+
+#header {
+	position: absolute;
+	z-index: 2;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: 5px;
+	border-bottom: 1px solid #E7E4E4;
+}
+
+#footer {
+	position: absolute;
+	z-index: 2;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	padding: 6px 0 5px 0 ;
+	border-top: 1px solid #E7E4E4;
+	font-size: 14px;
+}
+
+.swiper-container2 {
+	position: absolute;
+    width: 100%;
+    top: 45px;
+	bottom: 54px;
+}
+.swiper-container {
+	position: absolute;
+	width: 100%;
+	top: 45px;
+	bottom: 52px;
+}
+
+.swiper-slide {
+    font-size: 18px;
+    height: auto;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.slide {
+    padding: 30px;
+}
+
+.wrapper {
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	bottom:0;
+	left: 0;
+	width: 100%;
+	overflow: hidden;
+}
+ 
+
+.ul-main {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	text-align: left;
+}
+
+.ul-main > li {
+	padding: 2px 10px;
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid #fff;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.scroller > table {
+	width: 100%;
+}
+
+.lfwer-btn-check {
+	border: 0;
+	color: #337ab7;
+	cursor: pointer;
+}
+
+.lfwer-btn-uncheck {
+	border: 0;
+	color: gray;
+	cursor: pointer;
+}
+
+.lfwer-center {
+	width: auto;
+	display: table;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.lfwer-title {
+	font-weight: bolder;
+}
+
+.liclick {
+	color: gray;
+}
+.list-table{
+	padding: 0;
+	margin: 0;
+	line-height: 18px;
+	width: 100%;
+}
+
+#viewDiv{
+	z-index: 3;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: none;
+	background: white;
+	bottom: 0;
+	overflow: hidden;
+}
+
+#viewDiv2{
+	z-index: 4;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: none;
+	background: white;
+	bottom: 0;
+	overflow: hidden;
+}
+
+#viewMy{
+	width: 100%;
+	height:auto;
+	overflow: hidden;
+}
+
+#operDiv{
+	z-index: 5;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: none;
+	background: white;
+	bottom: 0;
+	overflow: hidden;
+}
+
+.modal{
+	font-size: 18px;
+	line-height: 28px;
+}
+
+.callDiv{
+	font-size: 32px;
+	position: absolute;
+	right: 5px;
+	bottom: 20px;
+	z-index: 2;
+	line-height: 48px; 
+}
+
+.callDiv > span{
+	border:1px #EEEEEE solid;
+	padding: 4px;
+	color: white;
+	background: gray;
+	
+}
