@@ -154,6 +154,10 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 		return (Long) this.getCurrentSession().createQuery(hql).uniqueResult();
 	}
 
+	public Object uniqueResult(String hql) {
+		return this.getCurrentSession().createQuery(hql).uniqueResult();
+	}
+
 	public Long count(String hql, Object[] param) {
 		Query q = this.getCurrentSession().createQuery(hql);
 		if (param != null && param.length > 0) {

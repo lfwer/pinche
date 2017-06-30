@@ -60,6 +60,8 @@ public class Util {
 //	            }
 //	        }
 //	        read.close();
+		
+		//输出省
 		Map<Integer, String> carProvinceMap = Util.getCarProvinceMap();
 		for (Integer i : carProvinceMap.keySet()) {
 			System.out.println("<button class=\"btn btn-default chooseCarProvince\" value=\""+i+"\">"+carProvinceMap.get(i)+"</button>");

@@ -7,10 +7,10 @@
 	<div class="row">
 		<div class="col-xs-2">
 			<span class="glyphicon glyphicon-chevron-left"
-				onclick="history.back();" style="cursor: pointer;">&nbsp;</span>
+				onclick="history.go(-1);" style="cursor: pointer;">&nbsp;</span>
 		</div>
 		<div class="col-xs-8 text-center">
-			<span>车主发布</span>
+			<span>乘客发布</span>
 		</div>
 		<div class="col-xs-2"></div>
 	</div>
@@ -21,10 +21,10 @@
 			<input type="hidden" id="mirror_field" value="" readonly />
 			<!-- <div class="alert alert-info"
 					style="padding: 4px; margin-bottom: 10px;">
-					<span>温馨提示：使用本平台拼车前，请认真阅读《<a href="#">免责声明</a>》，平台不承担任何法律连带责任！</span>
+					<span>温馨提示：使用本平台拼车前，请认真阅读《免责声明》，平台不承担任何法律连带责任！</span>
 				</div> -->
 			<div class="row" style="height: 10px;"></div>
-			<form id="addCarOwnerInfoForm" class="form-horizontal" method="post"
+			<form id="addPinkerInfoForm" class="form-horizontal" method="post"
 				style="margin: 0; padding: 0;">
 				<input type="hidden" name="spring.token.name" value=""> <input
 					type="hidden" id="userId" name="userId" />
@@ -90,6 +90,7 @@
 						</div>
 					</div>
 				</div>
+
 				<div class="form-group">
 					<div class="col-xs-12">
 						<div class="input-group btn-group">
@@ -109,7 +110,17 @@
 						<div class="input-group">
 							<span class="input-group-addon">拼车日期</span><input
 								class="form-control" id="pdate" name="pdate" data-bv-notempty
-								data-bv-notempty-message="请选择拼车日期" type="text" value="">
+								data-bv-notempty-message="请选择拼车日期" type="text"
+								value="">
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-xs-12">
+						<div class="input-group">
+							<span class="input-group-addon">出发时间</span><input name="ptime"
+								id="ptime" class="form-control" readonly type="text"
+								data-bv-notempty data-bv-notempty-message="请选择出发时间">
 						</div>
 					</div>
 				</div>
@@ -138,28 +149,36 @@
 				</div>
 				<div class="form-group">
 					<div class="col-xs-12">
-						<div class="input-group">
-							<span class="input-group-addon">出发时间</span><input name="ptime"
-								id="ptime" class="form-control" readonly type="text"
-								data-bv-notempty data-bv-notempty-message="请选择出发时间">
+						<div class="input-group btn-group">
+							<span class="input-group-addon">乘车人数</span> <input type="text"
+								id="pnum" name="pnum" class="form-control" placeholder="请填写乘车人数"
+								data-bv-notempty data-bv-notempty-message="请填写乘车人数"
+								data-bv-regexp data-bv-regexp-regexp="[0-9]+$" value="1"
+								data-bv-regexp-message="乘车人数只能输入数字" maxlength="4">
 						</div>
 					</div>
 				</div>
-
 				<div class="form-group">
 					<div class="col-xs-12">
-						<div class="input-group btn-group">
-							<span class="input-group-addon">可乘人数</span>
-							<button type="button" name="pnumC" class="btn btn-primary"
-								value="1">1人</button>
-							<button type="button" name="pnumC" class="btn btn-default"
-								value="2">2人</button>
-							<button type="button" name="pnumC" class="btn btn-default"
-								value="3">3人</button>
-							<button type="button" name="pnumC" class="btn btn-default"
-								value="4">4人</button>
-							<input name="pnum" id="pnum" type="text" class="lfwer-hidden"
-								value="1" data-bv-notempty data-bv-notempty-message="请选择可乘人数">
+						<div class="input-group">
+							<span class="input-group-addon">上车地点</span><input type="text"
+								id="onSite" name="onSite" class="form-control"
+								placeholder="请填写上车地点" data-bv-notempty
+								data-bv-notempty-message="请填写上车地点" data-bv-stringlength
+								data-bv-stringlength-min="2" data-bv-stringlength-max="20"
+								data-bv-stringlength-message="上车地点长度必须在2至20位之间">
+						</div>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-xs-12">
+						<div class="input-group">
+							<span class="input-group-addon">下车地点</span><input type="text"
+								id="offSite" name="offSite" class="form-control"
+								placeholder="请填写下车地点" data-bv-notempty
+								data-bv-notempty-message="请填写下车地点" data-bv-stringlength
+								data-bv-stringlength-min="2" data-bv-stringlength-max="20"
+								data-bv-stringlength-message="下车地点长度必须在2至20位之间">
 						</div>
 					</div>
 				</div>
@@ -171,57 +190,7 @@
 								data-bv-notempty data-bv-notempty-message="请填写拼车价格"
 								data-bv-regexp data-bv-regexp-regexp="[0-9]+$"
 								data-bv-regexp-message="拼车价格只能输入数字" maxlength="4"><span
-								class="input-group-addon">元/人</span>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-12">
-						<div class="input-group">
-							<span class="input-group-addon">途经地一</span><input type="text"
-								id="via1" name="via1" class="form-control" data-bv-stringlength
-								data-bv-stringlength-min="2" data-bv-stringlength-max="20"
-								data-bv-stringlength-message="途经地一长度必须在2至20位之间">
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-12">
-						<div class="input-group">
-							<span class="input-group-addon">途经地二</span><input type="text"
-								id="via2" name="via2" class="form-control" data-bv-stringlength
-								data-bv-stringlength-min="2" data-bv-stringlength-max="20"
-								data-bv-stringlength-message="途经地二长度必须在2至20位之间">
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-12">
-						<div class="input-group">
-							<span class="input-group-addon">途经地三</span><input type="text"
-								id="via3" name="via3" class="form-control" data-bv-stringlength
-								data-bv-stringlength-min="2" data-bv-stringlength-max="20"
-								data-bv-stringlength-message="途经地三长度必须在2至20位之间">
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-12">
-						<div class="input-group">
-							<span class="input-group-addon">途经地四</span><input type="text"
-								id="via4" name="via4" class="form-control" data-bv-stringlength
-								data-bv-stringlength-min="2" data-bv-stringlength-max="20"
-								data-bv-stringlength-message="途经地四长度必须在2至20位之间">
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-xs-12">
-						<div class="input-group">
-							<span class="input-group-addon">途经地五</span><input type="text"
-								id="via5" name="via5" class="form-control" data-bv-stringlength
-								data-bv-stringlength-min="2" data-bv-stringlength-max="20"
-								data-bv-stringlength-message="途经地五长度必须在2至20位之间">
+								class="input-group-addon">元</span>
 						</div>
 					</div>
 				</div>
@@ -233,10 +202,11 @@
 							data-bv-stringlength-message="留言长度需小于200字"></textarea>
 					</div>
 				</div>
+
 				<div class="form-group text-center">
 					<div class="col-xs-12">
 						<button type="button" id="btnSave"
-							class="btn btn-primary btn-lg btn-block">发 布</button>
+							class="btn btn-primary btn-lg btn-block">发布</button>
 					</div>
 				</div>
 			</form>
@@ -250,4 +220,4 @@
 		</div>
 	</div>
 </div>
-<script src="js/addCarOwnerInfo.js" />
+<script src="js/addPinkerInfo.js" />

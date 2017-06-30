@@ -4,48 +4,41 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
-
-import com.alibaba.dubbo.common.json.JSON;
 import com.google.gson.JsonObject;
 import com.lfwer.common.CookieUtil;
 import com.lfwer.common.ImageUtil;
 import com.lfwer.common.RandomUtil;
 import com.lfwer.common.SmbUtil;
-import com.lfwer.common.Util;
 import com.lfwer.common.Valid;
 import com.lfwer.model.User;
-import com.lfwer.service.DictService;
 import com.lfwer.service.LoginService;
 import com.lfwer.service.UserService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 @Controller
 @RequestMapping("login")
+@Api(value = "登录管理", produces = MediaType.APPLICATION_JSON_VALUE)
 public class LoginController {
 
 	@Autowired
 	private LoginService loginService;
-	@Autowired
-	private DictService dictService;
 	@Autowired
 	private UserService userService;
 
@@ -58,9 +51,10 @@ public class LoginController {
 	 */
 	@RequestMapping("signSubmit")
 	@ResponseBody
-	public JSONPObject signSubmit(String callback, @RequestParam("username") String username,
-			@RequestParam("password") String password) {
-		Valid valid  = null;
+	@ApiOperation(value = "登录验证", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid signSubmit(@ApiParam(value = "用户名") @RequestParam("username") String username,
+			@ApiParam(value = "密码") @RequestParam("password") String password) {
+		Valid valid = null;
 		boolean validUsername = loginService.validateUsername(username);
 		boolean validPhone = false;
 		if (!validUsername) {
@@ -75,8 +69,8 @@ public class LoginController {
 						new String[] { username, username, password });
 				if (list != null && !list.isEmpty() && list.size() == 1) {
 					Cookie cookie = CookieUtil.genCookie(username, password);
-					valid = new Valid(true,  cookie.getValue());
-					 
+					valid = new Valid(true, cookie.getValue());
+
 				} else {
 					valid = new Valid(false, "获取用户信息失败");
 				}
@@ -84,7 +78,7 @@ public class LoginController {
 		} else {
 			valid = new Valid(false, "用户名/手机号不存在");
 		}
-		return new JSONPObject(callback, valid);
+		return valid;
 	}
 
 	/**

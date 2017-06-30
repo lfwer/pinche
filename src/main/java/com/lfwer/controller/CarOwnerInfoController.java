@@ -1,34 +1,41 @@
 package com.lfwer.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
-
+import java.util.Map;
+import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.alibaba.dubbo.common.json.JSONObject;
 import com.lfwer.common.AvoidDuplicateSubmission;
 import com.lfwer.common.CookieUtil;
 import com.lfwer.common.Valid;
 import com.lfwer.model.User;
 import com.lfwer.model.CarOwnerInfo;
-import com.lfwer.model.PinkerInfo;
 import com.lfwer.service.DictService;
 import com.lfwer.service.LoginService;
 import com.lfwer.service.CarOwnerInfoService;
 import com.lfwer.service.UserService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 @Controller
 @RequestMapping("carOwnerInfo")
+@Api(value = "车主发布信息管理", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CarOwnerInfoController {
 
 	@Autowired
@@ -86,12 +93,13 @@ public class CarOwnerInfoController {
 	 * @throws Exception
 	 */
 	@RequestMapping("addCarOwnerInfoSubmit")
-	@AvoidDuplicateSubmission(needRemoveToken = true)
+	// @AvoidDuplicateSubmission(needRemoveToken = true)
 	@ResponseBody
-	public Valid addCarOwnerInfoSubmit(CarOwnerInfo result, HttpServletRequest request, HttpServletResponse response) {
+	@ApiOperation(value = "车主发布信息提交", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid addCarOwnerInfoSubmit(CarOwnerInfo result, String userId) {
 		Valid valid = null;
 		try {
-			User user = CookieUtil.readCookie(null, request, response, loginService);
+			User user = CookieUtil.readCookie(userId, null, null, loginService);
 			if (user != null) {
 				result.setAddTime(new Date());
 				result.setAddUser(user.getId());
@@ -128,12 +136,163 @@ public class CarOwnerInfoController {
 					}
 				}
 				carOwnerInfoService.saveCarOwnerInfo(result);
-				return valid = new Valid(true, String.valueOf(result.getId()));
+				try {
+					// 生成html
+					genHtml(result, user);
+					return valid = new Valid(true, String.valueOf(result.getId()));
+				} catch (Exception e) {
+					carOwnerInfoService.removeCarOwnerInfo(result.getId(), user);
+					throw e;
+				}
 			} else {
-				valid = new Valid(false, "保存失败。");
+				valid = new Valid(false, "保存失败：验证用户失败");
 			}
 		} catch (Exception ex) {
 			valid = new Valid(false, "保存失败。");
+			ex.printStackTrace();
+		}
+		return valid;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void genHtml(CarOwnerInfo result, User user) throws Exception {
+		Writer writer = null;
+		InputStream in = null;
+		File htmlFile = null;
+		try {
+
+			result.setFromZoneName(dictService.getName("ZONE", result.getFromZone()));
+			result.setToZoneName(dictService.getName("ZONE", result.getToZone()));
+			result.setSex(dictService.getName("SEX", result.getSex()));
+			result.setCarTypeName(dictService.getName("CARTYPE", result.getCarType()));
+			result.setCarColorName(dictService.getName("CARCOLOR", result.getCarColor()));
+			// 拼接周期
+			if (result.getTimeLimit() == 2) {
+				StringBuilder week = new StringBuilder();
+
+				if (result.getPweek1() != null && result.getPweek2() != null && result.getPweek3() != null
+						&& result.getPweek4() != null && result.getPweek5() != null && result.getPweek6() != null
+						&& result.getPweek7() != null) {
+					week.append("周一至周日");
+				} else if (result.getPweek1() != null && result.getPweek2() != null && result.getPweek3() != null
+						&& result.getPweek4() != null && result.getPweek5() != null && result.getPweek6() != null) {
+					week.append("周一至周六");
+				} else if (result.getPweek1() != null && result.getPweek2() != null && result.getPweek3() != null
+						&& result.getPweek4() != null && result.getPweek5() != null) {
+					week.append("周一至周五");
+				} else if (result.getPweek1() != null && result.getPweek2() != null && result.getPweek3() != null
+						&& result.getPweek4() != null) {
+					week.append("周一至周四");
+				} else {
+					if (result.getPweek1() != null) {
+						week.append("周一");
+					}
+					if (result.getPweek2() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周二");
+					}
+					if (result.getPweek3() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周三");
+					}
+					if (result.getPweek4() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周四");
+					}
+					if (result.getPweek5() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周五");
+					}
+					if (result.getPweek6() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周六");
+					}
+					if (result.getPweek7() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周日");
+					}
+
+				}
+
+				if (week.length() > 0) {
+					result.setPweekName(week.toString());
+				}
+			}
+			StringBuilder via = new StringBuilder();
+			if (result.getVia1() != null && !"".equals(result.getVia1())) {
+				via.append(result.getVia1()).append("，");
+			}
+			if (result.getVia2() != null && !"".equals(result.getVia2())) {
+				via.append(result.getVia2()).append("，");
+			}
+			if (result.getVia3() != null && !"".equals(result.getVia3())) {
+				via.append(result.getVia3()).append("，");
+			}
+			if (result.getVia4() != null && !"".equals(result.getVia4())) {
+				via.append(result.getVia4()).append("，");
+			}
+			if (result.getVia5() != null && !"".equals(result.getVia5())) {
+				via.append(result.getVia5()).append("，");
+			}
+			if (via.length() > 0) {
+				result.setViaName(via.substring(0, via.length() - 1));
+			} else {
+				result.setViaName("无");
+			}
+
+			Properties prop = new Properties();
+			in = LoginController.class.getResourceAsStream("/config/path.properties");
+			prop.load(in);
+			String path = prop.getProperty("html.carOwnerInfo.save.path");
+
+			Configuration cfg = new Configuration();
+
+			cfg.setClassForTemplateLoading(CarOwnerInfoController.class, "../templates");
+			cfg.setDefaultEncoding("UTF-8");
+			Template tmp = cfg.getTemplate("viewCarOwnerInfo.ftl");
+			Map root = new HashMap();
+			root.put("result", result);
+			root.put("user", user);
+			root.put("images", null);
+			htmlFile = new File(path + result.getId() + ".html");
+			writer = new OutputStreamWriter(new FileOutputStream(htmlFile), "UTF-8");
+			tmp.process(root, writer);
+		} catch (Exception ex) {
+			if (writer != null)
+				writer.close();
+			if (htmlFile!=null && htmlFile.exists())
+				htmlFile.delete();
+			throw ex;
+		} finally {
+			if (in != null)
+				in.close();
+			if (writer != null)
+				writer.close();
+		}
+	}
+
+	@RequestMapping("updateLookCount")
+	@ResponseBody
+	@ApiOperation(value = "车主发布信息浏览次数+1", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid updateLookCount(Integer id) {
+		Valid valid = null;
+		try {
+			Integer result = carOwnerInfoService.updateLookCount(id);
+			valid = new Valid(true, String.valueOf(result));
+		} catch (Exception ex) {
+			valid = new Valid(false, "更新浏览数失败");
 			ex.printStackTrace();
 		}
 		return valid;
@@ -268,7 +427,8 @@ public class CarOwnerInfoController {
 
 	@RequestMapping("getPageInfo")
 	@ResponseBody
-	public JSONPObject getPageInfo(String callback, CarOwnerInfo result, Integer page, String date) {
-		return new JSONPObject(callback, carOwnerInfoService.getPageInfo(result, page, date));
+	@ApiOperation(value = "车主发布信息分页展示", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Object[]> getPageInfo(CarOwnerInfo result, Integer page, String date) {
+		return carOwnerInfoService.getPageInfo(result, page, date);
 	}
 }

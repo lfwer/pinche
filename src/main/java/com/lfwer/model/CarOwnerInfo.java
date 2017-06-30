@@ -1,6 +1,7 @@
 package com.lfwer.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,6 +51,13 @@ public class CarOwnerInfo implements Serializable {
 	// 拼车日期
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date pdate;
+	@Transient
+	private String pdateStr;
+
+	public String getPdateStr() {
+		return new SimpleDateFormat("yyyy-MM-dd").format(pdate);
+	}
+
 	// 拼车周期
 	private String pweek1;
 	private String pweek2;
@@ -61,6 +69,13 @@ public class CarOwnerInfo implements Serializable {
 	// 出发时间
 	@DateTimeFormat(pattern = "HH:mm")
 	private Date ptime;
+	@Transient
+	private String ptimeStr;
+
+	public String getPtimeStr() {
+		return new SimpleDateFormat("HH:mm").format(ptime);
+	}
+
 	// 人数
 	private Integer pnum;
 	// 添加人
@@ -109,7 +124,7 @@ public class CarOwnerInfo implements Serializable {
 	// 车型
 	@Transient
 	private String carTypeName;
-	 
+
 	// 车辆颜色
 	@Transient
 	private String carColorName;
@@ -121,7 +136,6 @@ public class CarOwnerInfo implements Serializable {
 	public void setCarTypeName(String carTypeName) {
 		this.carTypeName = carTypeName;
 	}
-
 
 	public String getCarColorName() {
 		return carColorName;

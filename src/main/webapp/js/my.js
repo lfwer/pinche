@@ -2,7 +2,7 @@ document.addEventListener('touchmove', function(e) {
 	e.preventDefault();
 }, false);
 var user = getCurUser();
-console.log("my:"+user+",time:"+new Date().getTime());
+//console.log("my:"+user+",time:"+new Date().getTime());
 if (user) {
 	$(".nickName").text(user.nickName);
 

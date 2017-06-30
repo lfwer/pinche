@@ -228,8 +228,9 @@ $(document).ready(function() {
 		
 		$("#index_addInfo").click(function() {
 			if (zhaoche) {
-				if(server.curUser){//判断是否登录
-					if(server.curUser.carType){
+				if(getCurUser()){//判断是否登录
+					
+					if(getCurUser().carType){
 						gotoUrl1(lfwer.rootName+'/pages/carOwnerInfo/addCarOwnerInfo.html');
 					}else{
 						$('#myModal2').modal('show');
@@ -238,7 +239,7 @@ $(document).ready(function() {
 					$('#myModal').modal('show');
 				}
 			} else {
-				if(server.curUser){//判断是否登录
+				if(getCurUser()){//判断是否登录
 					gotoUrl1(lfwer.rootName+'/pages/pinkerInfo/addPinkerInfo.html');
 				}else{
 					$('#myModal').modal('show');
@@ -246,6 +247,11 @@ $(document).ready(function() {
 			}
 		});
 		
+		if(zhaoche){
+			loadCarOwnerInfo(page1);
+		}else{
+			loadPinkerInfo(page2);
+		}	
 		
 	});
 				
@@ -298,29 +304,26 @@ $(document).ready(function() {
 		$("#imgCarPhoto").removeAttr("src");
 	});
 	
-	loadCarOwnerInfo(page1);
+ 	
 });
 
-function getCurUser(){
-	return server.curUser;
-}
 
 function getCurUserForServer(callback){
-	server.curUser = undefined;
+	setCurUser(undefined);
 	if(server.cookieName){
 		$(".mask").show(); 
 		$.ajax({ 
 			url:server.path+"/login/getCurUser",
 			data:{name : server.cookieName},
 			//async:false,//jsonp不支持同步
-			crossDomain: true,
-			dataType: "jsonp",
+			//crossDomain: true,
+			//dataType: "jsonp",
 			success:function(data){
 				//console.log("ajax:"+data+",time:"+new Date().getTime());
 				$(".mask").hide();
 				if(data){
-					server.curUser = data;
-					if(server.curUser.type == "1"){
+					setCurUser(data);
+					if(getCurUser().type == "1"){
 						zhaoche = false;
 						$("#switchInfo").bootstrapSwitch("state",false);
 					}
@@ -389,14 +392,12 @@ function loadCarOwnerInfo(page) {
 		loading1 = true;
 		$("#pullOver1").hide();
 		if (page == 1) {
-			$("pullDown1").html("正在刷新……").show();
+			$("#pullDown1").html("正在刷新……").show();
 			myScroll1.scrollToElement(document.querySelector("#pullDown1"),0, true, true,null);
 			myScroll1.refresh();
 			$.ajax({
 				url : server.path+"/dict/getTime",
-				sync : true,
-				crossDomain: true,
-				dataType: "jsonp",
+				async : false,
 				success : function(data) {
 					_date1 = data;
 				}
@@ -411,8 +412,6 @@ function loadCarOwnerInfo(page) {
 			url : server.path+'/carOwnerInfo/getPageInfo',
 			type : 'post',
 			data : 'page=' + page + "&date=" + _date1,
-			crossDomain: true,
-			dataType: "jsonp",
 			success : function(data) {
 				if (data && data.length > 0) {
 					var result = "";
@@ -538,7 +537,7 @@ function loadCarOwnerInfo(page) {
 				$("#pullUp1").hide();
 				$("#pullDown1").hide();
 
-				if (page > 1 && (data == null || data.length == 0)) {
+				if ((data == null || data.length == 0)) {
 					loadUp1 = false;
 					$("#pullOver1").show();
 					myScroll1.scrollToElement(document.querySelector("#pullOver1"),0, true, true,null);
@@ -577,14 +576,12 @@ function loadPinkerInfo(page) {
 		loading2 = true;
 		$("#pullOver2").hide();
 		if (page == 1) {
-			$("pullDown2").html("正在刷新……").show();
+			$("#pullDown2").html("正在刷新……").show();
 			myScroll2.scrollToElement(document.querySelector("#pullDown2"),0, true, true,null);
 			myScroll2.refresh();
 			$.ajax({
 				url : server.path+"/dict/getTime",
-				sync : true,
-				crossDomain: true,
-				dataType: "jsonp",
+				async : false,
 				success : function(data) {
 					_date2 = data;
 				}
@@ -599,8 +596,6 @@ function loadPinkerInfo(page) {
 			url : server.path+'/pinkerInfo/getPageInfo',
 			type : 'post',
 			data : 'page=' + page + "&date=" + _date2,
-			crossDomain: true,
-			dataType: "jsonp",
 			success : function(data) {
 				if (data && data.length > 0) {
 					var result = "";
@@ -702,7 +697,8 @@ function loadPinkerInfo(page) {
 				$("#pullUp2").hide();
 				$("#pullDown2").hide();
 				
-				if (page > 1 && (data == null || data.length == 0)) {
+				if ((data == null || data.length == 0)) {
+					 
 					loadUp2 = false;
 					$("#pullOver2").show();
 					myScroll2.scrollToElement(document.querySelector("#pullOver2"),0, true, true,null);
@@ -774,8 +770,6 @@ function removeSubmit(){
 	$.ajax({
 		url : url,
 		type : 'post',
-		crossDomain: true,
-		dataType: "jsonp",
 		success : function() {
 			$("#msgContentInfo").html("删除成功,即将离开本页。").removeClass(
 					'alert-danger').addClass('alert-success');
@@ -853,7 +847,7 @@ function closeViewDiv2() {
 function signOutOk(){
 	$.cookie(server.cookieDomainName, null,{expires: -1,path : server.cookiePath});
 	server.cookieName = undefined;
-	server.curUser = undefined;
+	setCurUser(undefined);
 	location.href = lfwer.rootName + "/index.html";
 }
 

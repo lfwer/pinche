@@ -1,31 +1,45 @@
 package com.lfwer.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.alibaba.dubbo.common.json.JSONObject;
-import com.google.gson.JsonObject;
 import com.lfwer.common.AvoidDuplicateSubmission;
 import com.lfwer.common.CookieUtil;
 import com.lfwer.common.Valid;
 import com.lfwer.model.User;
+import com.lfwer.model.CarOwnerInfo;
 import com.lfwer.model.PinkerInfo;
 import com.lfwer.service.DictService;
 import com.lfwer.service.LoginService;
 import com.lfwer.service.PinkerInfoService;
 import com.lfwer.service.UserService;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 
 @Controller
 @RequestMapping("pinkerInfo")
+@Api(value = "乘客发布信息管理", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PinkerInfoController {
 
 	@Autowired
@@ -74,12 +88,13 @@ public class PinkerInfoController {
 	 * @return
 	 */
 	@RequestMapping("addPinkerInfoSubmit")
-	@AvoidDuplicateSubmission(needRemoveToken = true)
+	//@AvoidDuplicateSubmission(needRemoveToken = true)
 	@ResponseBody
-	public Valid addPinkerInfoSubmit(PinkerInfo result, HttpServletRequest request, HttpServletResponse response) {
+	@ApiOperation(value = "乘客发布信息提交", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid addPinkerInfoSubmit(PinkerInfo result, String userId) {
 		Valid valid = null;
 		try {
-			User user = CookieUtil.readCookie(null, request, response, loginService);
+			User user = CookieUtil.readCookie(userId, null, null, loginService);
 			if (user != null) {
 				result.setAddTime(new Date());
 				result.setAddUser(user.getId());
@@ -113,14 +128,142 @@ public class PinkerInfoController {
 						}
 					}
 				}
+
 				pinkerInfoService.savePinkerInfo(result);
-				// 查看刚发布的信息
-				return valid = new Valid(true, String.valueOf(result.getId()));
+				try {
+					// 生成html
+					genHtml(result, user);
+					return valid = new Valid(true, String.valueOf(result.getId()));
+				} catch (Exception e) {
+					pinkerInfoService.removePinkerInfo(result.getId(), user);
+					throw e;
+				}
 			} else {
-				valid = new Valid(false, "保存失败。");
+				valid = new Valid(false, "保存失败：验证用户失败。");
 			}
 		} catch (Exception ex) {
 			valid = new Valid(false, "保存失败。");
+			ex.printStackTrace();
+		}
+		return valid;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void genHtml(PinkerInfo result, User user) throws Exception {
+		Writer writer = null;
+		InputStream in = null;
+		File htmlFile = null;
+		try {
+
+			result.setFromZoneName(dictService.getName("ZONE", result.getFromZone()));
+			result.setToZoneName(dictService.getName("ZONE", result.getToZone()));
+			result.setSex(dictService.getName("SEX", result.getSex()));
+			// 拼接周期
+			if (result.getTimeLimit() == 2) {
+				StringBuilder week = new StringBuilder();
+
+				if (result.getPweek1() != null && result.getPweek2() != null && result.getPweek3() != null
+						&& result.getPweek4() != null && result.getPweek5() != null && result.getPweek6() != null
+						&& result.getPweek7() != null) {
+					week.append("周一至周日");
+				} else if (result.getPweek1() != null && result.getPweek2() != null && result.getPweek3() != null
+						&& result.getPweek4() != null && result.getPweek5() != null && result.getPweek6() != null) {
+					week.append("周一至周六");
+				} else if (result.getPweek1() != null && result.getPweek2() != null && result.getPweek3() != null
+						&& result.getPweek4() != null && result.getPweek5() != null) {
+					week.append("周一至周五");
+				} else if (result.getPweek1() != null && result.getPweek2() != null && result.getPweek3() != null
+						&& result.getPweek4() != null) {
+					week.append("周一至周四");
+				} else {
+					if (result.getPweek1() != null) {
+						week.append("周一");
+					}
+					if (result.getPweek2() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周二");
+					}
+					if (result.getPweek3() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周三");
+					}
+					if (result.getPweek4() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周四");
+					}
+					if (result.getPweek5() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周五");
+					}
+					if (result.getPweek6() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周六");
+					}
+					if (result.getPweek7() != null) {
+						if (week.length() > 0) {
+							week.append(",");
+						}
+						week.append("周日");
+					}
+
+				}
+
+				if (week.length() > 0) {
+					result.setPweekName(week.toString());
+				}
+			}
+
+			Properties prop = new Properties();
+			in = LoginController.class.getResourceAsStream("/config/path.properties");
+			prop.load(in);
+			String path = prop.getProperty("html.pinkerInfo.save.path");
+
+			Configuration cfg = new Configuration();
+
+			cfg.setClassForTemplateLoading(CarOwnerInfoController.class, "../templates");
+			cfg.setDefaultEncoding("UTF-8");
+			Template tmp = cfg.getTemplate("viewPinkerInfo.ftl");
+			Map root = new HashMap();
+			root.put("result", result);
+			root.put("user", user);
+			root.put("images", null);
+			htmlFile = new File(path + result.getId() + ".html");
+			writer = new OutputStreamWriter(new FileOutputStream(htmlFile), "UTF-8");
+			tmp.process(root, writer);
+		} catch (Exception ex) {
+			if (writer != null)
+				writer.close();
+			if (htmlFile!=null && htmlFile.exists())
+				htmlFile.delete();
+			throw ex;
+		} finally {
+			if (in != null)
+				in.close();
+			if (writer != null)
+				writer.close();
+		}
+	}
+
+	@RequestMapping("updateLookCount")
+	@ResponseBody
+	@ApiOperation(value = "乘客发布信息浏览次数+1", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid updateLookCount(Integer id) {
+		Valid valid = null;
+		try {
+			Integer result = pinkerInfoService.updateLookCount(id);
+			valid = new Valid(true, String.valueOf(result));
+		} catch (Exception ex) {
+			valid = new Valid(false, "更新浏览数失败");
 			ex.printStackTrace();
 		}
 		return valid;
@@ -228,7 +371,8 @@ public class PinkerInfoController {
 
 	@RequestMapping("getPageInfo")
 	@ResponseBody
-	public JSONPObject getPageInfo(String callback, PinkerInfo result, Integer page, String date) {
-		return new JSONPObject(callback, pinkerInfoService.getPageInfo(result, page, date));
+	@ApiOperation(value = "乘客发布信息分页展示", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<Object[]> getPageInfo(String callback, PinkerInfo result, Integer page, String date) {
+		return pinkerInfoService.getPageInfo(result, page, date);
 	}
 }

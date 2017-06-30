@@ -135,6 +135,14 @@ public interface BaseDao<T> {
 	public Long count(String hql);
 
 	/**
+	 * 
+	 * 
+	 * @param hql
+	 * @return
+	 */
+	public Object uniqueResult(String hql);
+
+	/**
 	 * select count(*) from 类
 	 * 
 	 * @param hql

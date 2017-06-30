@@ -27,8 +27,9 @@ public class PinkerInfoServiceImpl extends BaseServiceImpl implements PinkerInfo
 	}
 
 	@Override
-	public void updateLookCount(Integer id) {
+	public Integer updateLookCount(Integer id) {
 		pinkerInfoDao.executeHql("update PinkerInfo set lookCount=lookCount+1 where id=" + id);
+		return (Integer)pinkerInfoDao.uniqueResult("select lookCount from PinkerInfo where id = "+id);
 	}
 
 	@Override
@@ -45,9 +46,8 @@ public class PinkerInfoServiceImpl extends BaseServiceImpl implements PinkerInfo
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public List getPageInfo(PinkerInfo result, Integer page,String date) {
+	public List<Object[]> getPageInfo(PinkerInfo result, Integer page,String date) {
 		String d = date.split(" ")[0];
 		String t = date.split(" ")[1];
 		String sql = "select (select d.name from dict d where d.type='ZONE' and d.id=t.fromzone) fromzone,"

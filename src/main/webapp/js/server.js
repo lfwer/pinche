@@ -6,3 +6,14 @@ var server = {
 	curUser : null,
 	cookieName : null
 }
+
+function getCurUser(){
+	if(server.curUser){
+		return server.curUser.value;
+	}else{
+		return undefined;
+	}
+}
+function setCurUser(user){
+	server.curUser = user;
+}

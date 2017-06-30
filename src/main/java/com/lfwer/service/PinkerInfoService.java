@@ -11,10 +11,9 @@ public interface PinkerInfoService {
 	
 	public void savePinkerInfo(PinkerInfo result);
 	
-	public void updateLookCount(Integer id);
+	public Integer updateLookCount(Integer id);
 	
 	public void removePinkerInfo(Integer id,User user);
 	
-	@SuppressWarnings("rawtypes")
-	public List getPageInfo(PinkerInfo result,Integer page,String date);
+	public List<Object[]> getPageInfo(PinkerInfo result,Integer page,String date);
  }

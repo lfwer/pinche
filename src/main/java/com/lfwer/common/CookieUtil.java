@@ -66,12 +66,14 @@ public class CookieUtil {
 	public static User readCookie(String name, HttpServletRequest request, HttpServletResponse response,
 			LoginService loginService) throws Exception {
 		// 先从缓存中读取，读不到再从cookie中取
-		User user = (User) request.getSession().getAttribute("curUser");
+		User user = null;
+		if (request != null)
+			user = (User) request.getSession().getAttribute("curUser");
 		if (user == null) {
 			String cookieValue = null;
 			if (name != null && !"".equals(name.trim())) {
 				cookieValue = name;
-			} else {
+			} else if (request != null) {
 				// 从request中根据cookieName取cookieValue
 				Cookie cookies[] = request.getCookies();
 				if (cookies != null) {
@@ -99,7 +101,8 @@ public class CookieUtil {
 			long validTimeInCookie = new Long(cookieValues[1]);
 			if (validTimeInCookie < System.currentTimeMillis()) {
 				// 删除Cookie
-				clearCookie(request, response);
+				if (response != null)
+					clearCookie(request, response);
 				return null;
 			}
 			// 取出cookie中的用户名,并到数据库中检查这个用户名,
@@ -119,7 +122,8 @@ public class CookieUtil {
 						user.getPhone() + ":" + user.getPassword() + ":" + validTimeInCookie + ":" + webKey);
 				// 将结果与Cookie中的MD5码相比较,如果相同,写入Session,自动登陆成功,并继续用户请求
 				if (md5ValueFromUser.equals(md5ValueInCookie) || md5ValudFormUser2.equals(md5ValueInCookie)) {
-					request.getSession().setAttribute("curUser", user);
+					if (request != null)
+						request.getSession().setAttribute("curUser", user);
 					return user;
 				} else {
 					return null;

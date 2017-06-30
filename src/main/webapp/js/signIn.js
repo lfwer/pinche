@@ -43,8 +43,6 @@ $(document).ready(function() {
 			url : $form.attr('action'),
 			type : 'post',
 			data : $form.serialize(),
-			crossDomain : true,
-			dataType : "jsonp",
 			success : function(result) {
 				if (result.valid == true) {
 					// 浏览器中加入cookie

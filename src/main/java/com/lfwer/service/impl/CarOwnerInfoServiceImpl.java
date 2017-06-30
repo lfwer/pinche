@@ -29,8 +29,9 @@ public class CarOwnerInfoServiceImpl extends BaseServiceImpl implements CarOwner
 	}
 
 	@Override
-	public void updateLookCount(Integer id) {
+	public Integer updateLookCount(Integer id) {
 		carOwnerInfoDao.executeHql("update CarOwnerInfo set lookCount=lookCount+1 where id=" + id);
+		return (Integer)carOwnerInfoDao.uniqueResult("select lookCount from CarOwnerInfo where id = "+id);
 	}
 
 	@Override
@@ -47,8 +48,9 @@ public class CarOwnerInfoServiceImpl extends BaseServiceImpl implements CarOwner
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List getPageInfo(CarOwnerInfo result, Integer page, String date) {
+	public List<Object[]> getPageInfo(CarOwnerInfo result, Integer page, String date) {
 		String d = date.split(" ")[0];
 		String t = date.split(" ")[1];
 		String sql = "select (select d.name from dict d where d.type='ZONE' and d.id=t.fromzone) fromzone,"
@@ -65,6 +67,6 @@ public class CarOwnerInfoServiceImpl extends BaseServiceImpl implements CarOwner
 		sql += " order by refreshTime desc";
 		// sql += " order by pdate desc,ptime desc";
 		List<Object> param = new ArrayList<Object>();
-		return carOwnerInfoDao.findBySql(sql, param, page, 20);
+		return (List<Object[]>)carOwnerInfoDao.findBySql(sql, param, page, 20);
 	}
 }
