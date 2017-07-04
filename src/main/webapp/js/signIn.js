@@ -22,7 +22,7 @@ $(document).ready(function() {
 
 	$('#signForm').bootstrapValidator({
 		message : '验证失败',
-		live : 'disabled',
+		//live : 'disabled',
 		feedbackIcons : {
 			// valid : 'glyphicon glyphicon-ok',
 			// invalid : 'glyphicon glyphicon-remove',

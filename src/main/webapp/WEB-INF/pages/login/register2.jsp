@@ -262,7 +262,7 @@
 		uploader = WebUploader.create({
 			auto:false,
 			method:'post',
-			server:'${basePath}/login/uploadPhoto',
+			server:'${basePath}/login/uploadPhoto?cookieName='+getCookieName(),
 			pick:{
 				id:"#photoEdt",
 				label:"头像",

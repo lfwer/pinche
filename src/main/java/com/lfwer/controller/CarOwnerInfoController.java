@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import com.lfwer.common.CookieUtil;
 import com.lfwer.common.Valid;
 import com.lfwer.model.User;
 import com.lfwer.model.CarOwnerInfo;
+import com.lfwer.model.Image;
 import com.lfwer.service.DictService;
 import com.lfwer.service.LoginService;
 import com.lfwer.service.CarOwnerInfoService;
@@ -265,14 +267,35 @@ public class CarOwnerInfoController {
 			Map root = new HashMap();
 			root.put("result", result);
 			root.put("user", user);
-			root.put("images", null);
+
+			List<Image> images = new ArrayList<Image>();
+			Image image = new Image();
+			image.setId(result.getId());
+			String largeName = user.getCarPhotoLarge1();
+			image.setSmallName(user.getCarPhotoSmall1());
+			image.setLargeName(largeName);
+			image.setWidth(Integer.parseInt(largeName.split("_")[1]));
+			image.setHeight(Integer.parseInt(largeName.split("_")[2]));
+			images.add(image);
+
+			image = new Image();
+			image.setId(result.getId());
+			largeName = user.getCarPhotoLarge2();
+			image.setSmallName(user.getCarPhotoSmall2());
+			image.setLargeName(largeName);
+			image.setWidth(Integer.parseInt(largeName.split("_")[1]));
+			image.setHeight(Integer.parseInt(largeName.split("_")[2]));
+			images.add(image);
+
+			root.put("images", images);
+
 			htmlFile = new File(path + result.getId() + ".html");
 			writer = new OutputStreamWriter(new FileOutputStream(htmlFile), "UTF-8");
 			tmp.process(root, writer);
 		} catch (Exception ex) {
 			if (writer != null)
 				writer.close();
-			if (htmlFile!=null && htmlFile.exists())
+			if (htmlFile != null && htmlFile.exists())
 				htmlFile.delete();
 			throw ex;
 		} finally {

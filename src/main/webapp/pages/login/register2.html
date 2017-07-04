@@ -1,13 +1,10 @@
-<%@page import="java.util.Date"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@include file="/common/taglib.jsp"%>
 <style>
 #wrapperInfo {
 	bottom: 0;
 }
-
+.list-group-item{
+	cursor: pointer;
+}
 </style>
 <div id="headerInfo" style="height: 40px;">
 	<div class="row">
@@ -23,22 +20,16 @@
 </div>	 
 <div id="wrapperInfo">
 	<div id="scrollerInfo">
-
 		<table style="width: 100%; font-size: 18px;">
 			<tr>
 				<td style="padding-top: 10px;" width="80%" id="photoEdt">头像</td>
 				<td align="right" style="padding: 6px 14px;">
-					<div class="userPhotoBig" itemscope
+					<div class="userPhotoBig_2" itemscope
 						itemtype="http://schema.org/ImageGallery">
 						<figure itemprop="associatedMedia" itemscope
 							itemtype="http://schema.org/ImageObject">
-							<a
-								href="${basePath }/login/getPhoto?id=${user.id}&name=${user.photoLarge}"
-								itemprop="contentUrl"
-								data-size="${fn:split(user.photoLarge,'_')[1] }x${fn:split(user.photoLarge,'_')[2] }">
-								<img id="imgHead"
-								src="${basePath }/login/getPhoto?id=${user.id}&name=${user.photoSmall}"
-								class="img-circle"
+							<a id="userPhotoBig_a_2" itemprop="contentUrl"> <img
+								id="imgHead" class="img-circle"
 								style="width: 60px; height: 60px; cursor: pointer;"
 								onerror="nohead(this);" itemprop="thumbnail" />
 								<figcaption itemprop="caption description"></figcaption>
@@ -48,154 +39,118 @@
 				</td>
 			</tr>
 		</table>
-
+		
 		<ul class="list-group my-list" style="margin-top:0;">
-			<li class="list-group-item" onclick="">昵称
+			<li class="list-group-item" onclick="pushHis({name:'forwardEdit',value:''});$('#editNickNameDiv').show();$('#edit_nickName').focus();">昵称
 				<div class="pull-right">
-					<input type="text" id="nickName" value="${user.nickName }" class="selectC" readonly />
+					<input type="text" id="nickName" value="" class="selectC" readonly />
 				</div>
 			</li>
 			<li class="list-group-item" onclick="$('#sex').mobiscroll('show')">性别
 				<div class="pull-right">
-					<select id="sex">
-						<c:forEach var="o" items="${sexList }">
-							<c:if test="${o.id eq user.sex }">
-								<option value="${o.id }" selected="selected">${o.name }</option>
-							</c:if>
-							<c:if test="${o.id ne user.sex }">
-								<option value="${o.id }">${o.name }</option>
-							</c:if>
-						</c:forEach>
+					<select id="sex" class="selectC">
+						<option value="1">♂</option>
+						<option value="2">♀</option>
+						<option value="3">保密</option>
 					</select>
 				</div>
 			</li>
 			<li class="list-group-item" onclick="$('#birthday').mobiscroll('show')">生日
 				<div class="pull-right">
-					<input id="birthday" type="text" class="selectC"
-						value="<fmt:formatDate value="${user.birthday }" pattern="yyyy-MM-dd" />" />
+					<input id="birthday" type="text" class="selectC" value="" />
 				</div>
 			</li>
 			<li class="list-group-item" onclick="$('#age').mobiscroll('show')">年龄
 				<div class="pull-right">
-					<input type="text" id="age" value="${user.age }" class="selectC" readonly />
+					<input type="text" id="age" value="" class="selectC" readonly />
 				</div>
 			</li>
 			<li class="list-group-item" onclick="$('#marry').mobiscroll('show')">情感状态
 				<div class="pull-right">
-					<select id="marry">
-						<c:forEach var="o" items="${marryList }">
-							<c:if test="${o.id eq user.marry }">
-								<option value="${o.id }" selected="selected">${o.name }</option>
-							</c:if>
-							<c:if test="${o.id ne user.marry }">
-								<option value="${o.id }">${o.name }</option>
-							</c:if>
-						</c:forEach>
+					<select id="marry" class="selectC">
+						<option value="1">单身</option>
+						<option value="2">已婚</option>
+						<option value="3">保密</option>
 					</select>
 				</div>
 			</li>
-			<li class="list-group-item" onclick="$('#industry').mobiscroll('show')">从事行业
+			<li class="list-group-item"
+				onclick="$('#industry').mobiscroll('show')">从事行业
 				<div class="pull-right">
-					<select id="industry">
-						<c:forEach var="o" items="${industryList }">
-							<c:if test="${o.id eq user.industry }">
-								<option value="${o.id }" selected="selected">${o.name }</option>
-							</c:if>
-							<c:if test="${o.id ne user.industry }">
-								<option value="${o.id }">${o.name }</option>
-							</c:if>
-						</c:forEach>
+					<select id="industry" class="selectC">
+						<option value="1">计算机/互联网/通信</option>
+						<option value="2">生产/工艺/制造</option>
+						<option value="3">医疗/护理/制药</option>
+						<option value="4">金融/银行/投资/保险</option>
+						<option value="5">商业/服务业/敷衍经营</option>
+						<option value="6">文化/广告/传媒</option>
+						<option value="7">娱乐/艺术/表演</option>
+						<option value="8">律师/法务</option>
+						<option value="9">教育/培训</option>
+						<option value="10">公务员/行政/事业单位</option>
+						<option value="99">其他</option>
 					</select>
 				</div>
 			</li>
 			<li class="list-group-item" onclick="$('#hobby').mobiscroll('show')">兴趣爱好
 				<div class="pull-right">
-					<select id="hobby" multiple>
-						<c:forEach var="o" items="${hobbyList }">
-							<option value="${o.id }">${o.name }</option>
-						</c:forEach>
+					<select id="hobby" multiple class="selectC">
+						<option value="1">看书</option>
+						<option value="2">上网</option>
+						<option value="3">听歌</option>
+						<option value="11">王者荣耀</option>
 					</select>
 				</div>
-			</li> 
-			
-			<li class="list-group-item" onclick="">个性签名
+			</li>
+			<li class="list-group-item" id="resigter2_list-group-item_sign" style="min-height: 80px;" onclick="pushHis({name:'forwardEdit',value:''});$('#editSignDiv').show();$('#edit_sign').focus();$('#register2_edit_sign_span').text(120-$('#edit_sign').val().length);">个性签名
 				<div class="pull-right">
-					<input type="text" id="sign" value="${user.sign }" class="selectC" readonly />
+					<div id="sign"></div>
 				</div>
 			</li>
-			
-			 
-			  
 		</ul>
-	<div class="container">
-			<form id="form1" class="form-horizontal" method="post"
-				action="${basePath }/login/register2Submit">
-				 
-				<%-- <div class="form-group">
-					<div class="col-xs-12">
-						<div class="input-group">
-							<span class="input-group-addon">姓名<span
-								class="lfwer-seize">⊙⊙</span> <span
-								class="lfwer-required">*</span>
-							</span><input type="text" id="realName" name="realName"
-								class="form-control" style="border-radius: 0 3px 3px 0;"
-								placeholder="请填写姓名" data-bv-notempty
-								data-bv-notempty-message="请填写姓名" value="${user.realName }"
-								data-bv-stringlength data-bv-stringlength-max="12"
-								data-bv-stringlength-message="姓名应小于12字">
-						</div>
-					</div>
-				</div> --%>
-				
-				<%-- <div class="form-group">
-					<div class="col-xs-12">
-						<div class="input-group">
-							<span class="input-group-addon">身份证号 <span
-								class="lfwer-required">*</span>
-							</span><input type="text" id="idCard" name="idCard" class="form-control"
-								style="border-radius: 0 3px 3px 0;" placeholder="请填写身份证号"
-								data-bv-notempty data-bv-notempty-message="请填写身份证号"
-								value="${user.idCard }" data-bv-regexp
-								data-bv-regexp-regexp="(^\d{15}$)|(^\d{17}(\d|X|x)$)"
-								data-bv-regexp-message="身份证号格式不正确">
-						</div>
-					</div>
-				</div> --%>
+	</div>
+</div>
 
-				<%-- <div class="form-group">
-					<div class="col-xs-12">
-						<div class="input-group">
-							<span class="input-group-addon">现住地区 <span
-								class="lfwer-required">*</span></span><select data-bv-notempty
-								data-bv-notempty-message="请选择现住地区" class="form-control"
-								id="zone" name="zone" >
-								<option value=''>- 请选择 -</option>
-								<c:forEach var="o" items="${zoneList }">
-									<option value='${o.id }'>${o.name }</option>
-								</c:forEach>
-							</select>
-						</div>
-					</div>
-				</div> --%>
-				
-				<%-- <div class="form-group">
-					<div class="col-xs-12">
-						<div class="input-group">
-							<span class="input-group-addon">详细地址 <span
-								class="lfwer-required">*</span></span><input type="text" id="addr"
-								name="addr" class="form-control" placeholder="详细地址"
-								data-bv-notempty data-bv-notempty-message="请填写详细地址"
-								value="${user.addr }" data-bv-stringlength
-								data-bv-stringlength-max="20"
-								data-bv-stringlength-message="详细地址应小于20字">
-						</div>
-					</div>
-				</div> --%>
-			</form>
+<div id="editNickNameDiv" class="editDiv ">
+	<div class="row"  style="border-bottom: 1px solid #E7E4E4;height: 30px;">
+		<div class="col-xs-2" >
+			<span class="glyphicon glyphicon-chevron-left"
+				onclick="history.back();" style="cursor: pointer;">&nbsp;</span>
+		</div>
+		<div class="col-xs-8 text-center" >
+			<span>更改昵称</span>
+		</div>
+		<div class="col-xs-2">
+			<span class="pull-right"><button type="button" class="btn btn-xs btn-success" id="register2_edit_nickName_btn">保存</button></span>
+		</div>
+	</div>
+	<div class="row" style="margin-top: 20px;">
+		<div class="col-xs-12">
+			<input id="edit_nickName" type="text" maxlength="8"  style="border:0;border-bottom: 1px black solid;width:100%;"/>
 		</div>
 	</div>
 </div>
 
+<div id="editSignDiv" class="editDiv ">
+	<div class="row"  style="border-bottom: 1px solid #E7E4E4;height: 30px;">
+		<div class="col-xs-2" >
+			<span class="glyphicon glyphicon-chevron-left"
+				onclick="history.back();" style="cursor: pointer;">&nbsp;</span>
+		</div>
+		<div class="col-xs-8 text-center" >
+			<span>更改个性签名</span>
+		</div>
+		<div class="col-xs-2">
+			<span class="pull-right"><button type="button" class="btn btn-xs btn-success" id="register2_edit_sign_btn">保存</button></span>
+		</div>
+	</div>
+	<div class="row" style="margin-top: 20px;">
+		<div class="col-xs-12">
+			<textarea id="edit_sign" style="border-bottom: 1px black solid;width: 100%;min-height: 80px;" maxlength="120" ></textarea>
+			<div class="pull-right">还可输入<span id="register2_edit_sign_span"></span>个字符</div>
+		</div>
+	</div>
+</div>
 <!-- <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
 	aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
@@ -212,6 +167,7 @@
 </div> -->
 
 <script type="text/javascript">
+	
 	var _headPhoto;
 	var jcrop_api;
 	var uploader;
@@ -230,12 +186,47 @@
 		});
 	} */
 	
+	var now = new Date();
+
+	var nowDate = mini.parseDate(now,'yyyy-MM-dd');
+	var nowDateStr = mini.formatDate(now,'yyyy-MM-dd');
+ 
 	$(document).ready(function() {
 		//resizePhotoEdt();
 		
+		var user = getCurUser();
+		if(!user){
+			return;
+		}
+			
+		$("#imgHead").attr(
+				"src",
+				server.path + "/login/getPhoto?id=" + user.id + "&name="
+						+ user.photoSmall);
+		if (user.photoLarge) {
+			$("#userPhotoBig_a_2").attr(
+					"href",
+					server.path + "/login/getPhoto?id=" + user.id + "&name="
+							+ user.photoLarge);
+			$("#userPhotoBig_a_2").attr(
+					"data-size",
+					user.photoLarge.split("_")[1] + "x"
+							+ user.photoLarge.split("_")[2]);
+			initPhotoSwipeFromDOM('.userPhotoBig_2');
+		}
+		$("#nickName").val(user.nickName);
+		$("#edit_nickName").val(user.nickName);
+		$("#sex").val(user.sex);
+		$("#birthday").val(user.birthday);
+		$("#age").val(user.age);
+		$("#marry").val(user.marry);
+		$("#industry").val(user.industry);
+		$("#sign").html(user.sign);
+		$("#edit_sign").val(user.sign);
+		$("#resigter2_list-group-item_sign").css({height:'auto'});
 		//兴趣爱好初始化赋值
-		if("${user.hobby}"!=""){
-			var hobbyArr = "${user.hobby}".split(",");
+		if(user.hobby){
+			var hobbyArr = user.hobby.split(",");
 			$("#hobby > option").each(function(i,o){
 				$(hobbyArr).each(function(j,v){
 					if(o.value == v){
@@ -244,6 +235,9 @@
 				});
 			});
 		}
+		
+		
+		 
 		
 		document.addEventListener('touchmove', function(e) {
 			e.preventDefault();
@@ -262,7 +256,7 @@
 		uploader = WebUploader.create({
 			auto:false,
 			method:'post',
-			server:'${basePath}/login/uploadPhoto',
+			server:server.path + '/login/uploadPhoto?cookieName='+getCookieName(),
 			pick:{
 				id:"#photoEdt",
 				label:"头像",
@@ -355,6 +349,7 @@
 			});	
 		
 		});
+		
 		uploader.on('error', function( code ) {
 			var text = '';
 			switch( code ) {
@@ -373,11 +368,13 @@
 			}
 			alertMsg( text );
        	}); 
+		
 		//上传成功后触发事件;
 		uploader.on('uploadSuccess',function( file, data ){
 			_headPhoto = data;
-				$("#imgHead").attr("src","${basePath}/login/getPhoto?id=${user.id}&name="+data.small);	
+				$("#imgHead").attr("src",server.path + "/login/getPhoto?id="+user.id+"&name="+data.small);	
 				$("#headPhotoModal").modal("hide");
+				getCurUserForServer();
 		});
 		 
 		$("#photoEdt>.webuploader-pick").css({
@@ -388,7 +385,7 @@
 		});
 
 		$("#btnBreak").click(function() {
-			location.href = "${basePath}/index.jsp";
+			location.href = lfwer.rootName + "/index.html";
 		});
 
 		$('#myModal').modal('hide').css({
@@ -406,7 +403,73 @@
 			jcrop_api.destroy();
 			uploader.reset();
 		});
-	
+		
+		$("#register2_edit_nickName_btn").click(function(){
+			var o = $("#edit_nickName");
+			var v = $.trim(o.val());
+			if(v == ""){
+				alertMsg("昵称不能为空");
+			}else if (v.length < 2){
+				alertMsg("昵称最少为2个字符");
+			}else{
+				$.ajax({
+	         		url: server.path + '/login/updateUser',
+	         		data: {userId:user.id,type:'nickName',value:v},
+	         		type: 'post',
+	         		success:function(data){
+	         			if(!data.valid){
+	         				alertMsg(data.message);
+	         			}else{
+	         				alertMsg(data.message,"success");
+	         				$("#nickName").val(v);
+	         				history.back();
+	         				getCurUserForServer();
+	         				
+	         			}
+	         		},
+	         		error:function(){
+	         			alertMsg('保存失败！');
+	         		}
+	         	});
+			}
+		});
+		
+		
+		$("#edit_sign").keyup(function(){
+			var len = 120-$(this).val().length;
+			if(len >= 0)
+				$("#register2_edit_sign_span").text(len);
+			else{
+				
+			}
+				
+		});
+		
+		$("#register2_edit_sign_btn").click(function(){
+			var o = $("#edit_sign");
+			var v = $.trim(o.val());
+			$.ajax({
+         		url: server.path + '/login/updateUser',
+         		data: {userId:user.id,type:'sign',value:v},
+         		type: 'post',
+         		success:function(data){
+         			if(!data.valid){
+         				alertMsg(data.message);
+         			}else{
+         				alertMsg(data.message,"success");
+         				$("#sign").html(v);
+         				history.back();
+         				getCurUserForServer();
+         				
+         			}
+         		},
+         		error:function(){
+         			alertMsg('保存失败！');
+         		}
+         	});
+			 
+		});
+		
 		$('#sex').mobiscroll().select({
 	        theme: '',     // Specify theme like: theme: 'ios' or omit setting to use default 
 	        mode: 'scroller',       // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
@@ -423,14 +486,15 @@
             		}
             	});
 	         	$.ajax({
-	         		url:'${basePath}/login/updateUser',
-	         		data:'type=sex&value='+v,
-	         		type:'post',
+	         		url: server.path + '/login/updateUser',
+	         		data: {userId:user.id,type:'sex',value:v},
+	         		type: 'post',
 	         		success:function(data){
 	         			if(!data.valid){
 	         				alertMsg(data.message);
 	         			}else{
 	         				alertMsg(data.message,"success");
+	         				getCurUserForServer();
 	         			}
 	         		},
 	         		error:function(){
@@ -448,20 +512,21 @@
                   dateFormat: 'yy-mm-dd', // 日期格式
                   showLabel:true,
                   minDate:mini.parseDate('1900-01-01'),
-                  maxDate:mini.parseDate('<%=new SimpleDateFormat("yyyy-MM-dd").format(new Date())%>'),
+                  maxDate:nowDate,
                   headerText: function (valueText) { return "选择生日"; },
                   onSelect:function(valueText,inst){
                 		var age = getAge(valueText);
                 		valueText = valueText+","+age;
                 	  	$.ajax({
-         	         		url:'${basePath}/login/updateUser',
-         	         		data:'type=birthday&value='+valueText,
+         	         		url: server.path + '/login/updateUser',
+         	         		data:{userId:user.id,type:'birthday',value:valueText},
          	         		type:'post',
          	         		success:function(data){
          	         			if(!data.valid){
          	         				alertMsg(data.message);
          	         			}else{
          	         				alertMsg(data.message,"success");
+        	         				getCurUserForServer();
          	         			}
          	         		},
          	         		error:function(){
@@ -482,14 +547,15 @@
             step:1,
            	onSelect: function(valueText,inst){
    	         	$.ajax({
-   	         		url:'${basePath}/login/updateUser',
-   	         		data:'type=age&value='+valueText,
+   	         		url: server.path + '/login/updateUser',
+   	         		data:{userId:user.id,type:'age',value:valueText},
    	         		type:'post',
    	         		success:function(data){
    	         			if(!data.valid){
    	         				alertMsg(data.message);
    	         			}else{
    	         				alertMsg(data.message,"success");
+	         				getCurUserForServer();
    	         			}
    	         		},
    	         		error:function(){
@@ -515,14 +581,15 @@
             		}
             	});
 	         	$.ajax({
-	         		url:'${basePath}/login/updateUser',
-	         		data:'type=marry&value='+v,
+	         		url: server.path + '/login/updateUser',
+	         		data:{userId:user.id,type:'marry',value:v},
 	         		type:'post',
 	         		success:function(data){
 	         			if(!data.valid){
 	         				alertMsg(data.message);
 	         			}else{
 	         				alertMsg(data.message,"success");
+	         				getCurUserForServer();
 	         			}
 	         		},
 	         		error:function(){
@@ -549,14 +616,15 @@
             		}
             	});
 	         	$.ajax({
-	         		url:'${basePath}/login/updateUser',
-	         		data:'type=industry&value='+v,
+	         		url: server.path + '/login/updateUser',
+	         		data:{userId:user.id,type:'industry',value:v},
 	         		type:'post',
 	         		success:function(data){
 	         			if(!data.valid){
 	         				alertMsg(data.message);
 	         			}else{
 	         				alertMsg(data.message,"success");
+	         				getCurUserForServer();
 	         			}
 	         		},
 	         		error:function(){
@@ -576,15 +644,17 @@
             headerText: function (valueText) { return "选择兴趣爱好"; },
             onSelect: function(valueText,inst){
             	var v = $("#hobby").val();
+            	v = v.join(",");
 	         	$.ajax({
-	         		url:'${basePath}/login/updateUser',
-	         		data:'type=hobby&value='+v,
+	         		url: server.path + '/login/updateUser',
+	         		data:{userId:user.id,type:'hobby',value:v},
 	         		type:'post',
 	         		success:function(data){
 	         			if(!data.valid){
 	         				alertMsg(data.message);
 	         			}else{
 	         				alertMsg(data.message,"success");
+	         				getCurUserForServer();
 	         			}
 	         		},
 	         		error:function(){
@@ -594,31 +664,6 @@
             }
 		});
 		
-		$('#form1').bootstrapValidator({
-			message : '验证失败',
-			feedbackIcons : {
-				//valid : 'glyphicon glyphicon-ok',
-				//invalid : 'glyphicon glyphicon-remove',
-				validating : 'glyphicon glyphicon-refresh'
-			},
-			fields : {
-				nickName : {
-					validators : {
-						remote : {
-							url : lfwer.rootName + "/login/validateNickName?_r=" + new Date().getTime(),
-							type : "post",
-							delay : 1000,
-							message : "该昵称已经被使用了，请换一个吧"
-						}
-					}
-				}
-			}
-		}).on('error.field.bv', function(e, data) {
-			myScrollInfo.refresh();
-		}).on('success.field.bv', function(e, data) {
-			myScrollInfo.refresh();
-		});
-		
 		$('#uploadCarPhotoModal').modal('hide').css({
 			'margin-top' : function() {
 				return ($(this).height()/2-180);
@@ -626,84 +671,11 @@
 		}); 
 		
 		
-		/* $("button[name='typeC']").click(function(){
-			$("button[name='typeC']").removeClass('btn-primary').addClass('btn-default'); 
-			$(this).removeClass('btn-default').addClass('btn-primary');
-			$("#type").val($(this).val());
-			$("#type").keyup();
-		}); */
-		$("button[name='sexC']").click(function(){
-			$("button[name='sexC']").removeClass('btn-primary').addClass('btn-default'); 
-			$(this).removeClass('btn-default').addClass('btn-primary');
-			$("#sex").val($(this).val());
-			$("#sex").keyup();
-		});
-		$("button[name='marryC']").click(function(){
-			$("button[name='marryC']").removeClass('btn-primary').addClass('btn-default'); 
-			$(this).removeClass('btn-default').addClass('btn-primary');
-			$("#marry").val($(this).val());
-			$("#marry").keyup();
-		});
-		$("button[name='hobbyC']").click(function(){
-			if($(this).hasClass("btn-primary")){
-				$(this).removeClass('btn-primary').addClass('btn-default');
-			}else{
-				$(this).removeClass('btn-default').addClass('btn-primary');
-			}
-			$("#hobby").val("");
-			var v = "";
-			$("button[name='hobbyC']").each(function(index,element){
-				if($(this).hasClass("btn-primary")){
-					if(index>0){
-						v += ",";
-					}
-					v += $(this).val();
-				}
-			});
-			$("#hobby").val(v);
-			$("#hobby").keyup();
-		});
-		
-		//初始化赋值
-		/* $("button[name='typeC']").each(function(){
-			if("${user.type}" == $(this).val()){
-				$(this).removeClass('btn-default').addClass('btn-primary');
-			}
-		}); */
-		$("button[name='sexC']").each(function(){
-			if("${user.sex}" == $(this).val()){
-				$(this).removeClass('btn-default').addClass('btn-primary');
-			}
-		});
-		$("button[name='marryC']").each(function(){
-			if("${user.marry}" == $(this).val()){
-				$(this).removeClass('btn-default').addClass('btn-primary');
-			}
-		});
-		var arrHobby = "${user.hobby}".split(",");
-		$("button[name='hobbyC']").each(function(){
-			a:for(var i = 0; i< arrHobby.length; i++){
-				if(arrHobby[i] == $(this).val()){
-					$(this).removeClass('btn-default').addClass('btn-primary');
-					break a;
-				}
-			}
-			 
-		});
-		
-		initPhotoSwipeFromDOM('.userPhotoBig');
-		 
 	});
+	
 	function radioValueChg(e, id) {
 		$("#" + id).val(e.value);
 		$("#" + id).keyup();
-	}
-
-	function showBigHeadPhoto() {
-		var name = _headPhoto ? _headPhoto.large : "${user.photoLarge}";
-		$("#uploadCarPhotoModal").modal("show");
-		$("#imgCarPhoto").attr("src",
-				"${basePath}/login/getPhoto?id=${user.id}&name=" + name);
 	}
 
 	function savePhoto() {
@@ -725,9 +697,9 @@
 			var birthMonth = parseInt(v.substring(5, 7));
 			var birthDay = parseInt(v.substring(10, 12));
 
-			var nowYear = parseInt("${year}");
-			var nowMonth = parseInt("${month}");
-			var nowDay = parseInt("${day}");
+			var nowYear = now.getFullYear();
+			var nowMonth = now.getMonth();
+			var nowDay = now.getDate();
 
 			var ageDiff = nowYear - birthYear; //年之差
 			if (ageDiff > 0) {

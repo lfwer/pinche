@@ -237,7 +237,7 @@
 		$('#divCarPhoto1').diyUpload({
 			// 选完文件后，是否自动上传。
 			auto : true,
-			url : '${basePath}/login/uploadCarPhoto?_type=1',
+			url : '${basePath}/login/uploadCarPhoto?type=1&cookieName='+getCookieName(),
 			success : function(data) {
 				_carPhoto1 = data;
 				$("#imgCarPhoto1").attr(
@@ -296,7 +296,7 @@
 		$('#divCarPhoto2').diyUpload({
 			// 选完文件后，是否自动上传。
 			auto : true,
-			url : '${basePath}/login/uploadCarPhoto?_type=2',
+			url : '${basePath}/login/uploadCarPhoto?type=2&cookieName='+getCookieName(),
 			success : function(data) {
 				_carPhoto2 = data;
 				$("#imgCarPhoto2").attr(

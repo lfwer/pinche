@@ -12,6 +12,8 @@ import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "user")
 public class User implements Serializable {
@@ -64,7 +66,7 @@ public class User implements Serializable {
 	private String carStyle;
 	// 车辆颜色
 	private String carColor;
-	//车牌归属地
+	// 车牌归属地
 	private Integer carProvince;
 	// 车牌号
 	private String carNum;
@@ -74,9 +76,10 @@ public class User implements Serializable {
 	// 车辆照片2
 	private String carPhotoSmall2;
 	private String carPhotoLarge2;
-	//行驶本照片
+	// 行驶本照片
 	private String drivingBookPhotoSmall;
 	private String drivingBookPhotoLarge;
+
 	public String getRealName() {
 		return realName;
 	}
@@ -141,6 +144,7 @@ public class User implements Serializable {
 		this.phone = phone;
 	}
 
+	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
 	public Date getBirthday() {
 		return birthday;
 	}

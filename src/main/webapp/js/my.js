@@ -5,12 +5,11 @@ var user = getCurUser();
 //console.log("my:"+user+",time:"+new Date().getTime());
 if (user) {
 	$(".nickName").text(user.nickName);
-
+	$("#userPhotoBig_img").attr(
+			"src",
+			server.path + "/login/getPhoto?id=" + user.id + "&name="
+					+ user.photoSmall);
 	if (user.photoLarge) {
-		$("#userPhotoBig_img").attr(
-				"src",
-				server.path + "/login/getPhoto?id=" + user.id + "&name="
-						+ user.photoSmall);
 		$("#userPhotoBig_a").attr(
 				"href",
 				server.path + "/login/getPhoto?id=" + user.id + "&name="

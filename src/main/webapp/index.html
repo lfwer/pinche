@@ -80,9 +80,9 @@
 						<div id="pullUp1" class="alert text-center"
 							style="display: none; padding: 6px; margin: 0; font-size: 16px;color: gray;">
 							正在刷新……</div>
-						<div id="pullOver1" class="alert text-center" onclick="reloadInfo1()"
+						<div id="pullOver1" class="alert text-center"
 							style="display: none; padding: 6px; margin: 0; font-size: 16px; cursor: pointer;color: gray;">
-							没有更多数据，点击刷新</div>
+							已经到底啦</div>
 					</div>
 				</div>
 			</div>
@@ -97,9 +97,9 @@
 						<div id="pullUp2" class="alert text-center"
 							style="display: none; padding: 6px; margin: 0; font-size: 16px;color: gray;">
 							正在刷新……</div>
-						<div id="pullOver2" class="alert text-center" onclick="reloadInfo2()"
+						<div id="pullOver2" class="alert text-center" 
 							style="display: none; padding: 6px; margin: 0; font-size: 16px; cursor: pointer;color: gray;">
-							没有更多数据，点击刷新</div>
+							已经到底啦</div>
 					</div>
 				</div>
 			</div>
@@ -153,7 +153,6 @@
 	
 	<div id="viewDiv"></div>
 	<div id="viewDiv2"></div>
-	
 	<iframe id="targetFrame" name="targetFrame" style="display: none;"></iframe>
 	
 	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
@@ -314,7 +313,8 @@
 <div id="alertMsg" class="alert alert-danger text-center" style="display: none;position:absolute;bottom:50%;z-index: 999999999; margin:0   -40%;width: 80%;left:50%;">
 	<span id="alertMsgContent"></span>
 </div>
-						
+
+
 <!--加载效果-->
 <div class="mask">
     <div class="spinner">

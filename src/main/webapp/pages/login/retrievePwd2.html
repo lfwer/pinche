@@ -1,7 +1,4 @@
-<%@page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@include file="/common/taglib.jsp"%>
- <div id="headerInfo">
+<div id="headerInfo">
 	<div class="row">
 		<div class="col-xs-2">
 			<span class="glyphicon glyphicon-chevron-left"
@@ -17,7 +14,8 @@
 	<div id="scrollerInfo">
 		<div class="container">  
 			<form id="form1" class="form-horizontal" method="post"
-				action="${basePath }/login/retrievePwd2Submit">
+				action="">
+				<input type="hidden" id="phone" name="phone" />
 				 <div class="form-group">
 					<div class="col-xs-12">
 						<div style="display: table;">
@@ -82,7 +80,9 @@
 			fadeScrollbars : true,
 			preventDefault : false
 		});
-		
+		 
+		$("#phone").val(curPhone);
+		$("#form1").attr("action",server.path + "/login/retrievePwd2Submit");
 		// 表单验证
 		$('#form1').bootstrapValidator({
 			message : '验证失败',
@@ -115,7 +115,7 @@
 						$("#viewDiv2").empty();
 						$(".mask").show();
 						$("#viewDiv2").slideDown(500,function() {
-							$("#viewDiv2").load("${basePath}/login/retrievePwd", function() {
+							$("#viewDiv2").load("${basePath}/pages/login/retrievePwd.html", function() {
 								$(".mask").hide();
 							});
 						});

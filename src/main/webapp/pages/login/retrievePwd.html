@@ -1,6 +1,3 @@
-<%@page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@include file="/common/taglib.jsp"%>
 <div id="headerInfo">
 	<div class="row">
 		<div class="col-xs-2">
@@ -18,7 +15,7 @@
 	<div id="scrollerInfo">
 		<div class="container">
 			<form id="retrievePwdForm" class="form-horizontal"
-				action="${basePath }/login/retrievePwdSubmit" method="post">
+				action="" method="post">
 				<div class="form-group">
 					<div class="col-xs-12">
 						<div style="display: table;">
@@ -78,10 +75,12 @@
 			fadeScrollbars : true,
 			preventDefault : false
 		});
+		
+		$("#retrievePwdForm").attr("action",server.path + "/login/retrievePwdSubmit");
 		// 表单验证
 		$('#retrievePwdForm').bootstrapValidator({
 			message : '验证失败',
-			live : 'disabled',
+			//live : 'disabled',
 			feedbackIcons : {
 				//valid : 'glyphicon glyphicon-ok',
 				//invalid : 'glyphicon glyphicon-remove',
@@ -91,7 +90,7 @@
 				phone : {
 					validators : {
 						remote : {
-							url : lfwer.rootName + "/login/validatePhone?type=2&_r="+new Date().getTime(),
+							url : server.path + "/login/validatePhone?type=2&_r="+new Date().getTime(),
 							type : "post",
 							delay : 1000,
 							message : "手机号未注册"
@@ -119,7 +118,7 @@
 						.removeClass('btn-info').addClass('disabled');
 					var phone = $("#phone").val();
 					$.ajax({
-						url : lfwer.rootName + "/login/genSMS",
+						url : server.path + "/login/genSMS",
 						data : "phone="+ phone+ "&_r="+ new Date().getTime(),
 						success : function(result) {
 							if (result.valid == true) {
@@ -160,12 +159,14 @@
 			// Get the BootstrapValidator instance
 			var bv = $form.data('bootstrapValidator');
 			// Use Ajax to submit form data
+			var phone = $("#phone").val();
 			$.post($form.attr('action'), $form.serialize(), function(result) {
 				if (result.valid == true) {
 					$("#viewDiv2").empty();
 					$(".mask").show();
 					$("#viewDiv2").slideDown(500,function() {
-						$("#viewDiv2").load("${basePath}/login/retrievePwd2", function() {
+						curPhone = phone;
+						$("#viewDiv2").load(lfwer.rootName+"/pages/login/retrievePwd2.html", function() {
 							$(".mask").hide();
 						});
 					});

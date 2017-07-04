@@ -23,7 +23,10 @@ window.onhashchange = function(event){
 			my(true);
 		});
 		
+	}else if(_hash == "#forwardEdit"){
+		$(".editDiv").hide();
 	}
+	 
 }
 
 /* window.onpopstate = function(event) {
@@ -58,13 +61,14 @@ var myScroll3 = null;
 var myScroll4 = null;
 var loading1 = false;
 var loading2 = false;
-loadUp1 = true;
-loadUp2 = true;
+var overPullDown1 = false;
+var overPullDown2 = false;
 var swiper,swiper2;
-var firstIn =true;
+var firstIn1 = true;
+var firstIn2 = true;
 var delId,delflag;
 var gallery;
-
+var curPhone = null;
 var carOwnerInfoLi = '<li onclick="viewCarOwnerInfo(this,\'#id\')" style="padding:4px 4px 6px 4px;">'
 	+ '<table class="list-table"><tr><td rowspan="4" width="80" style="padding-left: 5px;">'
 	+ '<img src="'+server.path+'/login/getPhoto?id=#userId&name=#userPhotoSmall" '
@@ -96,11 +100,15 @@ var pinkerInfoLi = '<li onclick="viewPinkerInfo(this,\'#id\')" style="padding:4p
 		+ '</td></tr></table></li>';
 
 $(document).ready(function() {
+	
 	document.addEventListener('touchmove', function(e) {
 		e.preventDefault();
 	}, false);
+	
 	server.cookieName = $.cookie(server.cookieDomainName);
+	
 	zhaoche = true;
+	
 	$("#switchInfo").bootstrapSwitch("state",true);
 	
 	var setting = {
@@ -121,33 +129,30 @@ $(document).ready(function() {
   	
   	myScroll1.on("scrollEnd",function() {
 		if (!loading1) {
-			if ($("#pullDown1").html() == ("松开刷新 O(∩_∩)O")) {//下拉刷新
+			if (this.y == 0 && $("#pullDown1").text() == ("松开刷新 O(∩_∩)O")) {//下拉刷新
 				page1 = 1;
-				$("#pullDown1").html(
-						"正在加载……");
-				$("#pullDown1").show();
-				loadUp1 = true;
 				loadCarOwnerInfo(page1);
-				 
-			} else if ($("#pullDown1")
-					.html() == ("↑ 下拉刷新")) {
+			} else if ($("#pullDown1").html() == ("↑ 下拉刷新")) {
 				$("#pullDown1").empty().hide();
-			} else if (this.y == this.maxScrollY && loadUp1) {
+			} else if (this.y == this.maxScrollY && !overPullDown1) {
 				$("#pullUp1").show();
-				page1++;
 				loadCarOwnerInfo(page1);
 			} 
-
 		}
 
 	});
 
 	myScroll1.on("scroll", function() {
-		var y = this.y;
-		if (this.y >= 30) {
-			$("#pullDown1").html("松开刷新 O(∩_∩)O").show();
-		} else if (this.y > 0 && this.y < 30) {
-			$("#pullDown1").html("↑ 下拉刷新").show();
+		if(loading1){
+			alertMsg("请不要频繁刷新");
+			return;
+		}else{
+			var y = this.y;
+			if (this.y >= 30) {
+				$("#pullDown1").html("松开刷新 O(∩_∩)O").show();
+			} else if (this.y > 0 && this.y < 30) {
+				$("#pullDown1").html("↑ 下拉刷新").show();
+			}
 		}
 	});
 	
@@ -155,18 +160,13 @@ $(document).ready(function() {
 	
   	myScroll2.on('scrollEnd',function() {
 		if (!loading2) {
-			if ($("#pullDown2").html() == ("松开刷新 O(∩_∩)O")) {//下拉刷新
+			if (this.y == 0 && $("#pullDown2").text() == ("松开刷新 O(∩_∩)O")) {//下拉刷新
 				page2 = 1;
-				$("#pullDown2").html(
-						"正在加载……");
-				$("#pullDown2").show();
-				loadUp2 = true;
 				loadPinkerInfo(page2);
 			} else if ($("#pullDown2").html() == ("↑ 下拉刷新")) {
 				$("#pullDown2").empty().hide();
-			} else if (this.y == this.maxScrollY && loadUp2) {
+			} else if (this.y == this.maxScrollY && !overPullDown2) {
 				$("#pullUp2").show();
-				page2++;
 				loadPinkerInfo(page2);
 			} 
 		}
@@ -174,11 +174,17 @@ $(document).ready(function() {
 	});
 
 	myScroll2.on("scroll", function() {
-		var y = this.y;
-		if (this.y >= 30) {
-			$("#pullDown2").html("松开刷新 O(∩_∩)O").show();
-		} else if (this.y > 0 && this.y < 30) {
-			$("#pullDown2").html("↑ 下拉刷新").show();
+		if(loading2){
+			alertMsg("请不要频繁刷新");
+			return;
+		}else{
+			var y = this.y;
+			console.log(y);
+			if (this.y >= 30) {
+				$("#pullDown2").html("松开刷新 O(∩_∩)O").show();
+			} else if (this.y > 0 && this.y < 30) {
+				$("#pullDown2").html("↑ 下拉刷新").show();
+			}
 		}
 	});
 	
@@ -216,15 +222,27 @@ $(document).ready(function() {
 			if (zhaoche) {
 				$("#addInfoName").html("&nbsp;车主发布");
 				swiper.slideTo(0,0,false);
+				if(firstIn1){
+					$("#pullDown1").html("正在刷新……").show();
+				 	myScroll1.scrollTo(0, 10, 500, null);
+					firstIn1 = false;
+				}
 			} else {
 				$("#addInfoName").html("&nbsp;乘客发布");
 				swiper.slideTo(1,0,false); 
-				if(firstIn){
-					loadPinkerInfo(page2);
-					firstIn = false;
+				if(firstIn2){
+					$("#pullDown2").html("正在刷新……").show();
+				 	myScroll2.scrollTo(0, 10, 500, null);
+					firstIn2 = false;
 				}
 			}
 		});
+		
+		if(getCurUser() && getCurUser().type == "1"){
+			zhaoche = false;
+			$("#switchInfo").bootstrapSwitch("state",false);
+		}
+		
 		
 		$("#index_addInfo").click(function() {
 			if (zhaoche) {
@@ -248,9 +266,13 @@ $(document).ready(function() {
 		});
 		
 		if(zhaoche){
-			loadCarOwnerInfo(page1);
+			$("#pullDown1").html("正在刷新……").show();
+		 	myScroll1.scrollTo(0, 10, 500, null);
+		 	firstIn1 = false;
 		}else{
-			loadPinkerInfo(page2);
+			$("#pullDown2").html("正在刷新……").show();
+			myScroll2.scrollTo(0, 10, 500, null);
+			firstIn2 = false;
 		}	
 		
 	});
@@ -322,11 +344,7 @@ function getCurUserForServer(callback){
 				//console.log("ajax:"+data+",time:"+new Date().getTime());
 				$(".mask").hide();
 				if(data){
-					setCurUser(data);
-					if(getCurUser().type == "1"){
-						zhaoche = false;
-						$("#switchInfo").bootstrapSwitch("state",false);
-					}
+ 					setCurUser(data);
 				}
 				if("function" == typeof(callback)){  
 					callback();//将ajax请求后需要进行的操作放在回调函数callback()中  
@@ -386,14 +404,18 @@ function viewInfo() {
 	event.stopPropagation(); //  阻止事件冒泡
 }
 
-function loadCarOwnerInfo(page) {
-
+function loadCarOwnerInfo(page,retry) {
 	if (!loading1) {
 		loading1 = true;
 		$("#pullOver1").hide();
 		if (page == 1) {
-			$("#pullDown1").html("正在刷新……").show();
-			myScroll1.scrollToElement(document.querySelector("#pullDown1"),0, true, true,null);
+			if(retry){
+				$("#pullUp1").show();
+				myScroll1.scrollToElement(document.querySelector("#pullUp1"),0, true, true,null);
+			}else{
+				$("#pullDown1").html("正在刷新……").show();
+				myScroll1.scrollToElement(document.querySelector("#pullDown1"),0, true, true,null);
+			}
 			myScroll1.refresh();
 			$.ajax({
 				url : server.path+"/dict/getTime",
@@ -534,17 +556,31 @@ function loadCarOwnerInfo(page) {
 						$("#pageInfo1").html(result);
 					}
 				}
+				
 				$("#pullUp1").hide();
 				$("#pullDown1").hide();
 
-				if ((data == null || data.length == 0)) {
-					loadUp1 = false;
+				if ((data == null || data.length < 20)) {
 					$("#pullOver1").show();
-					myScroll1.scrollToElement(document.querySelector("#pullOver1"),0, true, true,null);
+					overPullDown1 = true;
+					 
+					if(page1 > 1)
+						myScroll1.scrollToElement(document.querySelector("#pullOver1"),0, true, true,null);
+					else{
+						var obj = $("#wrapper1");
+						//判断是否有滚动条
+						if(!(obj.scrollHeight>obj.clientHeight||obj.offsetHeight>obj.clientHeight)){
+							$("#pullOver1").html('<a href="javascript:loadCarOwnerInfo(1,true);">暂无更新，点我刷新</a>');
+						}else{
+							$("#pullOver1").html("已经到底啦");
+							 
+						}
+					}
 				}
 				if (data && data.length > 0) {
 					page1++;
 				}
+				
 				myScroll1.refresh();
 				loading1 = false;
 			},
@@ -553,7 +589,7 @@ function loadCarOwnerInfo(page) {
 				$("#pullDown1").hide();
 				myScroll1.refresh();
 				loading1 = false;
-				alertMsg("加载失败!");
+				alertMsg("刷新失败!");
 			}
 		});
 	}
@@ -571,13 +607,18 @@ function viewCarOwnerInfo(o, id) {
 	});
 }
 
-function loadPinkerInfo(page) {
+function loadPinkerInfo(page,retry) {
 	if (!loading2) {
 		loading2 = true;
 		$("#pullOver2").hide();
 		if (page == 1) {
-			$("#pullDown2").html("正在刷新……").show();
-			myScroll2.scrollToElement(document.querySelector("#pullDown2"),0, true, true,null);
+			if(retry){
+				$("#pullUp2").show();
+				myScroll2.scrollToElement(document.querySelector("#pullUp2"),0, true, true,null);
+			}else{
+				$("#pullDown2").html("正在刷新……").show();
+				myScroll2.scrollToElement(document.querySelector("#pullDown2"),0, true, true,null);
+			}
 			myScroll2.refresh();
 			$.ajax({
 				url : server.path+"/dict/getTime",
@@ -697,11 +738,20 @@ function loadPinkerInfo(page) {
 				$("#pullUp2").hide();
 				$("#pullDown2").hide();
 				
-				if ((data == null || data.length == 0)) {
-					 
-					loadUp2 = false;
+				if ((data == null || data.length < 20)) {
 					$("#pullOver2").show();
-					myScroll2.scrollToElement(document.querySelector("#pullOver2"),0, true, true,null);
+					overPullDown2 = true;
+					if(page2 > 1)
+						myScroll2.scrollToElement(document.querySelector("#pullOver2"),0, true, true,null);
+					else{
+						var obj = $("#wrapper2");
+						//判断是否有滚动条
+						if(!(obj.scrollHeight>obj.clientHeight||obj.offsetHeight>obj.clientHeight)){
+							$("#pullOver2").html('<a href="javascript:loadPinkerInfo(1,true);">暂无更新，点我刷新</a>');
+						}else{
+							$("#pullOver2").html("已经到底啦");
+						}
+					}
 				}
 				if (data && data.length > 0) {
 					page2++;
@@ -714,7 +764,7 @@ function loadPinkerInfo(page) {
 				$("#pullDown2").hide();
 				myScroll2.refresh();
 				loading2 = false;
-				alertMsg("加载失败！");
+				alertMsg("刷新失败！");
 			}
 		});
 	}
@@ -734,15 +784,11 @@ function viewPinkerInfo(o, id) {
 }
 
 function reloadInfo1() {
-	loading1 = false;
-	loadUp1 = true;
 	loadCarOwnerInfo(page1);
 
 }
 
 function reloadInfo2() {
-	loading2 = false;
-	loadUp2 = true;
 	loadPinkerInfo(page2);
 }
 
@@ -778,11 +824,11 @@ function removeSubmit(){
 				$("#msgInfo").modal('hide');
 				history.back();
 				if(name == "1"){
-		    		$("#pullDown1").html("松开刷新 O(∩_∩)O").show();
-	 				myScroll1.scrollTo(0, 30, 500, null);
+		    		$("#pullDown1").html("正在刷新……").show();
+	 				myScroll1.scrollTo(0, 10, 500, null);
 		    	}else{
-		    		$("#pullDown2").html("松开刷新 O(∩_∩)O").show();
-	 				myScroll1.scrollTo(0, 30, 500, null);
+		    		$("#pullDown2").html("正在刷新……").show();
+	 				myScroll1.scrollTo(0, 10, 500, null);
 		    	}
 			}, 2000);
 		},
@@ -804,7 +850,7 @@ function pushHis(json){
  
 function gotoLogin(){
 	$("#myModal").modal('hide');
-	gotoUrl1(''+lfwer.rootName+'/pages/login/signIn.html');
+	gotoUrl1(lfwer.rootName+'/pages/login/signIn.html');
 }
 
 function gotoRegister3(){

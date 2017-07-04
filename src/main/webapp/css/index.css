@@ -153,6 +153,21 @@ body {
 	overflow: hidden;
 }
 
+.editDiv{
+	z-index: 5;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: none;
+	background: white;
+	bottom: 0;
+	overflow: auto;
+	background-color: #fff;
+	font-size: 18px;
+	padding: 6px;
+	margin: 0;
+}
+
 #viewMy{
 	width: 100%;
 	height:auto;
@@ -191,3 +206,4 @@ body {
 	background: gray;
 	
 }
+

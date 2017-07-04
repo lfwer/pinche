@@ -1,6 +1,3 @@
-<%@page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@include file="/common/taglib.jsp"%>
 <div id="headerInfo">
 	<div class="row">
 		<div class="col-xs-2">
@@ -16,8 +13,7 @@
 <div id="wrapperInfo2">
 	<div id="scrollerInfo">
 		<div class="container">
-			<form id="registerForm" class="form-horizontal" method="post"
-				action="${basePath }/login/registerSubmit">
+			<form id="registerForm" class="form-horizontal" method="post">
 				<div class="form-group">
 					<div class="col-xs-12">
 						<div style="display: table;">
@@ -127,7 +123,7 @@
 		// 表单验证
 		$('#registerForm').bootstrapValidator({
 			message : '验证失败',
-			live : 'disabled',
+			//live : 'disabled',
 			feedbackIcons : {
 				//valid : 'glyphicon glyphicon-ok',
 				//invalid : 'glyphicon glyphicon-remove',
@@ -137,7 +133,7 @@
 				username : {
 					validators : {
 						remote : {
-							url : lfwer.rootName + "/login/validateUsername?type=1&_r="+new Date().getTime(),
+							url : server.path + "/login/validateUsername?type=1&_r="+new Date().getTime(),
 							type : "post",
 							delay : 1000,
 							message : "用户名已注册"
@@ -147,7 +143,7 @@
 				phone : {
 					validators : {
 						remote : {
-							url : lfwer.rootName + "/login/validatePhone?type=1&_r="+new Date().getTime(),
+							url : server.path + "/login/validatePhone?type=1&_r="+new Date().getTime(),
 							type : "post",
 							delay : 1000,
 							message : "手机号已注册"
@@ -157,7 +153,7 @@
 				smsCode : {
 					validators : {
 						remote : {
-							url : lfwer.rootName + "/login/validateSMS",
+							url : server.path + "/login/validateSMS",
 							type : "post",
 							data : {
 								phone : function(validator) {
@@ -188,7 +184,7 @@
 						.removeClass('btn-info').addClass('disabled');
 					var phone = $("#phone").val();
 					$.ajax({
-						url : lfwer.rootName + "/login/genSMS",
+						url : server.path + "/login/genSMS",
 						data : "phone="+ phone+ "&_r="+ new Date().getTime(),
 						success : function(result) {
 							if (result.valid == true) {
@@ -231,7 +227,7 @@
 			// Get the BootstrapValidator instance
 			var bv = $form.data('bootstrapValidator');
 			// Use Ajax to submit form data
-			$.post($form.attr('action'), $form.serialize(), function(result) {
+			$.post(server.path + "/login/registerSubmit", $form.serialize(), function(result) {
 				if (result.valid == true) {
 					$("#registerMsg").removeClass('alert-danger').addClass('alert-success');
 					window.setTimeout(function(){

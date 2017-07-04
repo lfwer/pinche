@@ -9,9 +9,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.codehaus.jackson.map.util.JSONPObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -52,8 +50,7 @@ public class LoginController {
 	@RequestMapping("signSubmit")
 	@ResponseBody
 	@ApiOperation(value = "登录验证", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
-	public Valid signSubmit(@ApiParam(value = "用户名") @RequestParam("username") String username,
-			@ApiParam(value = "密码") @RequestParam("password") String password) {
+	public Valid signSubmit(@ApiParam(value = "用户名") String username, @ApiParam(value = "密码") String password) {
 		Valid valid = null;
 		boolean validUsername = loginService.validateUsername(username);
 		boolean validPhone = false;
@@ -91,7 +88,8 @@ public class LoginController {
 	 */
 	@RequestMapping("registerSubmit")
 	@ResponseBody
-	public JSONPObject registerSubmit(String callback, User user) {
+	@ApiOperation(value = "注册提交", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid registerSubmit(User user) {
 		Valid data = null;
 		try {
 			if (user != null) {
@@ -107,7 +105,7 @@ public class LoginController {
 			e.printStackTrace();
 			data = new Valid(false, "注册失败。");
 		}
-		return new JSONPObject(callback, data);
+		return data;
 	}
 
 	/**
@@ -120,9 +118,10 @@ public class LoginController {
 	 */
 	@RequestMapping("retrievePwdSubmit")
 	@ResponseBody
-	public JSONPObject retrievePwdSubmit(String callback, String phone, String smsCode) {
+	@ApiOperation(value = "提交找回密码页面-验证手机并发送验证码", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid retrievePwdSubmit(String phone, String smsCode) {
 		Valid data = validateSMS(phone, smsCode);
-		return new JSONPObject(callback, data);
+		return data;
 	}
 
 	/**
@@ -134,7 +133,8 @@ public class LoginController {
 	 */
 	@RequestMapping("retrievePwd2Submit")
 	@ResponseBody
-	public JSONPObject retrievePwd2Submit(String callback, String phoneNo, String password) {
+	@ApiOperation(value = "提交重设密码", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid retrievePwd2Submit(String phoneNo, String password) {
 		Valid data = null;
 		try {
 			loginService.retrievePwd(phoneNo, password);
@@ -143,7 +143,7 @@ public class LoginController {
 			data = new Valid(false, "操作失败。");
 			ex.printStackTrace();
 		}
-		return new JSONPObject(callback, data);
+		return data;
 	}
 
 	/**
@@ -155,12 +155,12 @@ public class LoginController {
 	 */
 	@RequestMapping("validatePhone")
 	@ResponseBody
-	public JSONPObject validatePhone(String callback, @RequestParam("type") int type,
-			@RequestParam("phone") String phone) {
-		JsonObject result = new JsonObject();
+	@ApiOperation(value = "注册时验证“手机号”是否存在", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid validatePhone(@ApiParam("type") int type, @ApiParam("phone") String phone) {
+		Valid data = null;
 		boolean valid = loginService.validatePhone(phone);
-		result.addProperty("valid", type == 1 ? !valid : valid);
-		return new JSONPObject(callback, result.toString());
+		data = new Valid(type == 1 ? !valid : valid, "");
+		return data;
 	}
 
 	/**
@@ -172,22 +172,28 @@ public class LoginController {
 	 */
 	@RequestMapping("validateUsername")
 	@ResponseBody
-	public String validateUsername(@RequestParam("type") int type, @RequestParam("username") String username) {
-		JsonObject result = new JsonObject();
+	@ApiOperation(value = "注册时验证“用户名”是否存在", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid validateUsername(@RequestParam("type") int type, @RequestParam("username") String username) {
+		Valid data = null;
 		boolean valid = loginService.validateUsername(username);
-		result.addProperty("valid", type == 1 ? !valid : valid);
-		return result.toString();
+		data = new Valid(type == 1 ? !valid : valid, "");
+		return data;
 	}
 
 	@RequestMapping("validateNickName")
 	@ResponseBody
-	public String validateNickName(HttpServletRequest request, HttpServletResponse response, String nickName)
-			throws Exception {
-		User user = CookieUtil.readCookie(null, request, response, loginService);
-		JsonObject result = new JsonObject();
-		boolean valid = loginService.validateNickName(nickName, user.getId());
-		result.addProperty("valid", valid);
-		return result.toString();
+	@ApiOperation(value = "完善信息-验证“昵称”是否存在", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid validateNickName(String cookieName, String nickName) {
+		Valid data = null;
+		try {
+			User user = CookieUtil.readCookie(cookieName, null, null, loginService);
+			boolean valid = loginService.validateNickName(nickName, user.getId());
+			data = new Valid(valid, "");
+		} catch (Exception e) {
+			data = new Valid(false, "系统异常");
+			e.printStackTrace();
+		}
+		return data;
 	}
 
 	/**
@@ -199,14 +205,14 @@ public class LoginController {
 	 */
 	@RequestMapping("validateSMS")
 	@ResponseBody
-	public Valid validateSMS(@RequestParam("phone") String phone, @RequestParam("smsCode") String smsCode) {
+	@ApiOperation(value = "验证“短信验证码”是否正确", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid validateSMS(String phone, String smsCode) {
 		Valid data = null;
 		if (loginService.validateSMS(phone, smsCode)) {
 			data = new Valid(true, "验证码正确");
 		} else {
 			data = new Valid(false, "验证码不正确");
 		}
-
 		return data;
 
 	}
@@ -219,28 +225,28 @@ public class LoginController {
 	 */
 	@RequestMapping("genSMS")
 	@ResponseBody
-	public Valid genSMS(@RequestParam("phone") String phone) {
+	@ApiOperation(value = "生成验证码入库，并发送到指定手机", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid genSMS(String phone) {
 		return loginService.genSMS(phone);
 	}
 
 	@RequestMapping("uploadCarPhoto")
 	@ResponseBody
-	public String uploadCarPhoto(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
+	@ApiOperation(value = "上传车辆图片", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public String uploadCarPhoto(String cookieName, MultipartFile file, Integer type) {
 		File fromFile = null;
 		File largeFile = null;
 		File smallFile = null;
 		try {
-			User user = CookieUtil.readCookie(null, request, response, loginService);
-
-			int type = Integer.parseInt(request.getParameter("_type"));
-			File tempFile = new File(request.getServletContext().getRealPath("") + "/uploadTemp");
-			if (!tempFile.exists()) {
-				tempFile.mkdirs();
-			}
+			User user = CookieUtil.readCookie(cookieName, null, null, loginService);
 			String filename;
 			Properties prop = new Properties();
 			InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
 			prop.load(in);
+			File tempFile = new File(prop.getProperty("upload.temp.path"));
+			if (!tempFile.exists()) {
+				tempFile.mkdirs();
+			}
 			String stuff;
 			int index = file.getOriginalFilename().lastIndexOf(".");
 			if (index < 0) {
@@ -267,14 +273,14 @@ public class LoginController {
 			loginService.updateCarPhoto(user.getId(), smallFilename, largeFilename, type);
 
 			// session重新赋值
-			if (type == 1) {
-				user.setCarPhotoSmall1(smallFilename);
-				user.setCarPhotoLarge1(largeFilename);
-			} else {
-				user.setCarPhotoSmall2(smallFilename);
-				user.setCarPhotoLarge2(largeFilename);
-			}
-			request.getSession().setAttribute("curUser", user);
+			// if (type == 1) {
+			// user.setCarPhotoSmall1(smallFilename);
+			// user.setCarPhotoLarge1(largeFilename);
+			// } else {
+			// user.setCarPhotoSmall2(smallFilename);
+			// user.setCarPhotoLarge2(largeFilename);
+			// }
+			// request.getSession().setAttribute("curUser", user);
 
 			JsonObject result = new JsonObject();
 			result.addProperty("small", smallFilename);
@@ -300,20 +306,24 @@ public class LoginController {
 
 	@RequestMapping("uploadDrivingBookPhoto")
 	@ResponseBody
-	public String uploadDrivingBookPhoto(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
+	@ApiOperation(value = "上传行驶本图片", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public String uploadDrivingBookPhoto(String cookieName, MultipartFile file) {
 		File fromFile = null;
 		File largeFile = null;
 		File smallFile = null;
 		try {
-			User user = CookieUtil.readCookie(null, request, response, loginService);
-			File tempFile = new File(request.getServletContext().getRealPath("") + "/uploadTemp");
+			User user = CookieUtil.readCookie(cookieName, null, null, loginService);
+
+			Properties prop = new Properties();
+			InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
+			prop.load(in);
+
+			File tempFile = new File(prop.getProperty("upload.temp.path"));
 			if (!tempFile.exists()) {
 				tempFile.mkdirs();
 			}
 			String filename;
-			Properties prop = new Properties();
-			InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
-			prop.load(in);
+
 			String stuff;
 			int index = file.getOriginalFilename().lastIndexOf(".");
 			if (index < 0) {
@@ -340,9 +350,9 @@ public class LoginController {
 			loginService.updateDrivingBookPhoto(user.getId(), smallFilename, largeFilename);
 
 			// session重新赋值
-			user.setDrivingBookPhotoSmall(smallFilename);
-			user.setDrivingBookPhotoLarge(largeFilename);
-			request.getSession().setAttribute("curUser", user);
+			// user.setDrivingBookPhotoSmall(smallFilename);
+			// user.setDrivingBookPhotoLarge(largeFilename);
+			// request.getSession().setAttribute("curUser", user);
 
 			JsonObject result = new JsonObject();
 			result.addProperty("small", smallFilename);
@@ -368,8 +378,8 @@ public class LoginController {
 
 	@RequestMapping("getCarPhoto")
 	@ResponseBody
-	public void getCarPhoto(HttpServletRequest request, HttpServletResponse response, String name, String id)
-			throws Exception {
+	@ApiOperation(value = "获取车辆图片", httpMethod = "GET")
+	public void getCarPhoto(String name, String id, HttpServletResponse response) throws Exception {
 
 		Properties prop = new Properties();
 		InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
@@ -380,8 +390,8 @@ public class LoginController {
 
 	@RequestMapping("getDrivingBookPhoto")
 	@ResponseBody
-	public void getDrivingBookPhoto(HttpServletRequest request, HttpServletResponse response, String name, String id)
-			throws Exception {
+	@ApiOperation(value = "获取行驶本图片", httpMethod = "GET")
+	public void getDrivingBookPhoto(HttpServletResponse response, String name, String id) throws Exception {
 		Properties prop = new Properties();
 		InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
 		prop.load(in);
@@ -390,8 +400,8 @@ public class LoginController {
 
 	@RequestMapping("getCarPhotoLarge1")
 	@ResponseBody
-	public void getCarPhotoLarge1(HttpServletRequest request, HttpServletResponse response, Integer id)
-			throws Exception {
+	@ApiOperation(value = "获取车辆大图1", httpMethod = "GET")
+	public void getCarPhotoLarge1(HttpServletResponse response, Integer id) throws Exception {
 		User user = userService.getUser(id);
 		if (user != null) {
 			Properties prop = new Properties();
@@ -403,8 +413,8 @@ public class LoginController {
 
 	@RequestMapping("getCarPhotoLarge2")
 	@ResponseBody
-	public void getCarPhotoLarge2(HttpServletRequest request, HttpServletResponse response, Integer id)
-			throws Exception {
+	@ApiOperation(value = "获取车辆大图2", httpMethod = "GET")
+	public void getCarPhotoLarge2(HttpServletResponse response, Integer id) throws Exception {
 		User user = userService.getUser(id);
 		if (user != null) {
 			Properties prop = new Properties();
@@ -416,7 +426,8 @@ public class LoginController {
 
 	@RequestMapping("uploadPhoto")
 	@ResponseBody
-	public String uploadPhoto(HttpServletRequest request, HttpServletResponse response, MultipartFile file) {
+	@ApiOperation(value = "上传头像", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public String uploadPhoto(String cookieName, MultipartFile file, Integer x, Integer y, Integer w, Integer h) {
 		String filename = null;
 		File f = null;
 		File cutFile = null;
@@ -424,12 +435,10 @@ public class LoginController {
 		File largeFile = null;
 		InputStream in = null;
 		try {
-			int x = Integer.parseInt(request.getParameter("x"));
-			int y = Integer.parseInt(request.getParameter("y"));
-			int w = Integer.parseInt(request.getParameter("w"));
-			int h = Integer.parseInt(request.getParameter("h"));
-
-			File tempFile = new File(request.getServletContext().getRealPath("") + "/uploadTemp");
+			Properties prop = new Properties();
+			in = LoginController.class.getResourceAsStream("/config/upload.properties");
+			prop.load(in);
+			File tempFile = new File(prop.getProperty("upload.temp.path"));
 			if (!tempFile.exists()) {
 				tempFile.mkdirs();
 			}
@@ -443,11 +452,7 @@ public class LoginController {
 			f = new File(tempFile.getPath() + "/" + filename + "_tmp" + stuff);
 			file.transferTo(f);
 			f.createNewFile();
-			User user = CookieUtil.readCookie(null, request, response, loginService);
-			Properties prop = new Properties();
-			in = null;
-			in = LoginController.class.getResourceAsStream("/config/upload.properties");
-			prop.load(in);
+			User user = CookieUtil.readCookie(cookieName, null, null, loginService);
 
 			cutFile = ImageUtil.cut(f, tempFile.getPath(), x, y, w, h);
 
@@ -467,7 +472,6 @@ public class LoginController {
 
 			return result.toString();
 		} catch (Exception e) {
-			response.setStatus(500);
 			e.printStackTrace();
 			return null;
 		} finally {
@@ -495,8 +499,8 @@ public class LoginController {
 
 	@RequestMapping("getPhoto")
 	@ResponseBody
-	public void getPhoto(HttpServletRequest request, HttpServletResponse response, String name, String id)
-			throws Exception {
+	@ApiOperation(value = "获取头像", httpMethod = "GET")
+	public void getPhoto(HttpServletResponse response, String name, String id) throws Exception {
 		Properties prop = new Properties();
 		InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
 		prop.load(in);
@@ -505,33 +509,31 @@ public class LoginController {
 
 	@RequestMapping("getCurUser")
 	@ResponseBody
-	public JSONPObject getCurUser(String callback, String name, HttpServletRequest request,
-			HttpServletResponse response) {
+	@ApiOperation(value = "获取用户", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public User getCurUser(String name) {
 		User user = null;
 		try {
-			user = CookieUtil.readCookie(name, request, response, loginService);
+			user = CookieUtil.readCookie(name, null, null, loginService);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new JSONPObject(callback, user);
+		return user;
 	}
 
 	@RequestMapping("updateUser")
 	@ResponseBody
-	public Valid updateUser(Integer userId, String type, String value, HttpServletRequest request,
-			HttpServletResponse response) {
+	@ApiOperation(value = "修改用户信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid updateUser(Integer userId, String type, String value) {
 		Valid valid = null;
 		try {
 
 			if (value == null || "".equals(value.trim())) {
 				return new Valid(false, "不能为空");
 			}
-
 			int age = 0;
 			switch (type) {
 			case "type":
 				userService.updateByHql("update User u set u.type = ? where id = ?", new Object[] { value, userId });
-
 				break;
 			case "sex":
 				userService.updateByHql("update User u set u.sex = ? where id = ?", new Object[] { value, userId });
@@ -555,6 +557,14 @@ public class LoginController {
 				break;
 			case "hobby":
 				userService.updateByHql("update User u set u.hobby = ? where id = ?", new Object[] { value, userId });
+				break;
+			case "nickName":
+				userService.updateByHql("update User u set u.nickName = ? where id = ?",
+						new Object[] { value, userId });
+				break;
+			case "sign":
+				userService.updateByHql("update User u set u.sign = ? where id = ?",
+						new Object[] { value, userId });
 				break;
 			default:
 				return new Valid(false, "保存失败");

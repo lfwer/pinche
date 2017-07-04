@@ -9,11 +9,15 @@ var server = {
 
 function getCurUser(){
 	if(server.curUser){
-		return server.curUser.value;
+		return server.curUser;
 	}else{
 		return undefined;
 	}
 }
 function setCurUser(user){
 	server.curUser = user;
+}
+
+function getCookieName(){
+	return server.cookieName;
 }
