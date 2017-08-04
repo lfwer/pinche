@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -67,15 +68,15 @@ public class User implements Serializable {
 	// 车辆颜色
 	private String carColor;
 	// 车牌归属地
-	private Integer carProvince;
+	private String carProvince;
 	// 车牌号
 	private String carNum;
-	// 车辆照片1
-	private String carPhotoSmall1;
-	private String carPhotoLarge1;
-	// 车辆照片2
-	private String carPhotoSmall2;
-	private String carPhotoLarge2;
+	// 身份证照片1
+	private String cardPhotoSmall1;
+	private String cardPhotoLarge1;
+	// 身份证照片2
+	private String cardPhotoSmall2;
+	private String cardPhotoLarge2;
 	// 行驶本照片
 	private String drivingBookPhotoSmall;
 	private String drivingBookPhotoLarge;
@@ -233,11 +234,11 @@ public class User implements Serializable {
 		this.carType = carType;
 	}
 
-	public Integer getCarProvince() {
+	public String getCarProvince() {
 		return carProvince;
 	}
 
-	public void setCarProvince(Integer carProvince) {
+	public void setCarProvince(String carProvince) {
 		this.carProvince = carProvince;
 	}
 
@@ -249,36 +250,36 @@ public class User implements Serializable {
 		this.carNum = carNum;
 	}
 
-	public String getCarPhotoSmall1() {
-		return carPhotoSmall1;
+	public String getCardPhotoSmall1() {
+		return cardPhotoSmall1;
 	}
 
-	public void setCarPhotoSmall1(String carPhotoSmall1) {
-		this.carPhotoSmall1 = carPhotoSmall1;
+	public void setCardPhotoSmall1(String cardPhotoSmall1) {
+		this.cardPhotoSmall1 = cardPhotoSmall1;
 	}
 
-	public String getCarPhotoLarge1() {
-		return carPhotoLarge1;
+	public String getCardPhotoLarge1() {
+		return cardPhotoLarge1;
 	}
 
-	public void setCarPhotoLarge1(String carPhotoLarge1) {
-		this.carPhotoLarge1 = carPhotoLarge1;
+	public void setCardPhotoLarge1(String cardPhotoLarge1) {
+		this.cardPhotoLarge1 = cardPhotoLarge1;
 	}
 
-	public String getCarPhotoSmall2() {
-		return carPhotoSmall2;
+	public String getCardPhotoSmall2() {
+		return cardPhotoSmall2;
 	}
 
-	public void setCarPhotoSmall2(String carPhotoSmall2) {
-		this.carPhotoSmall2 = carPhotoSmall2;
+	public void setCardPhotoSmall2(String cardPhotoSmall2) {
+		this.cardPhotoSmall2 = cardPhotoSmall2;
 	}
 
-	public String getCarPhotoLarge2() {
-		return carPhotoLarge2;
+	public String getCardPhotoLarge2() {
+		return cardPhotoLarge2;
 	}
 
-	public void setCarPhotoLarge2(String carPhotoLarge2) {
-		this.carPhotoLarge2 = carPhotoLarge2;
+	public void setCardPhotoLarge2(String cardPhotoLarge2) {
+		this.cardPhotoLarge2 = cardPhotoLarge2;
 	}
 
 	public String getHobby() {

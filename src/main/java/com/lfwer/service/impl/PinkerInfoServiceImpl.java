@@ -39,7 +39,7 @@ public class PinkerInfoServiceImpl extends BaseServiceImpl implements PinkerInfo
 		}
 		PinkerInfo result = pinkerInfoDao.get(PinkerInfo.class, id);
 		// 只能自己删除自己的发布的拼车信息
-		if (result != null && user.getId().equals(result.getAddUser())) {
+		if (result != null && user.getId().equals(result.getAddUser().getId())) {
 			result.setDelTime(new Date());
 			result.setState(0);
 			pinkerInfoDao.update(result);
@@ -52,8 +52,8 @@ public class PinkerInfoServiceImpl extends BaseServiceImpl implements PinkerInfo
 		String t = date.split(" ")[1];
 		String sql = "select (select d.name from dict d where d.type='ZONE' and d.id=t.fromzone) fromzone,"
 				+ "t.onsite,(select d.name from dict d where d.type='ZONE' and d.id=t.tozone) tozone,"
-				+ "t.offsite,date_format(t.pdate,'%m-%d'),t.ptime," + "(select name from dict d where d.type='SEX' and d.id=t.sex) sex,"
-				+ "t.age,t.pnum,t.contactuser,t.id tid,u.id uid,u.photosmall,t.pweek1,t.pweek2,t.pweek3,t.pweek4,t.pweek5,t.pweek6,t.pweek7,t.timeLimit "
+				+ "t.offsite,date_format(t.pdate,'%m-%d'),t.ptime," + "(select name from dict d where d.type='SEX' and d.id=u.sex) sex,"
+				+ "u.age,t.pnum,u.phone,t.id tid,u.id uid,u.photosmall,t.pweek1,t.pweek2,t.pweek3,t.pweek4,t.pweek5,t.pweek6,t.pweek7,t.timeLimit "
 				+ "from pinkerinfo t,user u where t.adduser=u.id and t.state='1'";
 		if (page > 1) {
 			sql += "and t.pdate <= '" + d + "' and t.ptime <= '" + t + "'";

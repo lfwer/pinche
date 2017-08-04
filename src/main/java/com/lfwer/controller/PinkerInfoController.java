@@ -51,9 +51,6 @@ public class PinkerInfoController {
 	@Autowired
 	private PinkerInfoService pinkerInfoService;
 
-	@Autowired
-	private UserService userService;
-
 	/**
 	 * 跳转到乘客发布页面
 	 * 
@@ -88,7 +85,7 @@ public class PinkerInfoController {
 	 * @return
 	 */
 	@RequestMapping("addPinkerInfoSubmit")
-	//@AvoidDuplicateSubmission(needRemoveToken = true)
+	// @AvoidDuplicateSubmission(needRemoveToken = true)
 	@ResponseBody
 	@ApiOperation(value = "乘客发布信息提交", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Valid addPinkerInfoSubmit(PinkerInfo result, String userId) {
@@ -97,11 +94,7 @@ public class PinkerInfoController {
 			User user = CookieUtil.readCookie(userId, null, null, loginService);
 			if (user != null) {
 				result.setAddTime(new Date());
-				result.setAddUser(user.getId());
-				result.setAge(user.getAge());
-				result.setSex(user.getSex());
-				result.setContacePhone(user.getPhone());
-				result.setContactUser(user.getNickName());
+				result.setAddUser(user);
 				result.setModyTime(new Date());
 				result.setRefreshTime(new Date());
 				result.setState(1);
@@ -157,7 +150,6 @@ public class PinkerInfoController {
 
 			result.setFromZoneName(dictService.getName("ZONE", result.getFromZone()));
 			result.setToZoneName(dictService.getName("ZONE", result.getToZone()));
-			result.setSex(dictService.getName("SEX", result.getSex()));
 			// 拼接周期
 			if (result.getTimeLimit() == 2) {
 				StringBuilder week = new StringBuilder();
@@ -243,7 +235,7 @@ public class PinkerInfoController {
 		} catch (Exception ex) {
 			if (writer != null)
 				writer.close();
-			if (htmlFile!=null && htmlFile.exists())
+			if (htmlFile != null && htmlFile.exists())
 				htmlFile.delete();
 			throw ex;
 		} finally {
@@ -277,15 +269,18 @@ public class PinkerInfoController {
 	 * @throws Exception
 	 */
 	@RequestMapping("viewPinkerInfo")
-	public ModelAndView viewPinkerInfo(Integer id, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		ModelAndView modelAndView = null;
-		modelAndView = new ModelAndView("/pinkerInfo/viewPinkerInfo");
+	@ResponseBody
+	@ApiOperation(value = "获取乘客发布信息", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public PinkerInfo viewPinkerInfo(Integer id) throws Exception {
 		PinkerInfo result = pinkerInfoService.getPinkerInfo(id);
 		if (result != null) {
+
+			if (result.getState() == 0) {
+				return null;
+			}
+
 			result.setFromZoneName(dictService.getName("ZONE", result.getFromZone()));
 			result.setToZoneName(dictService.getName("ZONE", result.getToZone()));
-			result.setSex(dictService.getName("SEX", result.getSex()));
 			// 拼接周期
 			if (result.getTimeLimit() == 2) {
 				StringBuilder week = new StringBuilder();
@@ -345,28 +340,28 @@ public class PinkerInfoController {
 					}
 
 				}
-
 				if (week.length() > 0) {
 					result.setPweekName(week.toString());
 				}
 			}
-			pinkerInfoService.updateLookCount(result.getId());
-			modelAndView.addObject("result", result);
-			User user = userService.getUser(result.getAddUser());
-			modelAndView.addObject("user", user);
-
-			User addUser = CookieUtil.readCookie(null, request, response, loginService);
-			modelAndView.addObject("addUser", addUser);
 		}
-
-		return modelAndView;
+		return result;
 	}
 
 	@RequestMapping("removePinkerInfo")
-	public void removePinkerInfo(Integer id, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		User user = CookieUtil.readCookie(null, request, response, loginService);
-		pinkerInfoService.removePinkerInfo(id, user);
+	@ResponseBody
+	@ApiOperation(value = "删除乘客发布信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid removePinkerInfo(Integer id, String cookieName) {
+		Valid valid = null;
+		try {
+			User user = CookieUtil.readCookie(cookieName, null, null, loginService);
+			pinkerInfoService.removePinkerInfo(id, user);
+			valid = new Valid(true, "删除成功");
+		} catch (Exception ex) {
+			valid = new Valid(false, "删除失败");
+			ex.printStackTrace();
+		}
+		return valid;
 	}
 
 	@RequestMapping("getPageInfo")

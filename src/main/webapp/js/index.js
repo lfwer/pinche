@@ -26,7 +26,7 @@ window.onhashchange = function(event){
 	}else if(_hash == "#forwardEdit"){
 		$(".editDiv").hide();
 	}
-	 
+	
 }
 
 /* window.onpopstate = function(event) {
@@ -216,55 +216,6 @@ $(document).ready(function() {
 	
 	getCurUserForServer(function(){
 		
-		$("#switchInfo").on('switchChange.bootstrapSwitch',function(event, state) {
-			zhaoche = state;
-			info(false);
-			if (zhaoche) {
-				$("#addInfoName").html("&nbsp;车主发布");
-				swiper.slideTo(0,0,false);
-				if(firstIn1){
-					$("#pullDown1").html("正在刷新……").show();
-				 	myScroll1.scrollTo(0, 10, 500, null);
-					firstIn1 = false;
-				}
-			} else {
-				$("#addInfoName").html("&nbsp;乘客发布");
-				swiper.slideTo(1,0,false); 
-				if(firstIn2){
-					$("#pullDown2").html("正在刷新……").show();
-				 	myScroll2.scrollTo(0, 10, 500, null);
-					firstIn2 = false;
-				}
-			}
-		});
-		
-		if(getCurUser() && getCurUser().type == "1"){
-			zhaoche = false;
-			$("#switchInfo").bootstrapSwitch("state",false);
-		}
-		
-		
-		$("#index_addInfo").click(function() {
-			if (zhaoche) {
-				if(getCurUser()){//判断是否登录
-					
-					if(getCurUser().carType){
-						gotoUrl1(lfwer.rootName+'/pages/carOwnerInfo/addCarOwnerInfo.html');
-					}else{
-						$('#myModal2').modal('show');
-					}
-				}else{
-					$('#myModal').modal('show');
-				}
-			} else {
-				if(getCurUser()){//判断是否登录
-					gotoUrl1(lfwer.rootName+'/pages/pinkerInfo/addPinkerInfo.html');
-				}else{
-					$('#myModal').modal('show');
-				}
-			}
-		});
-		
 		if(zhaoche){
 			$("#pullDown1").html("正在刷新……").show();
 		 	myScroll1.scrollTo(0, 10, 500, null);
@@ -329,6 +280,56 @@ $(document).ready(function() {
  	
 });
 
+function init(){
+	$("#switchInfo").on('switchChange.bootstrapSwitch',function(event, state) {
+		zhaoche = state;
+		info(false);
+		if (zhaoche) {
+			$("#addInfoName").html("&nbsp;车主发布");
+			swiper.slideTo(0,0,false);
+			if(firstIn1){
+				$("#pullDown1").html("正在刷新……").show();
+			 	myScroll1.scrollTo(0, 10, 500, null);
+				firstIn1 = false;
+			}
+		} else {
+			$("#addInfoName").html("&nbsp;乘客发布");
+			swiper.slideTo(1,0,false); 
+			if(firstIn2){
+				$("#pullDown2").html("正在刷新……").show();
+			 	myScroll2.scrollTo(0, 10, 500, null);
+				firstIn2 = false;
+			}
+		}
+	});
+	
+	if(getCurUser() && getCurUser().type == "1"){
+		zhaoche = false;
+		$("#switchInfo").bootstrapSwitch("state",false);
+	}
+	
+	
+	$("#index_addInfo").click(function() {
+		if (zhaoche) {
+			if(getCurUser()){//判断是否登录
+				
+				if(getCurUser().carType){
+					gotoUrl1(lfwer.rootName+'/pages/carOwnerInfo/addCarOwnerInfo.html');
+				}else{
+					$('#myModal2').modal('show');
+				}
+			}else{
+				$('#myModal').modal('show');
+			}
+		} else {
+			if(getCurUser()){//判断是否登录
+				gotoUrl1(lfwer.rootName+'/pages/pinkerInfo/addPinkerInfo.html');
+			}else{
+				$('#myModal').modal('show');
+			}
+		}
+	});
+}
 
 function getCurUserForServer(callback){
 	setCurUser(undefined);
@@ -346,6 +347,7 @@ function getCurUserForServer(callback){
 				if(data){
  					setCurUser(data);
 				}
+				init();
 				if("function" == typeof(callback)){  
 					callback();//将ajax请求后需要进行的操作放在回调函数callback()中  
 				} 
@@ -355,6 +357,7 @@ function getCurUserForServer(callback){
 			}
 		});
 	}else{
+		init();
 		if("function" == typeof(callback)){  
 			callback();//将ajax请求后需要进行的操作放在回调函数callback()中  
 		}
@@ -850,7 +853,7 @@ function pushHis(json){
  
 function gotoLogin(){
 	$("#myModal").modal('hide');
-	gotoUrl1(lfwer.rootName+'/pages/login/signIn.html');
+	gotoUrl1(lfwer.rootName + '/pages/login/signIn.html', 'signIn');
 }
 
 function gotoRegister3(){

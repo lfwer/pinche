@@ -202,9 +202,6 @@ $(document).ready(function() {
 		$.post(server.path+"/pinkerInfo/addPinkerInfoSubmit",$form.serialize(),"json").done(function(result) {
 			$this.removeAttr("disabled");
 			if (result && result.valid == true) {
-				//刷新列表
-				//$("#pullDown2").html("松开刷新 O(∩_∩)O").show();
-				//myScroll2.scrollTo(0, 30, 500, null);
 				//查看详情
 				$("#viewDiv").empty();
 				$(".mask").show();

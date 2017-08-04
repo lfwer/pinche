@@ -3,11 +3,15 @@ package com.lfwer.model;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -26,14 +30,6 @@ public class CarOwnerInfo implements Serializable {
 	private String fromZone;
 	// 到
 	private String toZone;
-	// 联系人
-	private String contactUser;
-	// 联系电话
-	private String contacePhone;
-	// 性别
-	private String sex;
-	// 年龄
-	private Integer age;
 	// 途经
 	private String via1;
 	private String via2;
@@ -71,15 +67,12 @@ public class CarOwnerInfo implements Serializable {
 	private Date ptime;
 	@Transient
 	private String ptimeStr;
-
-	public String getPtimeStr() {
-		return new SimpleDateFormat("HH:mm").format(ptime);
-	}
-
 	// 人数
 	private Integer pnum;
 	// 添加人
-	private Integer addUser;
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = User.class)
+	@JoinColumn(name = "addUser")
+	private User addUser;
 	// 添加时间
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date addTime;
@@ -129,6 +122,10 @@ public class CarOwnerInfo implements Serializable {
 	@Transient
 	private String carColorName;
 
+	public String getPtimeStr() {
+		return new SimpleDateFormat("HH:mm").format(ptime);
+	}
+
 	public String getCarTypeName() {
 		return carTypeName;
 	}
@@ -167,22 +164,6 @@ public class CarOwnerInfo implements Serializable {
 
 	public String getCarColor() {
 		return carColor;
-	}
-
-	public String getSex() {
-		return sex;
-	}
-
-	public void setSex(String sex) {
-		this.sex = sex;
-	}
-
-	public Integer getAge() {
-		return age;
-	}
-
-	public void setAge(Integer age) {
-		this.age = age;
 	}
 
 	public void setCarColor(String carColor) {
@@ -273,22 +254,6 @@ public class CarOwnerInfo implements Serializable {
 		this.toZone = toZone;
 	}
 
-	public String getContactUser() {
-		return contactUser;
-	}
-
-	public void setContactUser(String contactUser) {
-		this.contactUser = contactUser;
-	}
-
-	public String getContacePhone() {
-		return contacePhone;
-	}
-
-	public void setContacePhone(String contacePhone) {
-		this.contacePhone = contacePhone;
-	}
-
 	public String getVia1() {
 		return via1;
 	}
@@ -361,11 +326,11 @@ public class CarOwnerInfo implements Serializable {
 		this.pnum = pnum;
 	}
 
-	public Integer getAddUser() {
+	public User getAddUser() {
 		return addUser;
 	}
 
-	public void setAddUser(Integer addUser) {
+	public void setAddUser(User addUser) {
 		this.addUser = addUser;
 	}
 

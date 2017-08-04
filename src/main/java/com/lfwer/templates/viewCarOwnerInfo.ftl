@@ -2,7 +2,7 @@
 	<div class="row">
 		<div class="col-xs-2">
 			<span class="glyphicon glyphicon-chevron-left"
-				onclick="history.back();" style="cursor: pointer;">&nbsp;</span>
+				onclick="back();" style="cursor: pointer;">&nbsp;</span>
 		</div>
 		<div class="col-xs-8 text-center">
 			<span>车主发布详情</span>
@@ -27,15 +27,15 @@
 								onerror="nohead(this);">&nbsp;&nbsp;</td>
 							<td valign="bottom">
 								${user.nickName }&nbsp;
-								<#if result.sex = '♂'>
-									<span class="badge-1">${result.sex!'-'}</span>&nbsp;
-									<span class="badge-1">${result.age!'-'}</span>
-								<#elseif result.sex = '♀'>
-									<span class="badge-2">${result.sex!'-'}</span>&nbsp;
-									<span class="badge-2">${result.age!'-'}</span>
+								<#if user.sex = '1'>
+									<span class="badge-1">${user.sex!'-'}</span>&nbsp;
+									<span class="badge-1">${user.age!'-'}</span>
+								<#elseif user.sex = '2'>
+									<span class="badge-2">${user.sex!'-'}</span>&nbsp;
+									<span class="badge-2">${user.age!'-'}</span>
 								<#else>
-									<span class="badge-3">${result.sex!'-'}</span>&nbsp;
-									<span class="badge-3">${result.age!'-'}</span>
+									<span class="badge-3">${user.sex!'-'}</span>&nbsp;
+									<span class="badge-3">${user.age!'-'}</span>
 								</#if>
 							</td>
 						</tr>
@@ -60,11 +60,11 @@
 			</div>
 			<div class="row">
 				<div class="col-xs-3 text-nowrap left-label">联系人</div>
-				<div class="col-xs-8">${result.contactUser }</div>
+				<div class="col-xs-8">${user.nickName }</div>
 			</div>
 			<div class="row">
 				<div class="col-xs-3 text-nowrap left-label">联系电话</div>
-				<div class="col-xs-9">${result.contacePhone }</div>
+				<div class="col-xs-9">${user.phone }</div>
 			</div>
 			 
 			<#if result.timeLimit == 1>
@@ -89,29 +89,23 @@
 				<div class="col-xs-8">${result.carTypeName }，${result.carStyle }，${result.carColorName }</div>
 			</div>
 			<div class="row">
-				<div class="col-xs-3 text-nowrap left-label">拼车价格</div>
-				<div class="col-xs-8">
-					<b>${result.cost }</b>&nbsp;元/人
-				</div>
-			</div>
-			<div class="row">
 				<div class="col-xs-3 text-nowrap left-label">剩余空位</div>
 				<div class="col-xs-8">
 					<b>${result.pnum }</b>&nbsp;位
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-xs-12 text-nowrap left-label">车主留言</div>
+				<div class="col-xs-3 text-nowrap left-label">拼车价格</div>
+				<div class="col-xs-8">
+					<b>${result.cost }</b>&nbsp;元/人
+				</div>
 			</div>
 			<div class="row">
-				<div class="col-xs-12">
-					<a href="javascript:void(0)">联系我时，请说是在邯郸拼车网上看到的，谢谢！</a>
-				</div>
+				<div class="col-xs-12 text-nowrap left-label">车主留言</div>
 			</div>
 			<div class="row">
 				<div class="col-xs-12" style="word-break: break-all;">${result.remark! }</div>
 			</div>
-			
 			<div class="row">
 				<div class="col-xs-12 text-nowrap left-label">车辆照片</div>
 			</div>
@@ -136,14 +130,19 @@
 					</#if>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-xs-12">
+					<a href="javascript:void(0)">联系我时，请说是在邯郸拼车网上看到的，谢谢！</a>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
 <div class="callDiv">
-	<a href="tel:${result.contacePhone }"><span
+	<a href="tel:${user.phone }"><span
 		class="glyphicon glyphicon-earphone" ></span></a>
 	<br>
-	<a href="sms:${result.contacePhone }" ><span
+	<a href="sms:${user.phone }" ><span
 		class="glyphicon glyphicon-envelope"></span></a>
 </div>
 <script type="text/javascript">
@@ -167,7 +166,7 @@
 	
 	var curUser = getCurUser();
 	
-	if(curUser && curUser.id == "${result.id}"){
+	if(curUser && curUser.id == "${user.id}"){
 		$("#btn_trash").show();
 	}
 	
@@ -190,7 +189,6 @@
 	//当所有图片加载完毕后刷新iscroll
 	isImgLoad("carPhone", function() {
 		myScrollInfo.refresh();
-
 	});
 	
 	initPhotoSwipeFromDOM('.carPhotoList');

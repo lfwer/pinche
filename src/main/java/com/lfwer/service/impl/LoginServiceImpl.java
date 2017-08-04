@@ -150,14 +150,14 @@ public class LoginServiceImpl extends BaseServiceImpl implements LoginService {
 	}
 
 	@Override
-	public void updateCarPhoto(Integer id, String smallFilename, String largeFilename, int type) {
+	public void updateCardPhoto(Integer id, String smallFilename, String largeFilename, int type) {
 		switch (type) {
 		case 1:
-			userDao.executeHql("update User t set t.carPhotoSmall1=?,t.carPhotoLarge1=? where t.id=?",
+			userDao.executeHql("update User t set t.cardPhotoSmall1=?,t.cardPhotoLarge1=? where t.id=?",
 					new Object[] { smallFilename, largeFilename, id });
 			break;
 		case 2:
-			userDao.executeHql("update User t set t.carPhotoSmall2=?,t.carPhotoLarge2=? where t.id=?",
+			userDao.executeHql("update User t set t.cardPhotoSmall2=?,t.cardPhotoLarge2=? where t.id=?",
 					new Object[] { smallFilename, largeFilename, id });
 			break;
 		}

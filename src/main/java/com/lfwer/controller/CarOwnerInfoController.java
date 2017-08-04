@@ -104,11 +104,7 @@ public class CarOwnerInfoController {
 			User user = CookieUtil.readCookie(userId, null, null, loginService);
 			if (user != null) {
 				result.setAddTime(new Date());
-				result.setAddUser(user.getId());
-				result.setAge(user.getAge());
-				result.setSex(user.getSex());
-				result.setContacePhone(user.getPhone());
-				result.setContactUser(user.getNickName());
+				result.setAddUser(user);
 				result.setCarColor(user.getCarColor());
 				result.setCarStyle(user.getCarStyle());
 				result.setCarType(user.getCarType());
@@ -165,7 +161,6 @@ public class CarOwnerInfoController {
 
 			result.setFromZoneName(dictService.getName("ZONE", result.getFromZone()));
 			result.setToZoneName(dictService.getName("ZONE", result.getToZone()));
-			result.setSex(dictService.getName("SEX", result.getSex()));
 			result.setCarTypeName(dictService.getName("CARTYPE", result.getCarType()));
 			result.setCarColorName(dictService.getName("CARCOLOR", result.getCarColor()));
 			// 拼接周期
@@ -271,20 +266,22 @@ public class CarOwnerInfoController {
 			List<Image> images = new ArrayList<Image>();
 			Image image = new Image();
 			image.setId(result.getId());
-			String largeName = user.getCarPhotoLarge1();
-			image.setSmallName(user.getCarPhotoSmall1());
+			String largeName = user.getCardPhotoLarge1();
+			image.setSmallName(user.getCardPhotoSmall1());
 			image.setLargeName(largeName);
-			image.setWidth(Integer.parseInt(largeName.split("_")[1]));
-			image.setHeight(Integer.parseInt(largeName.split("_")[2]));
+			String[] sizeArr = largeName.substring(0,largeName.lastIndexOf(".")).split("_");
+			image.setWidth(Integer.parseInt(sizeArr[1]));
+			image.setHeight(Integer.parseInt(sizeArr[2]));
 			images.add(image);
 
 			image = new Image();
 			image.setId(result.getId());
-			largeName = user.getCarPhotoLarge2();
-			image.setSmallName(user.getCarPhotoSmall2());
+			largeName = user.getCardPhotoLarge2();
+			image.setSmallName(user.getCardPhotoSmall2());
 			image.setLargeName(largeName);
-			image.setWidth(Integer.parseInt(largeName.split("_")[1]));
-			image.setHeight(Integer.parseInt(largeName.split("_")[2]));
+			sizeArr = largeName.substring(0,largeName.lastIndexOf(".")).split("_");
+			image.setWidth(Integer.parseInt(sizeArr[1]));
+			image.setHeight(Integer.parseInt(sizeArr[2]));
 			images.add(image);
 
 			root.put("images", images);
@@ -329,17 +326,20 @@ public class CarOwnerInfoController {
 	 * @throws Exception
 	 */
 	@RequestMapping("viewCarOwnerInfo")
-	public ModelAndView viewCarOwnerInfo(Integer id, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		ModelAndView modelAndView = null;
-		modelAndView = new ModelAndView("/carOwnerInfo/viewCarOwnerInfo");
+	@ApiOperation(value = "获取车主发布信息", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	public CarOwnerInfo viewCarOwnerInfo(Integer id) throws Exception {
+
 		CarOwnerInfo result = carOwnerInfoService.getCarOwnerInfo(id);
 		if (result != null) {
+
+			if (result.getState() == 0) {
+				return null;
+			}
 			result.setFromZoneName(dictService.getName("ZONE", result.getFromZone()));
 			result.setToZoneName(dictService.getName("ZONE", result.getToZone()));
-			result.setSex(dictService.getName("SEX", result.getSex()));
 			result.setCarTypeName(dictService.getName("CARTYPE", result.getCarType()));
 			result.setCarColorName(dictService.getName("CARCOLOR", result.getCarColor()));
+
 			// 拼接周期
 			if (result.getTimeLimit() == 2) {
 				StringBuilder week = new StringBuilder();
@@ -425,27 +425,25 @@ public class CarOwnerInfoController {
 			} else {
 				result.setViaName("无");
 			}
-			carOwnerInfoService.updateLookCount(result.getId());
-			modelAndView.addObject("result", result);
-			User user = userService.getUser(result.getAddUser());
-			modelAndView.addObject("user", user);
 
-			User curUser = CookieUtil.readCookie(null, request, response, loginService);
-			if (curUser != null) {
-				// redisTemplate.opsForSet().add("readCarOwner",
-				// String.valueOf(curUser.getId()));
-			}
-			modelAndView.addObject("curUser", curUser);
 		}
 
-		return modelAndView;
+		return result;
 	}
 
 	@RequestMapping("removeCarOwnerInfo")
-	public void removeCarOwnerInfo(Integer id, HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
-		User user = CookieUtil.readCookie(null, request, response, loginService);
-		carOwnerInfoService.removeCarOwnerInfo(id, user);
+	@ApiOperation(value = "删除车主发布信息", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Valid removeCarOwnerInfo(Integer id, String cookieName) {
+		Valid valid = null;
+		try {
+			User user = CookieUtil.readCookie(cookieName, null, null, loginService);
+			carOwnerInfoService.removeCarOwnerInfo(id, user);
+			valid = new Valid(true, "删除成功");
+		} catch (Exception ex) {
+			valid = new Valid(false, "删除失败");
+			ex.printStackTrace();
+		}
+		return valid;
 	}
 
 	@RequestMapping("getPageInfo")

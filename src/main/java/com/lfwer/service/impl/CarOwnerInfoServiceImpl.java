@@ -41,7 +41,7 @@ public class CarOwnerInfoServiceImpl extends BaseServiceImpl implements CarOwner
 		}
 		CarOwnerInfo result = carOwnerInfoDao.get(CarOwnerInfo.class, id);
 		// 只能自己删除自己的发布的拼车信息
-		if (result != null && user.getId().equals(result.getAddUser())) {
+		if (result != null && user.getId().equals(result.getAddUser().getId())) {
 			result.setDelTime(new Date());
 			result.setState(0);
 			carOwnerInfoDao.update(result);
@@ -56,10 +56,10 @@ public class CarOwnerInfoServiceImpl extends BaseServiceImpl implements CarOwner
 		String sql = "select (select d.name from dict d where d.type='ZONE' and d.id=t.fromzone) fromzone,"
 				+ "(select d.name from dict d where d.type='ZONE' and d.id=t.tozone) tozone,"
 				+ "t.via1,t.via2,t.via3,t.via4,t.via5,date_format(t.pdate,'%m-%d'),t.ptime,"
-				+ "(select d.name from dict d where d.type='SEX' and d.id=t.sex) sex," + "t.age,t.pnum,"
+				+ "(select d.name from dict d where d.type='SEX' and d.id=u.sex) sex," + "u.age,t.pnum,"
 				+ "(select d.name from dict d where d.type='CARTYPE' and d.id=t.cartype) cartype,"
 				+ "t.carstyle,(select name from dict d where d.type='CARCOLOR' and d.id=t.carcolor) carcolor,"
-				+ "t.contactuser,t.id tid,u.id uid,u.photosmall,t.pweek1,t.pweek2,t.pweek3,t.pweek4,t.pweek5,t.pweek6,t.pweek7,t.timeLimit "
+				+ "u.nickName,t.id tid,u.id uid,u.photosmall,t.pweek1,t.pweek2,t.pweek3,t.pweek4,t.pweek5,t.pweek6,t.pweek7,t.timeLimit "
 				+ "from carownerinfo t,user u where t.adduser=u.id and t.state='1' ";
 		if (page > 1) {
 			sql += "and t.pdate <= '" + d + "' and t.ptime <= '" + t + "'";

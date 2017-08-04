@@ -24,6 +24,7 @@ import com.lfwer.common.RandomUtil;
 import com.lfwer.common.SmbUtil;
 import com.lfwer.common.Valid;
 import com.lfwer.model.User;
+import com.lfwer.service.DictService;
 import com.lfwer.service.LoginService;
 import com.lfwer.service.UserService;
 import com.wordnik.swagger.annotations.Api;
@@ -39,6 +40,8 @@ public class LoginController {
 	private LoginService loginService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private DictService dictService;
 
 	/**
 	 * 登录提交
@@ -230,10 +233,10 @@ public class LoginController {
 		return loginService.genSMS(phone);
 	}
 
-	@RequestMapping("uploadCarPhoto")
+	@RequestMapping("uploadCardPhoto")
 	@ResponseBody
-	@ApiOperation(value = "上传车辆图片", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
-	public String uploadCarPhoto(String cookieName, MultipartFile file, Integer type) {
+	@ApiOperation(value = "上传身份证图片", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
+	public String uploadCardPhoto(String cookieName, MultipartFile file,Integer cardType) {
 		File fromFile = null;
 		File largeFile = null;
 		File smallFile = null;
@@ -267,18 +270,17 @@ public class LoginController {
 			String largeFilename = largeFile.getName();
 
 			// 使用smb协议将文件上传到共享目录
-			SmbUtil.smbPut(prop.getProperty("smb.carPhoto") + "/" + user.getId(), smallFile);
-			SmbUtil.smbPut(prop.getProperty("smb.carPhoto") + "/" + user.getId(), largeFile);
-
-			loginService.updateCarPhoto(user.getId(), smallFilename, largeFilename, type);
+			SmbUtil.smbPut(prop.getProperty("smb.cardPhoto") + "/" + user.getId(), smallFile);
+			SmbUtil.smbPut(prop.getProperty("smb.cardPhoto") + "/" + user.getId(), largeFile);
+			loginService.updateCardPhoto(user.getId(), smallFilename, largeFilename, cardType);
 
 			// session重新赋值
 			// if (type == 1) {
-			// user.setCarPhotoSmall1(smallFilename);
-			// user.setCarPhotoLarge1(largeFilename);
+			// user.setCardPhotoSmall1(smallFilename);
+			// user.setCardPhotoLarge1(largeFilename);
 			// } else {
-			// user.setCarPhotoSmall2(smallFilename);
-			// user.setCarPhotoLarge2(largeFilename);
+			// user.setCardPhotoSmall2(smallFilename);
+			// user.setCardPhotoLarge2(largeFilename);
 			// }
 			// request.getSession().setAttribute("curUser", user);
 
@@ -306,7 +308,7 @@ public class LoginController {
 
 	@RequestMapping("uploadDrivingBookPhoto")
 	@ResponseBody
-	@ApiOperation(value = "上传行驶本图片", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "上传行驶本图片", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String uploadDrivingBookPhoto(String cookieName, MultipartFile file) {
 		File fromFile = null;
 		File largeFile = null;
@@ -376,16 +378,16 @@ public class LoginController {
 		return null;
 	}
 
-	@RequestMapping("getCarPhoto")
+	@RequestMapping("getCardPhoto")
 	@ResponseBody
-	@ApiOperation(value = "获取车辆图片", httpMethod = "GET")
-	public void getCarPhoto(String name, String id, HttpServletResponse response) throws Exception {
+	@ApiOperation(value = "获取身份证图片", httpMethod = "GET")
+	public void getCardPhoto(String name, String id, HttpServletResponse response) throws Exception {
 
 		Properties prop = new Properties();
 		InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
 		prop.load(in);
 
-		SmbUtil.smbGet(prop.getProperty("smb.carPhoto") + "/" + id + "/" + name, response);
+		SmbUtil.smbGet(prop.getProperty("smb.cardPhoto") + "/" + id + "/" + name, response);
 	}
 
 	@RequestMapping("getDrivingBookPhoto")
@@ -398,35 +400,9 @@ public class LoginController {
 		SmbUtil.smbGet(prop.getProperty("smb.drivingBookPhoto") + "/" + id + "/" + name, response);
 	}
 
-	@RequestMapping("getCarPhotoLarge1")
-	@ResponseBody
-	@ApiOperation(value = "获取车辆大图1", httpMethod = "GET")
-	public void getCarPhotoLarge1(HttpServletResponse response, Integer id) throws Exception {
-		User user = userService.getUser(id);
-		if (user != null) {
-			Properties prop = new Properties();
-			InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
-			prop.load(in);
-			SmbUtil.smbGet(prop.getProperty("smb.carPhoto") + "/" + id + "/" + user.getCarPhotoLarge1(), response);
-		}
-	}
-
-	@RequestMapping("getCarPhotoLarge2")
-	@ResponseBody
-	@ApiOperation(value = "获取车辆大图2", httpMethod = "GET")
-	public void getCarPhotoLarge2(HttpServletResponse response, Integer id) throws Exception {
-		User user = userService.getUser(id);
-		if (user != null) {
-			Properties prop = new Properties();
-			InputStream in = LoginController.class.getResourceAsStream("/config/upload.properties");
-			prop.load(in);
-			SmbUtil.smbGet(prop.getProperty("smb.carPhoto") + "/" + id + "/" + user.getCarPhotoLarge2(), response);
-		}
-	}
-
 	@RequestMapping("uploadPhoto")
 	@ResponseBody
-	@ApiOperation(value = "上传头像", httpMethod = "GET", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "上传头像", httpMethod = "POST", produces = MediaType.APPLICATION_JSON_VALUE)
 	public String uploadPhoto(String cookieName, MultipartFile file, Integer x, Integer y, Integer w, Integer h) {
 		String filename = null;
 		File f = null;
@@ -442,8 +418,13 @@ public class LoginController {
 			if (!tempFile.exists()) {
 				tempFile.mkdirs();
 			}
-			String stuff = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-
+			String stuff;
+			int index = file.getOriginalFilename().lastIndexOf(".");
+			if (index < 0) {
+				stuff = ".jpg";
+			} else {
+				stuff = file.getOriginalFilename().substring(index);
+			}
 			// String name = file.getOriginalFilename().substring(0,
 			// file.getOriginalFilename().lastIndexOf("."))
 			// + "_uuid_" + UUID.randomUUID().toString();
@@ -563,7 +544,22 @@ public class LoginController {
 						new Object[] { value, userId });
 				break;
 			case "sign":
-				userService.updateByHql("update User u set u.sign = ? where id = ?",
+				userService.updateByHql("update User u set u.sign = ? where id = ?", new Object[] { value, userId });
+				break;
+			case "carNum":
+				userService.updateByHql("update User u set u.carNum = ? where id = ?", new Object[] { value, userId });
+				break;
+			case "carStyle":
+				userService.updateByHql("update User u set u.carStyle = ? where id = ?",
+						new Object[] { value, userId });
+				break;
+			case "carType":
+				String[] arr = value.split("\\|");
+				userService.updateByHql("update User u set u.carBrand = ? , u.carType = ? where id = ?",
+						new Object[] { arr[0], arr[1], userId });
+				break;
+			case "carColor":
+				userService.updateByHql("update User u set u.carColor = ? where id = ?",
 						new Object[] { value, userId });
 				break;
 			default:
