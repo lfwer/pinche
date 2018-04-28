@@ -123,14 +123,16 @@ public class PinkerInfoController {
 				}
 
 				pinkerInfoService.savePinkerInfo(result);
-				try {
-					// 生成html
-					genHtml(result, user);
-					return valid = new Valid(true, String.valueOf(result.getId()));
-				} catch (Exception e) {
-					pinkerInfoService.removePinkerInfo(result.getId(), user);
-					throw e;
-				}
+				valid = new Valid(true, String.valueOf(result.getId()));
+				// try {
+				// // 生成html
+				// genHtml(result, user);
+				// return valid = new Valid(true,
+				// String.valueOf(result.getId()));
+				// } catch (Exception e) {
+				// pinkerInfoService.removePinkerInfo(result.getId(), user);
+				// throw e;
+				// }
 			} else {
 				valid = new Valid(false, "保存失败：验证用户失败。");
 			}
